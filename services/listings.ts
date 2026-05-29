@@ -1,14 +1,15 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
-export async function getListings() {
-  const { data, error } = await supabase
-    .from("listings")
-    .select("*");
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (error) {
-    console.log(error);
-    return [];
-  }
+let supabase: any = null;
 
-  return data;
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(
+    supabaseUrl,
+    supabaseAnonKey
+  );
 }
+
+export { supabase };
