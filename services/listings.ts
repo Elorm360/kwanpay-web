@@ -6,7 +6,7 @@ export async function getListings() {
     .select("*");
 
   if (error) {
-    console.error("Supabase error:", error);
+    console.error(error);
     return [];
   }
 
