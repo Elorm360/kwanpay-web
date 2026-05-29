@@ -5,7 +5,13 @@ export default async function ListingPage({
 }: {
   params: { id: string };
 }) {
- 
+  if (!supabase) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Supabase not configured
+      </div>
+    );
+  }
 
   const { data, error } = await supabase
     .from("listings")
@@ -16,12 +22,7 @@ export default async function ListingPage({
   if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Error loading listing</h2>
-          <p className="text-white/60 mt-2">
-            {error?.message || "Listing not found"}
-          </p>
-        </div>
+        Listing not found
       </div>
     );
   }
@@ -31,7 +32,6 @@ export default async function ListingPage({
 
       <div className="max-w-4xl mx-auto">
 
-        {/* IMAGE */}
         <div className="rounded-2xl overflow-hidden border border-white/10">
           <img
             src={
@@ -42,7 +42,6 @@ export default async function ListingPage({
           />
         </div>
 
-        {/* DETAILS */}
         <h1 className="text-4xl font-bold mt-8">
           {data.title}
         </h1>
@@ -55,11 +54,6 @@ export default async function ListingPage({
           ${data.price_per_night} / night
         </p>
 
-        <p className="mt-6 text-white/70">
-          {data.description || "No description available yet."}
-        </p>
-
-        {/* BOOK BUTTON */}
         <button className="mt-10 px-8 py-4 bg-[#D4AF37] text-black font-semibold rounded-2xl">
           Book Now
         </button>
