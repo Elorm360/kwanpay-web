@@ -1,5 +1,6 @@
-
-export default function Home() {
+import { getListings } from "@/services/listings";
+export default async function Home() {
+  const listings = await getListings();
   return (
     <main className="min-h-screen bg-[#050505] text-white overflow-hidden">
 
@@ -33,6 +34,32 @@ export default function Home() {
 
       {/* HERO SECTION */}
       <section className="relative pt-40 pb-28 px-6">
+        <section className="py-20 px-6">
+  <h2 className="text-3xl font-bold mb-8">
+    Featured Stays
+  </h2>
+
+  <div className="grid md:grid-cols-3 gap-6">
+    {listings?.map((item: any) => (
+      <div
+        key={item.id}
+        className="p-5 border border-white/10 rounded-2xl bg-white/5"
+      >
+        <h3 className="text-xl font-semibold">
+          {item.title}
+        </h3>
+
+        <p className="text-white/60">
+          {item.location}
+        </p>
+
+        <p className="mt-2 font-bold">
+          ${item.price_per_night} / night
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
 
         {/* Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-blue-500/20 blur-[180px] rounded-full" />
