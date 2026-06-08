@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
 
+import BookingForm from "@/components/BookingForm";
+
 export default async function ListingPage({
   params,
 }: {
@@ -54,9 +56,7 @@ export default async function ListingPage({
           ${data.price_per_night} / night
         </p>
 
-        <button className="mt-10 px-8 py-4 bg-[#D4AF37] text-black font-semibold rounded-2xl">
-          Book Now
-        </button>
+        <BookingForm listingId={data.id} />
 
       </div>
 
