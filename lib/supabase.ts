@@ -6,7 +6,7 @@ const supabaseUrl =
 const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!superbaseUrl || !superbaseAnonKey) {
+if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing superbase environment variables");
 }
 
