@@ -33,12 +33,13 @@ export default function BookingForm({
 
     setLoading(false);
 
-    if (response.ok) {
-      alert("Booking submitted successfully!");
-    } else {
-      alert("Booking failed.");
-    }
-  }
+    const result = await response.json();
+
+if (response.ok) {
+  alert("Booking submitted successfully!");
+} else {
+  alert(`Booking failed: ${result.error}`);
+}
 
   return (
     <form
