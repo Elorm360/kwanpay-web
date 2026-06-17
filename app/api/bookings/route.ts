@@ -20,14 +20,17 @@ export async function POST(req: Request) {
         },
       ]);
 
-    if (error) {
-      console.error(error);
+   if (error) {
+  console.error("BOOKING INSERT ERROR:", error);
 
-      return NextResponse.json(
-        { success: false },
-        { status: 500 }
-      );
-    }
+  return NextResponse.json(
+    {
+      success: false,
+      error: error.message,
+    },
+    { status: 500 }
+  );
+}
 
     return NextResponse.json({
       success: true,
