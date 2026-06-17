@@ -40,6 +40,7 @@ if (response.ok) {
 } else {
   alert(`Booking failed: ${result.error}`);
 }
+  }
 
   return (
     <form
