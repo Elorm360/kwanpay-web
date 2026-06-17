@@ -1,29 +1,34 @@
 import { supabase } from "@/lib/supabase";
-
 import BookingForm from "@/components/BookingForm";
 
 export default async function ListingPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  if (!supabase) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Supabase not configured
-      </div>
-    );
-  }
+  const { id } = await params;
 
   const { data, error } = await supabase
     .from("listings")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
-  if (error || !data) {
+  if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
+      <div className="min-h-screen bg-black text-white p-10">
+        <h1 className="text-2xl font-bold">Supabase Error</h1>
+
+        <pre className="mt-4 text-red-400">
+          {JSON.stringify(error, null, 2)}
+        </pre>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
         Listing not found
       </div>
     );
@@ -31,7 +36,6 @@ export default async function ListingPage({
 
   return (
     <main className="min-h-screen bg-[#050505] text-white p-10">
-
       <div className="max-w-4xl mx-auto">
 
         <div className="rounded-2xl overflow-hidden border border-white/10">
@@ -40,6 +44,7 @@ export default async function ListingPage({
               data.image_url ||
               "https://images.unsplash.com/photo-1566073771259-6a8506099945"
             }
+            alt={data.title}
             className="w-full h-[400px] object-cover"
           />
         </div>
@@ -59,7 +64,6 @@ export default async function ListingPage({
         <BookingForm listingId={data.id} />
 
       </div>
-
     </main>
   );
 }
