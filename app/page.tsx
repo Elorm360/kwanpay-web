@@ -18,22 +18,140 @@ export default async function Home() {
       </header>
 
       {/* HERO */}
-      <section className="relative pt-40 pb-28 px-6">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-blue-500/20 blur-[180px] rounded-full" />
+<section className="relative overflow-hidden bg-gradient-to-b from-blue-50 via-white to-slate-50 pt-36 pb-24">
 
-        <div className="relative max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold">
-            Travel Africa{" "}
-            <span className="block text-[#D4AF37]">
-              Without Borders
-            </span>
-          </h1>
+  <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-blue-200 blur-3xl opacity-40"></div>
 
-          <p className="mt-8 text-lg text-white/70 max-w-2xl mx-auto">
-            Book stays, tours, and transport across Africa using Stellar USDC.
-          </p>
+  <div className="relative max-w-7xl mx-auto px-6">
+
+    <div className="text-center">
+
+      <span className="inline-flex items-center rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
+        Powered by Stellar Blockchain
+      </span>
+
+      <h1 className="mt-8 text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900">
+        Travel Africa
+        <span className="block text-blue-600">
+          Without Borders
+        </span>
+      </h1>
+
+      <p className="mt-8 max-w-3xl mx-auto text-lg text-slate-600">
+        Discover stays, tours and experiences across Africa with secure,
+        borderless payments powered by Stellar.
+      </p>
+
+      <div className="mt-10 flex flex-wrap justify-center gap-4">
+
+        <button className="rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white hover:bg-blue-700 transition">
+          Explore Stays
+        </button>
+
+        <button className="rounded-xl border border-slate-300 bg-white px-8 py-4 font-semibold text-slate-700 hover:bg-slate-100 transition">
+          Become a Host
+        </button>
+
+      </div>
+
+      <div className="mt-14 flex flex-wrap justify-center gap-10 text-center">
+
+        <div>
+          <p className="text-3xl">🌍</p>
+          <h3 className="font-bold text-slate-900 mt-2">
+            15+ Destinations
+          </h3>
         </div>
-      </section>
+
+        <div>
+          <p className="text-3xl">⚡</p>
+          <h3 className="font-bold text-slate-900 mt-2">
+            Instant Settlement
+          </h3>
+        </div>
+
+        <div>
+          <p className="text-3xl">🔒</p>
+          <h3 className="font-bold text-slate-900 mt-2">
+            Secure Payments
+          </h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    {/* Search Card */}
+
+    <div className="mt-20 max-w-5xl mx-auto rounded-3xl bg-white shadow-2xl border border-slate-200 p-8">
+
+      <div className="grid md:grid-cols-5 gap-5">
+
+        <div>
+          <label className="text-sm text-slate-500">
+            Destination
+          </label>
+
+          <select className="mt-2 w-full rounded-xl border p-3">
+            <option>Accra</option>
+            <option>Nairobi</option>
+            <option>Cape Town</option>
+            <option>Zanzibar</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="text-sm text-slate-500">
+            Check In
+          </label>
+
+          <input
+            type="date"
+            className="mt-2 w-full rounded-xl border p-3"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm text-slate-500">
+            Check Out
+          </label>
+
+          <input
+            type="date"
+            className="mt-2 w-full rounded-xl border p-3"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm text-slate-500">
+            Currency
+          </label>
+
+          <select className="mt-2 w-full rounded-xl border p-3">
+            <option>USD</option>
+            <option>GHS</option>
+            <option>KES</option>
+            <option>NGN</option>
+            <option>EUR</option>
+            <option>GBP</option>
+          </select>
+        </div>
+
+        <div className="flex items-end">
+
+          <button className="w-full rounded-xl bg-teal-500 py-3 font-semibold text-white hover:bg-teal-600 transition">
+            Explore →
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
       {/* LISTINGS SECTION (CLICKABLE) */}
       <section className="py-20 px-6">
