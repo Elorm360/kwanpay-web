@@ -165,24 +165,109 @@ export default async function Home() {
             <div className="grid md:grid-cols-3 gap-6">
 
               {listings.map((item: any) => (
-                <a
-                  key={item.id}
-                  href={`/listing/${item.id}`}
-                  className="block p-5 border border-white/10 rounded-2xl bg-white/5 hover:bg-white/10 transition"
-                >
-                  <h3 className="text-xl font-semibold">
-                    {item.title}
-                  </h3>
+  <a
+    key={item.id}
+    href={`/listing/${item.id}`}
+    className="
+      group
+      overflow-hidden
+      rounded-3xl
+      bg-white
+      text-black
+      shadow-xl
+      transition-all
+      duration-300
+      hover:-translate-y-2
+      hover:shadow-2xl
+    "
+  >
+    {/* Image */}
 
-                  <p className="text-white/60">
-                    {item.location}
-                  </p>
+    <div className="relative h-64 overflow-hidden">
 
-                  <p className="mt-3 font-bold">
-                    ${item.price_per_night} / night
-                  </p>
-                </a>
-              ))}
+      <img
+        src={
+          item.image_url ||
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945"
+        }
+        className="
+          w-full
+          h-full
+          object-cover
+          transition-transform
+          duration-500
+          group-hover:scale-110
+        "
+      />
+
+      <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-sm font-semibold">
+        ⭐ Featured
+      </div>
+
+      <div className="absolute bottom-4 right-4 bg-[#0A84FF] text-white px-4 py-2 rounded-full text-sm font-semibold">
+        Pay with Stellar
+      </div>
+
+    </div>
+
+    {/* Card Content */}
+
+    <div className="p-6">
+
+      <div className="flex justify-between items-start">
+
+        <div>
+
+          <h3 className="text-xl font-bold">
+            {item.title}
+          </h3>
+
+          <p className="text-gray-500 mt-1">
+            📍 {item.location}
+          </p>
+
+        </div>
+
+        <div className="text-right">
+
+          <div className="text-2xl font-bold">
+            ${item.price_per_night}
+          </div>
+
+          <div className="text-sm text-gray-500">
+            per night
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className="mt-6 flex items-center justify-between">
+
+        <span className="text-sm text-green-600 font-semibold">
+          Instant Confirmation
+        </span>
+
+        <span
+          className="
+            rounded-full
+            bg-black
+            text-white
+            px-5
+            py-2
+            text-sm
+            font-semibold
+          "
+        >
+          View Stay →
+        </span>
+
+      </div>
+
+    </div>
+
+  </a>
+))}
 
             </div>
           ) : (
