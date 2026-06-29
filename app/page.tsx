@@ -153,132 +153,123 @@ export default async function Home() {
 
 </section>
 
-      {/* LISTINGS SECTION (CLICKABLE) */}
-      <section className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
+     {/* FEATURED STAYS */}
+<section className="py-28 px-6 bg-gradient-to-b from-[#F8FAFC] to-white text-slate-900">
 
-          <h2 className="text-3xl font-bold mb-8">
-            Featured Stays
-          </h2>
+  <div className="max-w-7xl mx-auto">
 
-          {listings && listings.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-6">
+    <div className="flex items-center justify-between mb-12">
 
-              {listings.map((item: any) => (
-  <a
-    key={item.id}
-    href={`/listing/${item.id}`}
-    className="
-      group
-      overflow-hidden
-      rounded-3xl
-      bg-white
-      text-black
-      shadow-xl
-      transition-all
-      duration-300
-      hover:-translate-y-2
-      hover:shadow-2xl
-    "
-  >
-    {/* Image */}
+      <div>
 
-    <div className="relative h-64 overflow-hidden">
+        <p className="uppercase tracking-[0.25em] text-blue-600 text-sm font-semibold">
+          Discover
+        </p>
 
-      <img
-        src={
-          item.image_url ||
-          "https://images.unsplash.com/photo-1566073771259-6a8506099945"
-        }
-        className="
-          w-full
-          h-full
-          object-cover
-          transition-transform
-          duration-500
-          group-hover:scale-110
-        "
-      />
+        <h2 className="text-5xl font-bold mt-3">
+          Featured Stays
+        </h2>
 
-      <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 text-sm font-semibold">
-        ⭐ Featured
+        <p className="text-slate-500 mt-4 max-w-xl">
+          Book verified accommodations across Africa and pay securely using
+          Stellar-powered cross-border payments.
+        </p>
+
       </div>
 
-      <div className="absolute bottom-4 right-4 bg-[#0A84FF] text-white px-4 py-2 rounded-full text-sm font-semibold">
-        Pay with Stellar
-      </div>
+      <button className="hidden md:block px-6 py-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">
+        Explore All →
+      </button>
 
     </div>
 
-    {/* Card Content */}
+    {listings && listings.length > 0 ? (
 
-    <div className="p-6">
+      <div className="grid md:grid-cols-3 gap-8">
 
-      <div className="flex justify-between items-start">
+        {listings.map((item: any) => (
 
-        <div>
+          <a
+            key={item.id}
+            href={`/listing/${item.id}`}
+            className="group rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition duration-500"
+          >
 
-          <h3 className="text-xl font-bold">
-            {item.title}
-          </h3>
+            <div className="relative overflow-hidden">
 
-          <p className="text-gray-500 mt-1">
-            📍 {item.location}
-          </p>
+              <img
+                src={
+                  item.image_url ||
+                  "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200&auto=format&fit=crop"
+                }
+                className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+                alt={item.title}
+              />
 
-        </div>
-
-        <div className="text-right">
-
-          <div className="text-2xl font-bold">
-            ${item.price_per_night}
-          </div>
-
-          <div className="text-sm text-gray-500">
-            per night
-          </div>
-
-        </div>
-
-      </div>
-
-      <div className="mt-6 flex items-center justify-between">
-
-        <span className="text-sm text-green-600 font-semibold">
-          Instant Confirmation
-        </span>
-
-        <span
-          className="
-            rounded-full
-            bg-black
-            text-white
-            px-5
-            py-2
-            text-sm
-            font-semibold
-          "
-        >
-          View Stay →
-        </span>
-
-      </div>
-
-    </div>
-
-  </a>
-))}
+              <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-sm font-semibold shadow">
+                ⭐ Featured
+              </div>
 
             </div>
-          ) : (
-            <p className="text-white/50">
-              No listings found. Add data in Supabase table.
-            </p>
-          )}
 
-        </div>
-      </section>
+            <div className="p-6">
 
+              <h3 className="text-2xl font-bold">
+                {item.title}
+              </h3>
+
+              <p className="mt-2 text-slate-500">
+                📍 {item.location}
+              </p>
+
+              <div className="mt-6 flex items-center justify-between">
+
+                <div>
+
+                  <p className="text-sm text-slate-400">
+                    Starting from
+                  </p>
+
+                  <h4 className="text-2xl font-bold text-blue-600">
+                    ${item.price_per_night}
+                  </h4>
+
+                </div>
+
+                <div className="px-4 py-2 rounded-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition">
+                  View →
+                </div>
+
+              </div>
+
+            </div>
+
+          </a>
+
+        ))}
+
+      </div>
+
+    ) : (
+
+      <div className="rounded-3xl border border-dashed border-slate-300 p-20 text-center">
+
+        <h3 className="text-2xl font-bold">
+          No Listings Yet
+        </h3>
+
+        <p className="mt-4 text-slate-500">
+          Your properties from Supabase will appear here.
+        </p>
+
+      </div>
+
+    )}
+
+  </div>
+
+</section>
+      
       {/* FEATURES */}
       <section className="py-28 px-6 border-t border-white/10">
         <div className="max-w-7xl mx-auto text-center">
