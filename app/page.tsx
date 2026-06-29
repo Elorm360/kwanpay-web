@@ -598,11 +598,151 @@ export default async function Home() {
 
 </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/10 py-10 px-6 text-center text-white/50">
-        © {new Date().getFullYear()} TransVista. Powered by Stellar.
-      </footer>
+      {/* WHY CHOOSE TRANSVISTA */}
 
-    </main>
+<section className="py-28 px-6 bg-gradient-to-b from-white to-slate-100">
+
+  <div className="max-w-7xl mx-auto">
+
+    <div className="text-center">
+
+      <p className="uppercase tracking-[0.3em] text-blue-600 font-semibold">
+        WHY TRANSVISTA
+      </p>
+
+      <h2 className="text-5xl font-bold mt-4 text-slate-900">
+        Travel Payments Reimagined
+      </h2>
+
+      <p className="mt-6 text-lg text-slate-500 max-w-3xl mx-auto">
+        We're building Africa's next-generation travel payment platform—
+        combining secure bookings with fast, transparent cross-border payments.
+      </p>
+
+    </div>
+
+    <div className="mt-20 grid lg:grid-cols-2 gap-10">
+
+      {/* Traditional */}
+
+      <div className="rounded-3xl bg-red-50 border border-red-100 p-10">
+
+        <h3 className="text-3xl font-bold text-red-600">
+          Traditional Booking
+        </h3>
+
+        <div className="mt-10 space-y-6">
+
+          <div>❌ Multiple bank charges</div>
+
+          <div>❌ Slow international transfers</div>
+
+          <div>❌ Currency conversion confusion</div>
+
+          <div>❌ Delayed host settlement</div>
+
+          <div>❌ Limited payment options</div>
+
+        </div>
+
+      </div>
+
+      {/* TransVista */}
+
+      <div className="rounded-3xl bg-blue-600 text-white p-10 shadow-2xl">
+
+        <h3 className="text-3xl font-bold">
+          With TransVista
+        </h3>
+
+        <div className="mt-10 space-y-6">
+
+          <div>✅ Local currency display</div>
+
+          <div>✅ Stellar-powered settlement</div>
+
+          <div>✅ Secure USDC payments</div>
+
+          <div>✅ Verified hosts</div>
+
+          <div>✅ Faster cross-border travel payments</div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+      {/* FINAL CTA */}
+
+<section className="py-32 px-6 bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-500 text-white">
+
+  <div className="max-w-5xl mx-auto text-center">
+
+    <h2 className="text-6xl font-bold">
+      Ready to Travel Africa?
+    </h2>
+
+    <p className="mt-8 text-xl text-white/90">
+      Experience secure cross-border travel payments powered by Stellar.
+    </p>
+
+    <div className="mt-12 flex justify-center gap-6 flex-wrap">
+
+      <a
+        href="#featured"
+        className="px-8 py-4 rounded-full bg-white text-blue-700 font-semibold hover:scale-105 transition"
+      >
+        Explore Stays
+      </a>
+
+      <button className="px-8 py-4 rounded-full border border-white hover:bg-white/10 transition">
+        Become a Host
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+      {/* FOOTER */}
+     <footer className="bg-slate-900 text-slate-300 py-16 px-6">
+
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+
+    <div>
+
+      <h2 className="text-3xl font-bold text-white">
+        TransVista
+      </h2>
+
+      <p className="mt-3 text-slate-400">
+        Travel Africa Without Borders
+      </p>
+
+    </div>
+
+    <div className="mt-8 md:mt-0 text-center md:text-right">
+
+      <p>
+        Powered by Stellar
+      </p>
+
+      <p className="mt-2 text-slate-500">
+
+        © {new Date().getFullYear()} TransVista Africa Ltd.
+
+      </p>
+
+    </div>
+
+  </div>
+
+</footer>
   );
 }
