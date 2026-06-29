@@ -423,6 +423,181 @@ export default async function Home() {
 
 </section>
 
+      {/* EXPLORE AFRICA */}
+
+<section className="py-28 px-6 bg-slate-50">
+
+  <div className="max-w-7xl mx-auto">
+
+    <div className="text-center">
+
+      <p className="uppercase tracking-[0.3em] text-blue-600 font-semibold">
+        EXPLORE AFRICA
+      </p>
+
+      <h2 className="text-5xl font-bold mt-4 text-slate-900">
+        Your Next African Adventure Starts Here
+      </h2>
+
+      <p className="mt-6 max-w-3xl mx-auto text-slate-500 text-lg">
+        From tropical beaches and historic castles to wildlife safaris and vibrant cities,
+        discover unforgettable destinations across Africa.
+      </p>
+
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-20">
+
+      {/* Ghana */}
+
+      <div className="group overflow-hidden rounded-3xl bg-white shadow hover:shadow-2xl transition duration-500">
+
+        <img
+          src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=1200&auto=format&fit=crop"
+          className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+          alt="Cape Coast"
+        />
+
+        <div className="p-8">
+
+          <h3 className="text-2xl font-bold text-slate-900">
+            🇬🇭 Cape Coast
+          </h3>
+
+          <p className="mt-3 text-slate-500">
+            Historic castles, golden beaches and rich Ghanaian culture.
+          </p>
+
+        </div>
+
+      </div>
+
+      {/* Zanzibar */}
+
+      <div className="group overflow-hidden rounded-3xl bg-white shadow hover:shadow-2xl transition duration-500">
+
+        <img
+          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop"
+          className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+          alt="Zanzibar"
+        />
+
+        <div className="p-8">
+
+          <h3 className="text-2xl font-bold text-slate-900">
+            🇹🇿 Zanzibar
+          </h3>
+
+          <p className="mt-3 text-slate-500">
+            Crystal-clear waters, white sand beaches and island luxury.
+          </p>
+
+        </div>
+
+      </div>
+
+      {/* Cape Town */}
+
+      <div className="group overflow-hidden rounded-3xl bg-white shadow hover:shadow-2xl transition duration-500">
+
+        <img
+          src="https://images.unsplash.com/photo-1576485290814-1c72aa4bbb8b?q=80&w=1200&auto=format&fit=crop"
+          className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+          alt="Cape Town"
+        />
+
+        <div className="p-8">
+
+          <h3 className="text-2xl font-bold text-slate-900">
+            🇿🇦 Cape Town
+          </h3>
+
+          <p className="mt-3 text-slate-500">
+            Mountains, oceans and one of Africa's most iconic skylines.
+          </p>
+
+        </div>
+
+      </div>
+
+      {/* Marrakech */}
+
+      <div className="group overflow-hidden rounded-3xl bg-white shadow hover:shadow-2xl transition duration-500">
+
+        <img
+          src="https://images.unsplash.com/photo-1597212618440-806262de4f6b?q=80&w=1200&auto=format&fit=crop"
+          className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+          alt="Marrakech"
+        />
+
+        <div className="p-8">
+
+          <h3 className="text-2xl font-bold text-slate-900">
+            🇲🇦 Marrakech
+          </h3>
+
+          <p className="mt-3 text-slate-500">
+            Colorful markets, luxury riads and centuries of history.
+          </p>
+
+        </div>
+
+      </div>
+
+      {/* Nairobi */}
+
+      <div className="group overflow-hidden rounded-3xl bg-white shadow hover:shadow-2xl transition duration-500">
+
+        <img
+          src="https://images.unsplash.com/photo-1521295121783-8a321d551ad2?q=80&w=1200&auto=format&fit=crop"
+          className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+          alt="Nairobi"
+        />
+
+        <div className="p-8">
+
+          <h3 className="text-2xl font-bold text-slate-900">
+            🇰🇪 Nairobi
+          </h3>
+
+          <p className="mt-3 text-slate-500">
+            Wildlife, innovation and vibrant city life all in one destination.
+          </p>
+
+        </div>
+
+      </div>
+
+      {/* Kigali */}
+
+      <div className="group overflow-hidden rounded-3xl bg-white shadow hover:shadow-2xl transition duration-500">
+
+        <img
+          src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1200&auto=format&fit=crop"
+          className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+          alt="Kigali"
+        />
+
+        <div className="p-8">
+
+          <h3 className="text-2xl font-bold text-slate-900">
+            🇷🇼 Kigali
+          </h3>
+
+          <p className="mt-3 text-slate-500">
+            One of Africa's cleanest, safest and fastest-growing cities.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
       {/* FOOTER */}
       <footer className="border-t border-white/10 py-10 px-6 text-center text-white/50">
         © {new Date().getFullYear()} TransVista. Powered by Stellar.
