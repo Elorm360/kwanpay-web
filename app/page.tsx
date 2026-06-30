@@ -694,10 +694,8 @@ export default async function Home() {
     <div className="mt-12 flex justify-center gap-6 flex-wrap">
 
       <a
-        <section
-  id="featured"
-  className="py-20 px-6"
-
+        href="#featured"
+        className="px-8 py-4 rounded-full bg-white text-blue-700 font-semibold hover:scale-105 transition"
       >
         Explore Stays
       </a>
@@ -713,50 +711,10 @@ export default async function Home() {
 </section>
 
       {/* FOOTER */}
-     <footer className="bg-slate-900 text-slate-300 py-16 px-6 border-t border-slate-800">
+      <footer className="py-10 text-center text-sm text-white/70">
+        © {new Date().getFullYear()} TransVista — Built with Stellar
+      </footer>
 
-  <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
-
-    <div>
-      <h2 className="text-3xl font-bold text-white">
-        TransVista
-      </h2>
-
-      <p className="mt-4 text-slate-400">
-        Travel Africa Without Borders.
-      </p>
-
-      <p className="mt-2 text-slate-500">
-        Cross-border travel payments powered by Stellar.
-      </p>
-    </div>
-
-    <div>
-      <h3 className="text-white font-semibold mb-4">
-        Platform
-      </h3>
-
-      <ul className="space-y-2 text-slate-400">
-        <li>Explore Stays</li>
-        <li>Become a Host</li>
-        <li>Payments</li>
-      </ul>
-    </div>
-
-    <div className="md:text-right">
-      <h3 className="text-white font-semibold mb-4">
-        Technology
-      </h3>
-
-      <p>Powered by Stellar</p>
-
-      <p className="mt-6 text-slate-500">
-        © {new Date().getFullYear()} TransVista Africa Ltd.
-      </p>
-    </div>
-
-  </div>
-
-</footer>
+    </main>
   );
 }
