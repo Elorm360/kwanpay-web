@@ -711,6 +711,38 @@ export default async function Home() {
 </section>
 
       {/* FOOTER */}
-     
+     <footer className="bg-slate-900 text-slate-300 py-16 px-6">
+
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+
+    <div>
+
+      <h2 className="text-3xl font-bold text-white">
+        TransVista
+      </h2>
+
+      <p className="mt-3 text-slate-400">
+        Travel Africa Without Borders
+      </p>
+
+    </div>
+
+    <div className="mt-8 md:mt-0 text-center md:text-right">
+
+      <p>
+        Powered by Stellar
+      </p>
+
+      <p className="mt-2 text-slate-500">
+
+        © {new Date().getFullYear()} TransVista Africa Ltd.
+
+      </p>
+
+    </div>
+
+  </div>
+
+</footer>
   );
 }
