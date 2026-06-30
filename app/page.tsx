@@ -6,16 +6,86 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-[#050505] text-white overflow-hidden">
 
-      {/* NAVBAR */}
-      <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl border-b border-white/10 bg-black/40">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">TransVista</h1>
+     {/* NAVBAR */}
 
-          <button className="px-5 py-2 rounded-full bg-white text-black font-medium">
-            Join Waitlist
-          </button>
-        </div>
-      </header>
+<header className="fixed top-0 left-0 right-0 z-50">
+
+  <div className="max-w-7xl mx-auto mt-5 px-6">
+
+    <div className="backdrop-blur-2xl bg-white/80 border border-white/40 shadow-xl rounded-full px-7 py-4 flex items-center justify-between">
+
+      {/* Logo */}
+
+      <div>
+
+        <h1 className="text-2xl font-bold text-slate-900">
+          TransVista
+        </h1>
+
+      </div>
+
+     {/* Navigation */}
+
+<nav className="hidden md:flex items-center gap-8">
+
+  <a
+    href="#featured"
+    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+  >
+    Stays
+  </a>
+
+  <a
+    href="#explore"
+    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+  >
+    Explore
+  </a>
+
+  <a
+    href="#experience"
+    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+  >
+    Experience
+  </a>
+
+  <a
+    href="#contact"
+    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+  >
+    Contact
+  </a>
+
+</nav>
+
+      {/* Right Side */}
+
+      <div className="flex items-center gap-4">
+
+        <select
+          className="rounded-full border border-slate-200 px-4 py-2 bg-white text-slate-700 outline-none hover:border-blue-500 transition"
+        >
+          <option>USD</option>
+          <option>GHS</option>
+          <option>NGN</option>
+          <option>KES</option>
+          <option>ZAR</option>
+          <option>EUR</option>
+        </select>
+
+        <button
+          className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 font-semibold transition shadow-lg"
+        >
+          Join Waitlist
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
 
    {/* HERO */}
 <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-sky-600 to-cyan-500 text-white">
@@ -754,8 +824,10 @@ export default async function Home() {
 </section>
 
       {/* FOOTER */}
-      <footer className="bg-slate-900 text-slate-300 py-16 px-6 border-t border-slate-800">
-
+<footer
+  id="contact"
+  className="bg-slate-900 text-slate-300 py-16 px-6 border-t border-slate-800"
+>
   <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
 
     <div>
