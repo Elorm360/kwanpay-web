@@ -598,76 +598,120 @@ export default async function Home() {
 
 </section>
 
-      {/* WHY CHOOSE TRANSVISTA */}
+      {/* THE TRANSVISTA EXPERIENCE */}
 
-<section className="py-28 px-6 bg-gradient-to-b from-white to-slate-100">
+<section className="py-32 px-6 bg-white">
 
   <div className="max-w-7xl mx-auto">
 
     <div className="text-center">
 
-      <p className="uppercase tracking-[0.3em] text-blue-600 font-semibold">
-        WHY TRANSVISTA
+      <p className="uppercase tracking-[0.35em] text-blue-600 font-semibold">
+        THE TRANSVISTA EXPERIENCE
       </p>
 
-      <h2 className="text-5xl font-bold mt-4 text-slate-900">
-        Travel Payments Reimagined
+      <h2 className="text-5xl md:text-6xl font-bold mt-5 text-slate-900">
+        Travel Across Africa
+        <br />
+        Without Payment Barriers
       </h2>
 
-      <p className="mt-6 text-lg text-slate-500 max-w-3xl mx-auto">
-        We're building Africa's next-generation travel payment platform—
-        combining secure bookings with fast, transparent cross-border payments.
+      <p className="mt-8 max-w-3xl mx-auto text-slate-500 text-xl leading-relaxed">
+        From choosing your destination to paying securely and arriving with confidence,
+        TransVista creates one seamless travel experience powered by Stellar.
       </p>
 
     </div>
 
-    <div className="mt-20 grid lg:grid-cols-2 gap-10">
+    <div className="mt-24 grid lg:grid-cols-5 gap-8">
 
-      {/* Traditional */}
+      {/* Step 1 */}
 
-      <div className="rounded-3xl bg-red-50 border border-red-100 p-10">
+      <div className="group text-center">
 
-        <h3 className="text-3xl font-bold text-red-600">
-          Traditional Booking
+        <div className="w-24 h-24 mx-auto rounded-full bg-blue-100 flex items-center justify-center text-5xl transition duration-500 group-hover:scale-110">
+          🌍
+        </div>
+
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+          Explore
         </h3>
 
-        <div className="mt-10 space-y-6">
-
-          <div>❌ Multiple bank charges</div>
-
-          <div>❌ Slow international transfers</div>
-
-          <div>❌ Currency conversion confusion</div>
-
-          <div>❌ Delayed host settlement</div>
-
-          <div>❌ Limited payment options</div>
-
-        </div>
+        <p className="mt-4 text-slate-500">
+          Discover stays, tours and experiences across Africa.
+        </p>
 
       </div>
 
-      {/* TransVista */}
+      {/* Step 2 */}
 
-      <div className="rounded-3xl bg-blue-600 text-white p-10 shadow-2xl">
+      <div className="group text-center">
 
-        <h3 className="text-3xl font-bold">
-          With TransVista
+        <div className="w-24 h-24 mx-auto rounded-full bg-cyan-100 flex items-center justify-center text-5xl transition duration-500 group-hover:scale-110">
+          🏡
+        </div>
+
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+          Reserve
         </h3>
 
-        <div className="mt-10 space-y-6">
+        <p className="mt-4 text-slate-500">
+          Choose verified accommodation with instant booking.
+        </p>
 
-          <div>✅ Local currency display</div>
+      </div>
 
-          <div>✅ Stellar-powered settlement</div>
+      {/* Step 3 */}
 
-          <div>✅ Secure USDC payments</div>
+      <div className="group text-center">
 
-          <div>✅ Verified hosts</div>
-
-          <div>✅ Faster cross-border travel payments</div>
-
+        <div className="w-24 h-24 mx-auto rounded-full bg-green-100 flex items-center justify-center text-5xl transition duration-500 group-hover:scale-110">
+          💱
         </div>
+
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+          Pay
+        </h3>
+
+        <p className="mt-4 text-slate-500">
+          View prices in your preferred currency while Stellar handles secure settlement.
+        </p>
+
+      </div>
+
+      {/* Step 4 */}
+
+      <div className="group text-center">
+
+        <div className="w-24 h-24 mx-auto rounded-full bg-yellow-100 flex items-center justify-center text-5xl transition duration-500 group-hover:scale-110">
+          ⚡
+        </div>
+
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+          Confirm
+        </h3>
+
+        <p className="mt-4 text-slate-500">
+          Receive fast confirmation with transparent payment tracking.
+        </p>
+
+      </div>
+
+      {/* Step 5 */}
+
+      <div className="group text-center">
+
+        <div className="w-24 h-24 mx-auto rounded-full bg-purple-100 flex items-center justify-center text-5xl transition duration-500 group-hover:scale-110">
+          ✈️
+        </div>
+
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+          Travel
+        </h3>
+
+        <p className="mt-4 text-slate-500">
+          Enjoy your African adventure with confidence.
+        </p>
 
       </div>
 
@@ -676,7 +720,6 @@ export default async function Home() {
   </div>
 
 </section>
-
       {/* FINAL CTA */}
 
 <section className="py-32 px-6 bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-500 text-white">
