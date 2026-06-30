@@ -256,62 +256,80 @@ export default async function Home() {
 
         {listings.map((item: any) => (
 
-          <a
-            key={item.id}
-            href={`/listing/${item.id}`}
-            className="group rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition duration-500"
-          >
+         <a
+  key={item.id}
+  href={`/listing/${item.id}`}
+  className="group overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+>
 
-            <div className="relative overflow-hidden">
+  <div className="relative overflow-hidden">
 
-              <img
-                src={
-                  item.image_url ||
-                  "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200&auto=format&fit=crop"
-                }
-                className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
-                alt={item.title}
-              />
+    <img
+      src={
+        item.image_url ||
+        "https://images.unsplash.com/photo-1576485290814-1c72aa4bbb8b?q=80&w=1200&auto=format&fit=crop"
+      }
+      alt={item.title}
+      className="h-64 w-full object-cover transition duration-700 group-hover:scale-110"
+    />
 
-              <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-sm font-semibold shadow">
-                ⭐ Featured
-              </div>
+    <div className="absolute top-5 left-5">
 
-            </div>
+      <span className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-slate-800 shadow">
 
-            <div className="p-6">
+        Featured
 
-              <h3 className="text-2xl font-bold">
-                {item.title}
-              </h3>
+      </span>
 
-              <p className="mt-2 text-slate-500">
-                📍 {item.location}
-              </p>
+    </div>
 
-              <div className="mt-6 flex items-center justify-between">
+    <div className="absolute top-5 right-5">
 
-                <div>
+      <span className="rounded-full bg-blue-600 px-3 py-2 text-white text-sm">
 
-                  <p className="text-sm text-slate-400">
-                    Starting from
-                  </p>
+        ★ 4.9
 
-                  <h4 className="text-2xl font-bold text-blue-600">
-                    ${item.price_per_night}
-                  </h4>
+      </span>
 
-                </div>
+    </div>
 
-                <div className="px-4 py-2 rounded-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white transition">
-                  View →
-                </div>
+  </div>
 
-              </div>
+  <div className="p-6">
 
-            </div>
+    <h3 className="text-2xl font-bold text-slate-900">
+      {item.title}
+    </h3>
 
-          </a>
+    <p className="mt-2 text-slate-500">
+      📍 {item.location}
+    </p>
+
+    <div className="mt-6 flex items-center justify-between">
+
+      <div>
+
+        <p className="text-3xl font-bold text-blue-600">
+          ${item.price_per_night}
+        </p>
+
+        <p className="text-slate-500">
+          per night
+        </p>
+
+      </div>
+
+      <span className="rounded-full bg-blue-600 px-5 py-3 text-white font-semibold transition group-hover:bg-blue-700">
+
+        View Stay →
+
+      </span>
+
+    </div>
+
+  </div>
+
+</a>
 
         ))}
 
