@@ -140,134 +140,79 @@ export default async function Home() {
 
 </header>
 
-   {/* HERO */}
+  {/* HERO */}
+<section className="relative pt-44 pb-32 px-6 overflow-hidden">
 
-<section
-  id="hero"
-  className="relative pt-44 pb-36 px-6 overflow-hidden"
->
-  {/* Background glow */}
-  <div className="absolute -top-40 -right-32 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl" />
-  <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-300/20 rounded-full blur-3xl" />
+  {/* background glow */}
+  <div
+    className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full blur-[180px] opacity-40"
+    style={{ background: BRAND.indigo }}
+  />
 
-  <div className="relative max-w-7xl mx-auto px-6 pt-40 pb-32 grid lg:grid-cols-2 gap-16 items-center">
+  <div className="relative max-w-5xl mx-auto text-center">
 
-    {/* LEFT SIDE */}
-    <div>
+    {/* small label */}
+    <p
+      className="uppercase tracking-[0.3em] font-semibold text-sm"
+      style={{ color: BRAND.amber }}
+    >
+      Cross-Border Payment Infrastructure
+    </p>
 
-      <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md px-5 py-2 text-sm mb-8">
-         Powered by Stellar Blockchain
-      </div>
+    {/* headline */}
+    <h1
+      className="text-5xl md:text-7xl font-bold mt-6 leading-tight"
+      style={{ color: BRAND.indigo }}
+    >
+      Powering payments for African tourism — without the friction.
+    </h1>
 
-      <h1 className="text-6xl lg:text-7xl font-extrabold leading-tight">
-        Travel Africa
-        <span className="block text-cyan-200">
-          Without Borders
-        </span>
-      </h1>
+    {/* subtext */}
+    <p className="mt-8 text-lg text-slate-600 max-w-2xl mx-auto">
+      KwanPay lets travelers pay any tourism business in Africa from anywhere in the world.
+      Fast settlement. Low cost. Built on Stellar.
+    </p>
 
-      <p className="mt-8 text-xl text-white/90 max-w-xl leading-relaxed">
-        Book accommodations across Africa and pay securely using
-        Stellar-powered cross-border payments.
-      </p>
+    {/* CTA buttons */}
+    <div className="mt-10 flex items-center justify-center gap-4 flex-wrap">
 
-      <div className="mt-10 flex flex-wrap gap-5">
+      <button
+        className="rounded-full px-6 py-3 font-semibold shadow-lg transition-all duration-300 hover:scale-105"
+        style={{
+          background: BRAND.amber,
+          color: "white",
+        }}
+      >
+        Request Early Access
+      </button>
 
-        <a
-          href="#featured"
-          className="px-8 py-4 rounded-full bg-white text-blue-700 font-semibold hover:scale-105 transition"
-        >
-          Explore Stays
-        </a>
-
-        <button className="px-8 py-4 rounded-full border border-white/40 hover:bg-white/10 transition">
-          Become a Host
-        </button>
-
-      </div>
-
-      <div className="mt-14 flex gap-12">
-
-        <div>
-          <h2 className="text-3xl font-bold">20+</h2>
-          <p className="text-white/80 text-sm">
-            Future Countries
-          </p>
-        </div>
-
-        <div>
-          <h2 className="text-3xl font-bold">24/7</h2>
-          <p className="text-white/80 text-sm">
-            Secure Payments
-          </p>
-        </div>
-
-        <div>
-          <h2 className="text-3xl font-bold">USDC</h2>
-          <p className="text-white/80 text-sm">
-            Borderless Settlement
-          </p>
-        </div>
-
-      </div>
+      <a
+        href="#how-it-works"
+        className="text-sm font-medium hover:underline"
+        style={{ color: BRAND.indigo }}
+      >
+        See how it works ↓
+      </a>
 
     </div>
 
-    {/* RIGHT SIDE */}
-    <div className="flex justify-center">
+    {/* FLOW VISUAL */}
+    <div className="mt-20 flex flex-col items-center gap-3 text-sm">
 
-      <div className="bg-white rounded-[32px] shadow-2xl overflow-hidden w-[360px]">
+      <div className="px-4 py-2 rounded-full bg-white shadow">
+        🌍 Traveler pays in local currency
+      </div>
 
-        <img
-          src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200&auto=format&fit=crop"
-          alt="Luxury Stay"
-          className="h-64 w-full object-cover"
-        />
+      <div className="text-slate-400">↓</div>
 
-        <div className="p-6 text-slate-900">
+      <div className="px-4 py-2 rounded-full bg-white shadow">
+        ⚡ KwanPay routes payment via Stellar
+      </div>
 
-          <h3 className="text-2xl font-bold">
-            Beach House
-          </h3>
+      <div className="text-slate-400">↓</div>
 
-          <p className="text-slate-500 mt-2">
-            📍 Cape Coast, Ghana
-          </p>
-
-          <div className="mt-6 flex justify-between items-center">
-
-            <div>
-
-              <p className="text-sm text-slate-500">
-                Pay with
-              </p>
-
-              <h4 className="text-lg font-bold text-blue-600">
-                Stellar USDC
-              </h4>
-
-            </div>
-
-            <div className="text-right">
-
-              <p className="text-sm text-slate-500">
-                From
-              </p>
-
-              <h4 className="text-2xl font-bold">
-                $80
-              </h4>
-
-            </div>
-
-          </div>
-
-          <button className="mt-8 w-full rounded-full bg-blue-600 text-white py-4 font-semibold hover:bg-blue-700 transition">
-            Book Now
-          </button>
-
-        </div>
-
+      <div className="px-4 py-2 rounded-full bg-white shadow">
+        🏨 Tourism business receives payout
       </div>
 
     </div>
