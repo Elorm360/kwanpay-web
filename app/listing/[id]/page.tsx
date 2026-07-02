@@ -61,7 +61,53 @@ export default async function ListingPage({
           ${data.price_per_night} / night
         </p>
 
-        <BookingForm listingId={data.id} />
+        {/* About */}
+
+<div className="mt-12">
+
+  <h2 className="text-3xl font-bold">
+    About this stay
+  </h2>
+
+  <p className="mt-6 text-white/70 leading-8">
+
+    Experience comfort, convenience and authentic African hospitality.
+
+    This property is ideal for business travellers, families and tourists looking
+    to explore the surrounding attractions while enjoying a secure booking
+    experience powered by TransVista.
+
+  </p>
+
+</div>
+
+{/* Amenities */}
+
+<div className="grid md:grid-cols-2 gap-5 mt-12">
+
+  <div className="rounded-2xl border border-white/10 p-5">
+    🏖 Beachfront Access
+  </div>
+
+  <div className="rounded-2xl border border-white/10 p-5">
+    📶 High-Speed Wi-Fi
+  </div>
+
+  <div className="rounded-2xl border border-white/10 p-5">
+    🚗 Free Parking
+  </div>
+
+  <div className="rounded-2xl border border-white/10 p-5">
+    🔒 Secure Booking
+  </div>
+
+</div>
+
+<div className="mt-16">
+
+  <BookingForm listingId={data.id} />
+
+</div>
 
       </div>
     </main>
