@@ -105,8 +105,11 @@ export default async function Home() {
 </header>
 
    {/* HERO */}
-<section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-sky-600 to-cyan-500 text-white">
 
+<section
+  id="hero"
+  className="relative pt-40 pb-28 px-6"
+>
   {/* Background glow */}
   <div className="absolute -top-40 -right-32 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl" />
   <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-300/20 rounded-full blur-3xl" />
@@ -238,8 +241,10 @@ export default async function Home() {
 </section>
       
      {/* FEATURED STAYS */}
-<section className="py-28 px-6 bg-gradient-to-b from-[#F8FAFC] to-white text-slate-900">
-
+<section
+  id="featured"
+  className="py-20 px-6"
+>
   <div className="max-w-7xl mx-auto">
 
     <div className="flex items-center justify-between mb-12">
@@ -477,8 +482,10 @@ export default async function Home() {
 
       {/* EXPLORE AFRICA */}
 
-<section className="py-28 px-6 bg-slate-50">
-
+<section
+  id="explore"
+  className="py-28 px-6 bg-slate-50"
+>
   <div className="max-w-7xl mx-auto">
 
     <div className="text-center">
