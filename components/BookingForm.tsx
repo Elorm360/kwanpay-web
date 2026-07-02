@@ -7,8 +7,10 @@ export default function BookingForm({
 }: {
   listingId: number;
 }) {
-  const [loading, setLoading] = useState(false);
-
+ const [loading, setLoading] = useState(false);
+const [success, setSuccess] = useState(false);
+const [error, setError] = useState("");
+  
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
   ) {
@@ -36,9 +38,16 @@ export default function BookingForm({
     const result = await response.json();
 
 if (response.ok) {
-  alert("Booking submitted successfully!");
+
+  setSuccess(true);
+  setError("");
+
+  (e.target as HTMLFormElement).reset();
+
 } else {
-  alert(`Booking failed: ${result.error}`);
+
+  setError(result.error || "Booking failed.");
+
 }
   }
 
@@ -91,6 +100,30 @@ if (response.ok) {
         required
         className="w-full p-3 rounded-xl bg-black border border-white/10"
       />
+
+      {success && (
+
+  <div className="rounded-2xl bg-green-100 text-green-700 p-4 font-medium">
+
+    ✅ Your booking request has been received.
+
+    <br />
+
+    Our team will contact you shortly.
+
+  </div>
+
+)}
+
+{error && (
+
+  <div className="rounded-2xl bg-red-100 text-red-700 p-4">
+
+    {error}
+
+  </div>
+
+)}
 
       <button
         type="submit"
