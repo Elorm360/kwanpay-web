@@ -4,8 +4,8 @@ export default async function Home() {
   const listings = await getListings();
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white overflow-hidden">
-
+<main className="min-h-screen bg-white text-slate-900 overflow-hidden">
+  
      {/* NAVBAR */}
 
 <header className="fixed top-0 left-0 right-0 z-50">
