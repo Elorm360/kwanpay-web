@@ -38,28 +38,72 @@ export default async function ListingPage({
     <main className="min-h-screen bg-[#050505] text-white p-10">
       <div className="max-w-4xl mx-auto">
 
-        <div className="rounded-2xl overflow-hidden border border-white/10">
-          <img
-            src={
-              data.image_url ||
-              "https://images.unsplash.com/photo-1566073771259-6a8506099945"
-            }
-            alt={data.title}
-            className="w-full h-[400px] object-cover"
-          />
-        </div>
+       <div className="relative overflow-hidden rounded-[32px] shadow-2xl">
 
-        <h1 className="text-4xl font-bold mt-8">
-          {data.title}
-        </h1>
+  <img
+    src={
+      data.image_url ||
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945"
+    }
+    alt={data.title}
+    className="w-full h-[520px] object-cover transition duration-700 hover:scale-105"
+  />
 
-        <p className="text-white/60 mt-2">
-          {data.location}
-        </p>
+  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-        <p className="text-2xl font-bold mt-6">
-          ${data.price_per_night} / night
-        </p>
+  <div className="absolute bottom-8 left-8">
+
+    <span className="bg-blue-600 text-white px-5 py-2 rounded-full font-semibold shadow-lg">
+
+      📍 {data.location}
+
+    </span>
+
+  </div>
+
+  <div className="absolute top-8 right-8">
+
+    <span className="bg-white text-slate-900 px-5 py-2 rounded-full font-bold shadow-lg">
+
+      ★ 4.9
+
+    </span>
+
+  </div>
+
+</div>
+
+       <div className="mt-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+
+  <div>
+
+    <h1 className="text-5xl font-extrabold tracking-tight">
+      {data.title}
+    </h1>
+
+    <p className="mt-4 text-xl text-white/70">
+      Luxury stay in {data.location}
+    </p>
+
+  </div>
+
+  <div className="rounded-3xl bg-blue-600 px-8 py-6 shadow-xl">
+
+    <p className="text-sm uppercase tracking-wider text-blue-100">
+      Starting From
+    </p>
+
+    <h2 className="text-4xl font-bold">
+      ${data.price_per_night}
+    </h2>
+
+    <p className="text-blue-100">
+      per night
+    </p>
+
+  </div>
+
+</div>
 
         {/* About */}
 
