@@ -1,11 +1,22 @@
 import { getListings } from "@/services/listings";
 
+const BRAND = {
+  indigo: "#1E2340",
+  charcoal: "#24262B",
+  amber: "#D98E3B",
+  paper: "#EDEFF0",
+};
+
 export default async function Home() {
   const listings = await getListings();
 
   return (
-<main className="min-h-screen bg-white text-slate-900 overflow-hidden">
-  
+<main
+  className="min-h-screen overflow-hidden text-slate-900"
+  style={{
+    background: BRAND.paper,
+  }}
+>  
      {/* NAVBAR */}
 
 <header className="fixed top-0 left-0 right-0 z-50">
@@ -16,26 +27,47 @@ export default async function Home() {
 
       {/* Logo */}
 
-   <div className="flex items-center gap-3">
+<div className="flex items-center gap-4">
 
-  <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg">
+  <div
+    className="h-11 w-11 rounded-2xl flex items-center justify-center shadow-lg"
+    style={{
+      background: BRAND.indigo,
+    }}
+  >
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M6 18C10 12 14 12 18 6"
+        stroke={BRAND.amber}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
 
-    T
-
+      <circle
+        cx="18"
+        cy="6"
+        r="2"
+        fill={BRAND.amber}
+      />
+    </svg>
   </div>
 
   <div>
 
-    <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
-
-      TransVista
-
+    <h1
+      className="text-2xl font-extrabold tracking-tight"
+      style={{ color: BRAND.indigo }}
+    >
+      Kwan<span style={{ color: BRAND.amber }}>Pay</span>
     </h1>
 
     <p className="text-xs text-slate-500">
-
-      Travel Africa Without Borders
-
+      The path your payment takes.
     </p>
 
   </div>
@@ -90,11 +122,15 @@ export default async function Home() {
     <option>GBP 🇬🇧</option>
   </select>
 
-  <button className="rounded-full bg-blue-600 px-6 py-3 text-white font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition-all duration-300">
-
-    Join Waitlist
-
-  </button>
+  <button
+  className="rounded-full px-6 py-3 font-semibold shadow-lg transition-all duration-300 hover:scale-105"
+  style={{
+    background: BRAND.amber,
+    color: "white",
+  }}
+>
+  Request Early Access
+</button>
 
 </div>
 
