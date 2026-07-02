@@ -16,70 +16,87 @@ export default async function Home() {
 
       {/* Logo */}
 
-      <div>
+   <div className="flex items-center gap-3">
 
-        <h1 className="text-2xl font-bold text-slate-900">
-          TransVista
-        </h1>
+  <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg">
 
-      </div>
+    T
 
-     {/* Navigation */}
+  </div>
 
-<nav className="hidden md:flex items-center gap-8">
+  <div>
+
+    <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+
+      TransVista
+
+    </h1>
+
+    <p className="text-xs text-slate-500">
+
+      Travel Africa Without Borders
+
+    </p>
+
+  </div>
+
+</div>
+
+    {/* Navigation */}
+
+<nav className="hidden lg:flex items-center gap-10 text-slate-600 font-medium">
+
+  <a
+    href="#hero"
+    className="hover:text-blue-600 transition"
+  >
+    Discover
+  </a>
 
   <a
     href="#featured"
-    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+    className="hover:text-blue-600 transition"
   >
     Stays
   </a>
 
   <a
     href="#explore"
-    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+    className="hover:text-blue-600 transition"
   >
     Explore
   </a>
 
   <a
-    href="#experience"
-    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
+    href="#how-it-works"
+    className="hover:text-blue-600 transition"
   >
-    Experience
-  </a>
-
-  <a
-    href="#contact"
-    className="text-slate-600 hover:text-blue-600 transition font-medium relative after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full"
-  >
-    Contact
+    How It Works
   </a>
 
 </nav>
 
-      {/* Right Side */}
+    <div className="flex items-center gap-4">
 
-      <div className="flex items-center gap-4">
+  <select
+    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm hover:border-blue-500 transition"
+  >
+    <option>USD 🇺🇸</option>
+    <option>GHS 🇬🇭</option>
+    <option>KES 🇰🇪</option>
+    <option>NGN 🇳🇬</option>
+    <option>ZAR 🇿🇦</option>
+    <option>EUR 🇪🇺</option>
+    <option>GBP 🇬🇧</option>
+  </select>
 
-        <select
-          className="rounded-full border border-slate-200 px-4 py-2 bg-white text-slate-700 outline-none hover:border-blue-500 transition"
-        >
-          <option>USD</option>
-          <option>GHS</option>
-          <option>NGN</option>
-          <option>KES</option>
-          <option>ZAR</option>
-          <option>EUR</option>
-        </select>
+  <button className="rounded-full bg-blue-600 px-6 py-3 text-white font-semibold shadow-lg hover:bg-blue-700 hover:scale-105 transition-all duration-300">
 
-        <button
-          className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 font-semibold transition shadow-lg"
-        >
-          Join Waitlist
-        </button>
+    Join Waitlist
 
-      </div>
+  </button>
+
+</div>
 
     </div>
 
