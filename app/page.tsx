@@ -108,7 +108,7 @@ export default async function Home() {
 
 <section
   id="hero"
-  className="relative pt-40 pb-28 px-6"
+  className="relative pt-44 pb-36 px-6 overflow-hidden"
 >
   {/* Background glow */}
   <div className="absolute -top-40 -right-32 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl" />
@@ -120,7 +120,7 @@ export default async function Home() {
     <div>
 
       <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md px-5 py-2 text-sm mb-8">
-        🚀 Powered by Stellar Blockchain
+         Powered by Stellar Blockchain
       </div>
 
       <h1 className="text-6xl lg:text-7xl font-extrabold leading-tight">
