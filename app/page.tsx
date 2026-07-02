@@ -64,7 +64,7 @@ export default async function Home() {
     href="#explore"
     className="hover:text-blue-600 transition"
   >
-    Explore
+    Explore Africa
   </a>
 
   <a
@@ -372,152 +372,99 @@ export default async function Home() {
 
 </section>
       
-      {/* HOW IT WORKS */}
-<section className="py-28 px-6 bg-white text-slate-900">
+     {/* HOW IT WORKS */}
+
+<section
+  id="how-it-works"
+  className="py-28 px-6 bg-white"
+>
 
   <div className="max-w-7xl mx-auto">
 
-    <div className="text-center max-w-3xl mx-auto">
+    <div className="text-center">
 
       <p className="uppercase tracking-[0.3em] text-blue-600 font-semibold">
         HOW IT WORKS
       </p>
 
-      <h2 className="text-5xl font-bold mt-4">
-        Cross-Border Payments Made Simple
+      <h2 className="mt-4 text-5xl font-bold text-slate-900">
+        Book Across Africa in Three Simple Steps
       </h2>
 
-      <p className="mt-6 text-slate-500 text-lg">
-        TransVista enables travelers to book verified accommodations across Africa
-        while paying securely using Stellar-powered blockchain payments.
+      <p className="mt-6 text-lg text-slate-500 max-w-3xl mx-auto">
+        TransVista connects travellers, hosts and secure cross-border payments
+        into one seamless booking experience.
       </p>
 
     </div>
 
-    <div className="grid lg:grid-cols-4 gap-8 mt-20">
+    <div className="grid lg:grid-cols-3 gap-10 mt-20">
 
-      {/* STEP 1 */}
+      <div className="bg-slate-50 rounded-3xl p-10 shadow-sm hover:shadow-xl transition">
 
-      <div className="relative">
+        <div className="h-16 w-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
 
-        <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
           1
+
         </div>
 
-        <h3 className="mt-8 text-2xl font-bold">
-          Choose a Stay
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+
+          Discover
+
         </h3>
 
-        <p className="mt-4 text-slate-500 leading-7">
-          Browse verified accommodations from trusted hosts across Africa.
+        <p className="mt-4 text-slate-500 leading-8">
+
+          Browse beautiful stays, tours and experiences from trusted African
+          hosts.
+
         </p>
 
       </div>
 
-      {/* STEP 2 */}
+      <div className="bg-slate-50 rounded-3xl p-10 shadow-sm hover:shadow-xl transition">
 
-      <div>
+        <div className="h-16 w-16 rounded-2xl bg-cyan-500 text-white flex items-center justify-center text-2xl font-bold">
 
-        <div className="w-16 h-16 rounded-full bg-cyan-500 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
           2
+
         </div>
 
-        <h3 className="mt-8 text-2xl font-bold">
-          Pay in Your Currency
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+
+          Book Securely
+
         </h3>
 
-        <p className="mt-4 text-slate-500 leading-7">
-          Travelers can see prices in their preferred currency before making payment.
+        <p className="mt-4 text-slate-500 leading-8">
+
+          Submit your booking request with transparent pricing and local currency
+          display.
+
         </p>
 
       </div>
 
-      {/* STEP 3 */}
+      <div className="bg-slate-50 rounded-3xl p-10 shadow-sm hover:shadow-xl transition">
 
-      <div>
+        <div className="h-16 w-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-2xl font-bold">
 
-        <div className="w-16 h-16 rounded-full bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
           3
+
         </div>
 
-        <h3 className="mt-8 text-2xl font-bold">
-          Stellar Handles Settlement
+        <h3 className="mt-8 text-2xl font-bold text-slate-900">
+
+          Pay Across Borders
+
         </h3>
 
-        <p className="mt-4 text-slate-500 leading-7">
-          Payments are securely settled using Stellar and USDC, making cross-border transactions fast and transparent.
-        </p>
+        <p className="mt-4 text-slate-500 leading-8">
 
-      </div>
+          Complete payments securely through Stellar-powered infrastructure,
+          making African travel simpler than ever.
 
-      {/* STEP 4 */}
-
-      <div>
-
-        <div className="w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
-          4
-        </div>
-
-        <h3 className="mt-8 text-2xl font-bold">
-          Host Gets Paid
-        </h3>
-
-        <p className="mt-4 text-slate-500 leading-7">
-          Hosts receive secure settlement while travelers enjoy a seamless booking experience.
-        </p>
-
-      </div>
-
-    </div>
-
-    {/* TRUST SECTION */}
-
-    <div className="mt-24 grid md:grid-cols-4 gap-6">
-
-      <div className="rounded-3xl bg-slate-50 p-8 border border-slate-200">
-
-        <h3 className="font-bold text-xl">
-          🌍 Borderless
-        </h3>
-
-        <p className="mt-3 text-slate-500">
-          Travel across Africa without worrying about payment barriers.
-        </p>
-
-      </div>
-
-      <div className="rounded-3xl bg-slate-50 p-8 border border-slate-200">
-
-        <h3 className="font-bold text-xl">
-          ⚡ Instant
-        </h3>
-
-        <p className="mt-3 text-slate-500">
-          Fast settlement powered by Stellar blockchain technology.
-        </p>
-
-      </div>
-
-      <div className="rounded-3xl bg-slate-50 p-8 border border-slate-200">
-
-        <h3 className="font-bold text-xl">
-          🔒 Secure
-        </h3>
-
-        <p className="mt-3 text-slate-500">
-          Transparent transactions with trusted infrastructure.
-        </p>
-
-      </div>
-
-      <div className="rounded-3xl bg-slate-50 p-8 border border-slate-200">
-
-        <h3 className="font-bold text-xl">
-          ✅ Verified
-        </h3>
-
-        <p className="mt-3 text-slate-500">
-          Carefully curated hosts and accommodations.
         </p>
 
       </div>
