@@ -221,138 +221,62 @@ export default async function Home() {
 
 </section>
       
-     {/* FEATURED STAYS */}
-<section
-  id="featured"
-  className="py-20 px-6"
->
-  <div className="max-w-7xl mx-auto">
+    {/* PROBLEM SECTION */}
+<section className="py-28 px-6 bg-white">
 
-    <div className="flex items-center justify-between mb-12">
+  <div className="max-w-6xl mx-auto">
 
-      <div>
-
-        <p className="uppercase tracking-[0.25em] text-blue-600 text-sm font-semibold">
-          Discover
-        </p>
-
-        <h2 className="text-5xl font-bold mt-3">
-          Featured Stays
-        </h2>
-
-        <p className="text-slate-500 mt-4 max-w-xl">
-          Book verified accommodations across Africa and pay securely using
-          Stellar-powered cross-border payments.
-        </p>
-
-      </div>
-
-      <button className="hidden md:block px-6 py-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">
-        Explore All →
-      </button>
-
-    </div>
-
-    {listings && listings.length > 0 ? (
-
-      <div className="grid md:grid-cols-3 gap-8">
-
-        {listings.map((item: any) => (
-
-         <a
-  key={item.id}
-  href={`/listing/${item.id}`}
-  className="group overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
->
-
-  <div className="relative overflow-hidden">
-
-    <img
-      src={
-        item.image_url ||
-        "https://images.unsplash.com/photo-1576485290814-1c72aa4bbb8b?q=80&w=1200&auto=format&fit=crop"
-      }
-      alt={item.title}
-      className="h-64 w-full object-cover transition duration-700 group-hover:scale-110"
-    />
-
-    <div className="absolute top-5 left-5">
-
-      <span className="rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-slate-800 shadow">
-
-        Featured
-
-      </span>
-
-    </div>
-
-    <div className="absolute top-5 right-5">
-
-      <span className="rounded-full bg-blue-600 px-3 py-2 text-white text-sm">
-
-        ★ 4.9
-
-      </span>
-
-    </div>
-
-  </div>
-
-  <div className="p-6">
-
-    <h3 className="text-2xl font-bold text-slate-900">
-      {item.title}
-    </h3>
-
-    <p className="mt-2 text-slate-500">
-      📍 {item.location}
+    {/* label */}
+    <p
+      className="uppercase tracking-[0.3em] text-sm font-semibold text-center"
+      style={{ color: BRAND.amber }}
+    >
+      The Problem
     </p>
 
-    <div className="mt-6 flex items-center justify-between">
+    {/* title */}
+    <h2
+      className="text-4xl md:text-5xl font-bold text-center mt-4"
+      style={{ color: BRAND.indigo }}
+    >
+      Cross-border travel payments are still broken
+    </h2>
 
-      <div>
+    <p className="text-center mt-6 text-slate-600 max-w-2xl mx-auto">
+      Despite global travel growth, sending money to African tourism businesses is still slow, expensive, and unreliable.
+    </p>
 
-        <p className="text-3xl font-bold text-blue-600">
-          ${item.price_per_night}
+    {/* cards */}
+    <div className="grid md:grid-cols-3 gap-8 mt-16">
+
+      <div className="p-8 rounded-2xl border border-slate-200 bg-[#F7F7F7] hover:shadow-lg transition">
+        <h3 className="font-semibold text-lg" style={{ color: BRAND.indigo }}>
+          High Fees
+        </h3>
+        <p className="mt-3 text-slate-600">
+          International payments often lose 5–10% in banking and conversion fees.
         </p>
-
-        <p className="text-slate-500">
-          per night
-        </p>
-
       </div>
 
-      <span className="rounded-full bg-blue-600 px-5 py-3 text-white font-semibold transition group-hover:bg-blue-700">
+      <div className="p-8 rounded-2xl border border-slate-200 bg-[#F7F7F7] hover:shadow-lg transition">
+        <h3 className="font-semibold text-lg" style={{ color: BRAND.indigo }}>
+          Slow Settlement
+        </h3>
+        <p className="mt-3 text-slate-600">
+          Transfers take 3–5 days, delaying bookings and cash flow for operators.
+        </p>
+      </div>
 
-        View Stay →
-
-      </span>
+      <div className="p-8 rounded-2xl border border-slate-200 bg-[#F7F7F7] hover:shadow-lg transition">
+        <h3 className="font-semibold text-lg" style={{ color: BRAND.indigo }}>
+          Limited Access
+        </h3>
+        <p className="mt-3 text-slate-600">
+          Many African operators cannot reliably accept global cards or payments.
+        </p>
+      </div>
 
     </div>
-
-  </div>
-
-</a>
-
-        ))}
-
-      </div>
-
-    ) : (
-
-      <div className="rounded-3xl border border-dashed border-slate-300 p-20 text-center">
-
-        <h3 className="text-2xl font-bold">
-          No Listings Yet
-        </h3>
-
-        <p className="mt-4 text-slate-500">
-          Your properties from Supabase will appear here.
-        </p>
-
-      </div>
-
-    )}
 
   </div>
 
