@@ -19,7 +19,7 @@ export default async function Home() {
   animate={{ opacity: 1 }}
   transition={{ duration: 0.8, ease: "easeOut" }}
   className="min-h-screen overflow-hidden text-slate-900"
->  style={{
+  style={{
     background: BRAND.paper,
   }}
 >  
