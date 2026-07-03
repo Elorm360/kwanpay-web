@@ -282,99 +282,111 @@ export default async function Home() {
 
 </section>
       
-     {/* HOW IT WORKS */}
+    {/* HOW IT WORKS */}
 
 <section
   id="how-it-works"
-  className="py-28 px-6 bg-white"
+  className="py-32 px-6"
+  style={{ background: BRAND.indigo }}
 >
 
-  <div className="max-w-7xl mx-auto">
+  <div className="max-w-6xl mx-auto">
 
     <div className="text-center">
 
-      <p className="uppercase tracking-[0.3em] text-blue-600 font-semibold">
+      <p
+        className="uppercase tracking-[0.3em] text-sm font-semibold"
+        style={{ color: BRAND.amber }}
+      >
         HOW IT WORKS
       </p>
 
-      <h2 className="mt-4 text-5xl font-bold text-slate-900">
-        Book Across Africa in Three Simple Steps
+      <h2 className="text-5xl font-bold mt-5 text-white">
+        One payment.
+        <br />
+        One path.
       </h2>
 
-      <p className="mt-6 text-lg text-slate-500 max-w-3xl mx-auto">
-        TransVista connects travellers, hosts and secure cross-border payments
-        into one seamless booking experience.
+      <p className="mt-6 text-slate-300 max-w-3xl mx-auto text-lg">
+        KwanPay connects travelers and African tourism businesses through a
+        faster, more transparent payment infrastructure powered by Stellar.
       </p>
 
     </div>
 
-    <div className="grid lg:grid-cols-3 gap-10 mt-20">
+    <div className="mt-24 grid lg:grid-cols-3 gap-8">
 
-      <div className="bg-slate-50 rounded-3xl p-10 shadow-sm hover:shadow-xl transition">
+      {/* Step 1 */}
 
-        <div className="h-16 w-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+      <div className="rounded-3xl bg-white/5 border border-white/10 p-10 backdrop-blur-lg hover:-translate-y-2 transition duration-500">
 
+        <div
+          className="h-14 w-14 rounded-2xl flex items-center justify-center text-xl font-bold"
+          style={{
+            background: BRAND.amber,
+            color: "white",
+          }}
+        >
           1
-
         </div>
 
-        <h3 className="mt-8 text-2xl font-bold text-slate-900">
-
-          Discover
-
+        <h3 className="text-2xl font-bold text-white mt-8">
+          Traveler Pays
         </h3>
 
-        <p className="mt-4 text-slate-500 leading-8">
-
-          Browse beautiful stays, tours and experiences from trusted African
-          hosts.
-
+        <p className="mt-4 text-slate-300">
+          A traveler pays from anywhere in the world using their preferred
+          currency.
         </p>
 
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-10 shadow-sm hover:shadow-xl transition">
+      {/* Step 2 */}
 
-        <div className="h-16 w-16 rounded-2xl bg-cyan-500 text-white flex items-center justify-center text-2xl font-bold">
+      <div className="rounded-3xl bg-white/5 border border-white/10 p-10 backdrop-blur-lg hover:-translate-y-2 transition duration-500">
 
+        <div
+          className="h-14 w-14 rounded-2xl flex items-center justify-center text-xl font-bold"
+          style={{
+            background: BRAND.amber,
+            color: "white",
+          }}
+        >
           2
-
         </div>
 
-        <h3 className="mt-8 text-2xl font-bold text-slate-900">
-
-          Book Securely
-
+        <h3 className="text-2xl font-bold text-white mt-8">
+          Stellar Settlement
         </h3>
 
-        <p className="mt-4 text-slate-500 leading-8">
-
-          Submit your booking request with transparent pricing and local currency
-          display.
-
+        <p className="mt-4 text-slate-300">
+          KwanPay routes and settles the payment securely over the Stellar
+          network within minutes.
         </p>
 
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-10 shadow-sm hover:shadow-xl transition">
+      {/* Step 3 */}
 
-        <div className="h-16 w-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-2xl font-bold">
+      <div className="rounded-3xl bg-white/5 border border-white/10 p-10 backdrop-blur-lg hover:-translate-y-2 transition duration-500">
 
+        <div
+          className="h-14 w-14 rounded-2xl flex items-center justify-center text-xl font-bold"
+          style={{
+            background: BRAND.amber,
+            color: "white",
+          }}
+        >
           3
-
         </div>
 
-        <h3 className="mt-8 text-2xl font-bold text-slate-900">
-
-          Pay Across Borders
-
+        <h3 className="text-2xl font-bold text-white mt-8">
+          Operator Receives Funds
         </h3>
 
-        <p className="mt-4 text-slate-500 leading-8">
-
-          Complete payments securely through Stellar-powered infrastructure,
-          making African travel simpler than ever.
-
+        <p className="mt-4 text-slate-300">
+          Tourism businesses receive settlement quickly, reducing delays,
+          uncertainty and unnecessary costs.
         </p>
 
       </div>
