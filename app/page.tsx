@@ -13,7 +13,7 @@ export default async function Home() {
   const listings = await getListings();
 
   return (
-<main
+
 <motion.main
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
