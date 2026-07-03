@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 import { getListings } from "@/services/listings";
 
 const BRAND = {
