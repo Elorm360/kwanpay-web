@@ -209,28 +209,102 @@ export default async function Home() {
 
     </div>
 
-    {/* FLOW VISUAL */}
-    <div className="mt-20 flex flex-col items-center gap-3 text-sm">
+{/* PAYMENT FLOW */}
 
-      <div className="px-4 py-2 rounded-full bg-white shadow">
-        🌍 Traveler pays in local currency
+<div className="mt-24 max-w-5xl mx-auto">
+
+  <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+
+    {/* Step 1 */}
+
+    <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
+
+      <div
+        className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
+        style={{ background: BRAND.amber }}
+      >
+        1
       </div>
 
-      <div className="text-slate-400">↓</div>
+      <h3
+        className="text-2xl font-bold mt-6"
+        style={{ color: BRAND.indigo }}
+      >
+        Traveler Pays
+      </h3>
 
-      <div className="px-4 py-2 rounded-full bg-white shadow">
-        ⚡ KwanPay routes payment via Stellar
+      <p className="mt-4 text-slate-600 leading-7">
+        The traveler pays from anywhere in the world using their preferred
+        payment method and currency.
+      </p>
+
+    </div>
+
+    {/* Arrow */}
+
+    <div className="hidden md:flex justify-center text-5xl text-slate-300">
+      →
+    </div>
+
+    {/* Step 2 */}
+
+    <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
+
+      <div
+        className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
+        style={{ background: BRAND.amber }}
+      >
+        2
       </div>
 
-      <div className="text-slate-400">↓</div>
+      <h3
+        className="text-2xl font-bold mt-6"
+        style={{ color: BRAND.indigo }}
+      >
+        KwanPay + Stellar
+      </h3>
 
-      <div className="px-4 py-2 rounded-full bg-white shadow">
-        🏨 Tourism business receives payout
+      <p className="mt-4 text-slate-600 leading-7">
+        KwanPay securely routes and settles the payment over the Stellar
+        network with speed and transparency.
+      </p>
+
+    </div>
+
+    {/* Arrow */}
+
+    <div className="hidden md:flex justify-center text-5xl text-slate-300">
+      →
+    </div>
+
+    {/* Step 3 */}
+
+    <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
+
+      <div
+        className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
+        style={{ background: BRAND.amber }}
+      >
+        3
       </div>
+
+      <h3
+        className="text-2xl font-bold mt-6"
+        style={{ color: BRAND.indigo }}
+      >
+        Operator Receives Funds
+      </h3>
+
+      <p className="mt-4 text-slate-600 leading-7">
+        The tourism business receives settlement quickly, improving cash flow
+        and reducing cross-border payment friction.
+      </p>
 
     </div>
 
   </div>
+
+</div>
 
 </section>
       
