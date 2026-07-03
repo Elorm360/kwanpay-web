@@ -179,6 +179,7 @@ export default async function Home() {
     </h1>
 
     {/* subtext */}
+    <p
     className="mt-8 text-xl leading-9 text-slate-600 max-w-3xl mx-auto"
       KwanPay lets travelers pay any tourism business in Africa from anywhere in the world.
       Fast settlement. Low cost. Built on Stellar.
