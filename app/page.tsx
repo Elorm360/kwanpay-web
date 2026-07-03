@@ -209,101 +209,104 @@ export default async function Home() {
 
     </div>
 
-{/* PAYMENT FLOW */}
+    {/* PAYMENT FLOW */}
 
-<div className="mt-24 max-w-5xl mx-auto">
+    <div className="mt-24 max-w-5xl mx-auto">
 
-  <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-6">
 
-    {/* Step 1 */}
+        {/* Step 1 */}
 
-    <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
+        <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
 
-      <div
-        className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
-        style={{ background: BRAND.amber }}
-      >
-        1
-      </div>
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
+            style={{ background: BRAND.amber }}
+          >
+            1
+          </div>
 
-      <h3
-        className="text-2xl font-bold mt-6"
-        style={{ color: BRAND.indigo }}
-      >
-        Traveler Pays
-      </h3>
+          <h3
+            className="text-2xl font-bold mt-6"
+            style={{ color: BRAND.indigo }}
+          >
+            Traveler Pays
+          </h3>
 
-      <p className="mt-4 text-slate-600 leading-7">
-        The traveler pays from anywhere in the world using their preferred
-        payment method and currency.
-      </p>
+          <p className="mt-4 text-slate-600 leading-7">
+            The traveler pays from anywhere in the world using their preferred
+            payment method and currency.
+          </p>
 
-    </div>
+        </div>
 
-    {/* Arrow */}
+        {/* Arrow */}
 
-    <div className="hidden md:flex justify-center text-5xl text-slate-300">
-      →
-    </div>
+        <div className="hidden md:flex justify-center text-5xl text-slate-300">
+          →
+        </div>
 
-    {/* Step 2 */}
+        {/* Step 2 */}
 
-    <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
+        <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
 
-      <div
-        className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
-        style={{ background: BRAND.amber }}
-      >
-        2
-      </div>
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
+            style={{ background: BRAND.amber }}
+          >
+            2
+          </div>
 
-      <h3
-        className="text-2xl font-bold mt-6"
-        style={{ color: BRAND.indigo }}
-      >
-        KwanPay + Stellar
-      </h3>
+          <h3
+            className="text-2xl font-bold mt-6"
+            style={{ color: BRAND.indigo }}
+          >
+            KwanPay + Stellar
+          </h3>
 
-      <p className="mt-4 text-slate-600 leading-7">
-        KwanPay securely routes and settles the payment over the Stellar
-        network with speed and transparency.
-      </p>
+          <p className="mt-4 text-slate-600 leading-7">
+            KwanPay securely routes and settles the payment over the Stellar
+            network with speed and transparency.
+          </p>
 
-    </div>
+        </div>
 
-    {/* Arrow */}
+        {/* Arrow */}
 
-    <div className="hidden md:flex justify-center text-5xl text-slate-300">
-      →
-    </div>
+        <div className="hidden md:flex justify-center text-5xl text-slate-300">
+          →
+        </div>
 
-    {/* Step 3 */}
+        {/* Step 3 */}
 
-    <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
+        <div className="rounded-3xl bg-white p-8 shadow-xl border border-slate-200 hover:-translate-y-2 transition-all duration-300">
 
-      <div
-        className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
-        style={{ background: BRAND.amber }}
-      >
-        3
-      </div>
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold"
+            style={{ background: BRAND.amber }}
+          >
+            3
+          </div>
 
-      <h3
-        className="text-2xl font-bold mt-6"
-        style={{ color: BRAND.indigo }}
-      >
-        Operator Receives Funds
-      </h3>
+          <h3
+            className="text-2xl font-bold mt-6"
+            style={{ color: BRAND.indigo }}
+          >
+            Operator Receives Funds
+          </h3>
 
-      <p className="mt-4 text-slate-600 leading-7">
-        The tourism business receives settlement quickly, improving cash flow
-        and reducing cross-border payment friction.
-      </p>
+          <p className="mt-4 text-slate-600 leading-7">
+            The tourism business receives settlement quickly, improving cash flow
+            and reducing cross-border payment friction.
+          </p>
 
-    </div>
+        </div>
 
-  </div>
+      </div>  {/* closes .flex (already present) */}
 
+    </div>    {/* ADDED: closes .mt-24 max-w-5xl mx-auto */}
+
+  </div>      {/* ADDED: closes .relative max-w-5xl mx-auto text-center */}
 
 </section>
       
