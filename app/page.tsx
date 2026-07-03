@@ -14,8 +14,12 @@ export default async function Home() {
 
   return (
 <main
+<motion.main
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.8, ease: "easeOut" }}
   className="min-h-screen overflow-hidden text-slate-900"
-  style={{
+>  style={{
     background: BRAND.paper,
   }}
 >  
@@ -868,6 +872,6 @@ export default async function Home() {
   </div>
 
 </footer>
-    </main>
+    </motion.main>
   );
 }
