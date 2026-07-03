@@ -143,11 +143,22 @@ export default async function Home() {
   {/* HERO */}
 <section className="relative pt-44 pb-32 px-6 overflow-hidden">
 
-  {/* background glow */}
-  <div
-    className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full blur-[180px] opacity-40"
-    style={{ background: BRAND.indigo }}
-  />
+ {/* Background Effects */}
+
+<div
+  className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full blur-[220px] opacity-20"
+  style={{ background: BRAND.indigo }}
+></div>
+
+<div
+  className="absolute top-40 -left-32 w-[350px] h-[350px] rounded-full blur-[140px] opacity-20"
+  style={{ background: BRAND.amber }}
+></div>
+
+<div
+  className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full blur-[170px] opacity-10"
+  style={{ background: BRAND.indigo }}
+></div>
 
   <div className="relative max-w-5xl mx-auto text-center">
 
@@ -161,14 +172,14 @@ export default async function Home() {
 
     {/* headline */}
     <h1
-      className="text-5xl md:text-7xl font-bold mt-6 leading-tight"
+      className="text-6xl md:text-8xl font-black tracking-tight leading-[1.05] mt-6"
       style={{ color: BRAND.indigo }}
     >
       Powering payments for African tourism — without the friction.
     </h1>
 
     {/* subtext */}
-    <p className="mt-8 text-lg text-slate-600 max-w-2xl mx-auto">
+    className="mt-8 text-xl leading-9 text-slate-600 max-w-3xl mx-auto"
       KwanPay lets travelers pay any tourism business in Africa from anywhere in the world.
       Fast settlement. Low cost. Built on Stellar.
     </p>
@@ -183,7 +194,7 @@ export default async function Home() {
           color: "white",
         }}
       >
-        Request Early Access
+        Request Early Access →
       </button>
 
       <a
