@@ -14,7 +14,7 @@ export default function BookingPage({
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
 
-  async function handleSubmit(e: any) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const response = await fetch("/api/bookings", {

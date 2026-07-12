@@ -1,0 +1,7 @@
+Supabase error observed: column waitlist.role does not exist.
+
+Current admin code selects role: app/admin/page.tsx .select(..., role, ...)
+DashboardContent expects person.role.
+To fix: update selection to existing column(s) and adapt filters/table.
+Need to inspect waitlist table schema (or existing column names) via SQL in Supabase or check migrations.
+

@@ -1,9 +1,20 @@
 import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+
+const BookingSchema = z.object({
+  listing_id: z.coerce.number().int().positive(),
+  full_name: z.string().min(1).max(200),
+  email: z.string().email().max(254),
+  phone: z.string().min(3).max(50),
+  check_in: z.string().min(1).max(40),
+  check_out: z.string().min(1).max(40),
+  guests: z.coerce.number().int().positive().max(50),
+});
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = BookingSchema.parse(await req.json());
 
     const { error } = await supabase
       .from("bookings")
@@ -32,9 +43,7 @@ export async function POST(req: Request) {
   );
 }
 
-    return NextResponse.json({
-      success: true,
-    });
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
 

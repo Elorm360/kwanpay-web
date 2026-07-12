@@ -1,19 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 
 export default function BookingForm({
   listingId,
 }: {
   listingId: number;
 }) {
- const [loading, setLoading] = useState(false);
-const [success, setSuccess] = useState(false);
-const [error, setError] = useState("");
-  
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setLoading(true);
@@ -37,25 +36,17 @@ const [error, setError] = useState("");
 
     const result = await response.json();
 
-if (response.ok) {
-
-  setSuccess(true);
-  setError("");
-
-  (e.target as HTMLFormElement).reset();
-
-} else {
-
-  setError(result.error || "Booking failed.");
-
-}
+    if (response.ok) {
+      setSuccess(true);
+      setError("");
+      e.currentTarget.reset();
+    } else {
+      setError(result.error || "Booking failed.");
+    }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 mt-10"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4 mt-10">
       <input
         name="full_name"
         placeholder="Full Name"
@@ -102,28 +93,16 @@ if (response.ok) {
       />
 
       {success && (
+        <div className="rounded-2xl bg-green-100 text-green-700 p-4 font-medium">
+          ✅ Your booking request has been received.
+          <br />
+          Our team will contact you shortly.
+        </div>
+      )}
 
-  <div className="rounded-2xl bg-green-100 text-green-700 p-4 font-medium">
-
-    ✅ Your booking request has been received.
-
-    <br />
-
-    Our team will contact you shortly.
-
-  </div>
-
-)}
-
-{error && (
-
-  <div className="rounded-2xl bg-red-100 text-red-700 p-4">
-
-    {error}
-
-  </div>
-
-)}
+      {error && (
+        <div className="rounded-2xl bg-red-100 text-red-700 p-4">{error}</div>
+      )}
 
       <button
         type="submit"
@@ -135,3 +114,4 @@ if (response.ok) {
     </form>
   );
 }
+
