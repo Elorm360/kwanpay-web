@@ -42,12 +42,12 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 18),
 
               const Text(
-                'The easiest way to send money, pay tourism operators and travel across Africa.',
+                'Send money, pay operators, and travel across Africa.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 17,
                   height: 1.6,
-                  color: AppColors.grey,
+                  color: AppColors.textSecondary,
                 ),
               ),
 
@@ -65,7 +65,7 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.amber,
+                    backgroundColor: AppColors.accent,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
@@ -96,7 +96,7 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.navy),
+                    side: const BorderSide(color: AppColors.primary),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
@@ -106,7 +106,7 @@ class WelcomeScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.navy,
+                      color: AppColors.primary,
                     ),
                   ),
                 ),

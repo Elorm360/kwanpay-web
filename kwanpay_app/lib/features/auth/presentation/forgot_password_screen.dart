@@ -103,7 +103,7 @@ class _ForgotPasswordScreenState
 
               Text(
                 "Forgot Password",
-                style: AppTextStyles.heading1,
+                style: AppTextStyles.headline,
               ),
 
               const SizedBox(height: 12),

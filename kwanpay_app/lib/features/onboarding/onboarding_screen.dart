@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
 import 'onboarding_data.dart';
 
 import '../auth/presentation/welcome_screen.dart';
@@ -12,9 +13,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-
   final PageController _pageController = PageController();
-
   int currentPage = 0;
 
   @override
@@ -25,143 +24,79 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       body: PageView.builder(
-
-  controller: _pageController,
-
-  onPageChanged: (index){
-
-    setState((){
-
-      currentPage = index;
-
-    });
-
-  },
-
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            currentPage = index;
+          });
+        },
         itemCount: onboardingPages.length,
-
         itemBuilder: (context, index) {
-
           final page = onboardingPages[index];
-
           return SafeArea(
-
             child: Padding(
-
               padding: const EdgeInsets.all(24),
-
               child: Column(
-
                 children: [
-
                   const SizedBox(height: 20),
-
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-
-  _pageController.animateToPage(
-
-    onboardingPages.length - 1,
-
-    duration: const Duration(milliseconds: 500),
-
-    curve: Curves.easeInOut,
-
-  );
-
-},
+                        _pageController.animateToPage(
+                          onboardingPages.length - 1,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                        );
+                      },
                       child: const Text("Skip"),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   Expanded(
-
                     child: SizedBox.expand(
-
                       child: Image.asset(
-
                         page.image,
-
                         fit: BoxFit.cover,
-
                         errorBuilder: (context, error, stackTrace) {
-
                           return Center(
-
                             child: Text(
-
                               'Failed to load asset: ${page.image}',
-
                               textAlign: TextAlign.center,
-
                               style: const TextStyle(color: Colors.red),
-
                             ),
-
                           );
-
                         },
-
                       ),
-
                     ),
-
                   ),
-
                   const SizedBox(height: 30),
-
                   Text(
-
                     page.title,
-
                     textAlign: TextAlign.center,
-
                     style: const TextStyle(
-
                       fontSize: 30,
-
                       fontWeight: FontWeight.bold,
-
                     ),
-
                   ),
-
                   const SizedBox(height: 18),
-
                   Text(
-
                     page.subtitle,
-
                     textAlign: TextAlign.center,
-
                     style: const TextStyle(
-
                       fontSize: 16,
-
                       height: 1.6,
-
                     ),
-
                   ),
-
-                  const SizedBox(height: 0),
-                  // Slight spacing so the button isn't too close to the dots.
                   const SizedBox(height: 32),
-
                   SizedBox(
                     width: double.infinity,
                     height: 58,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD98E3B),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
@@ -177,7 +112,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           );
                           return;
                         }
-
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 350),
                           curve: Curves.easeInOut,
@@ -194,9 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
@@ -218,7 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             height: 8,
                             decoration: BoxDecoration(
                               color: selected
-                                  ? const Color(0xFFD98E3B)
+                                  ? AppColors.accent
                                   : Colors.grey.shade300,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -227,24 +159,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 30),
-
-
                 ],
-
               ),
-
             ),
-
           );
-
         },
-
       ),
-
     );
-
   }
-
 }
+

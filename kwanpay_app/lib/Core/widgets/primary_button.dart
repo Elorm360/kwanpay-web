@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -20,21 +21,20 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.amber,
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.accent,
+          foregroundColor: AppColors.primary,
           elevation: 0,
           shadowColor: Colors.transparent,
           minimumSize: const Size(double.infinity, 58),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
         ),
         child: Text(
           text,
           style: const TextStyle(
             fontSize: 17,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.3,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

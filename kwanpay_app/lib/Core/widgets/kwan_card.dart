@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_shadows.dart';
+
 class KwanCard extends StatelessWidget {
   final Widget child;
 
@@ -12,24 +16,13 @@ class KwanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-
       decoration: BoxDecoration(
-        color: Colors.white,
-
-        borderRadius: BorderRadius.circular(24),
-
-        boxShadow: [
-
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
-            blurRadius: 25,
-            offset: const Offset(0, 12),
-          ),
-
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.large),
+        boxShadow: AppShadows.card,
       ),
-
       child: child,
     );
   }
 }
+

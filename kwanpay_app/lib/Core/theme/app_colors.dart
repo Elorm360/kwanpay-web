@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 
-/// Centralized app colors.
-///
-/// NOTE: This project previously referenced `AppColors` from several screens
-/// but the file was missing. This implementation restores the expected API.
 class AppColors {
-  static const Color paper = Color(0xFFFFFFFF);
+  AppColors._();
 
-  static const Color grey = Color(0xFF6B7280);
+  // Brand
+  static const Color primary = Color(0xFF1E2340);      // Route Indigo
+  static const Color accent = Color(0xFFD98E3B);       // Amber Route
 
-  static const Color amber = Color(0xFFF6B21A);
+  // Backgrounds
+  static const Color paper = Color(0xFFEDEFF0);
+  static const Color surface = Colors.white;
 
-  static const Color navy = Color(0xFF0B1B3A);
+  // Text
+  static const Color textPrimary = Color(0xFF24262B);
+  static const Color textSecondary = Color(0xFF6B7280);
+
+  // States
+  static const Color success = Color(0xFF1E8E5A);
+  static const Color error = Color(0xFFD14343);
+
+  // Border
+  static const Color border = Color(0xFFE5E7EB);
 }
 

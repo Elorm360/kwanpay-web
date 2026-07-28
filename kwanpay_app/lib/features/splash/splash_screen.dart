@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../home/presentation/home_screen.dart';
+import '../navigation/main_navigation_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
       MaterialPageRoute(
         builder: (_) {
           if (user != null) {
-            return const HomeScreen();
+            return const MainNavigationScreen();
           }
           return const OnboardingScreen();
         },

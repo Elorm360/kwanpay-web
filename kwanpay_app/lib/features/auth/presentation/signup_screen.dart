@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-
-import 'welcome_screen.dart';
-
 import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/password_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-
-import '../../../core/services/supabase_service.dart';
+import '../../../core/services/auth_service.dart';
+import '../../../core/services/profile_service.dart';
+import 'email_verification_screen.dart';
+import 'welcome_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,7 +24,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final passwordController = TextEditingController();
 
   bool isLoading = false;
-
 
   Future<void> signUp() async {
     final name = nameController.text.trim();
@@ -42,38 +41,44 @@ class _SignupScreenState extends State<SignupScreen> {
 
     try {
       setState(() {
-        isLoading = true;
+        isLoading = true; 
       });
 
-      await SupabaseService.client.auth.signUp(
+      final response = await AuthService().signUp(
         email: email,
         password: password,
-        data: {
-          'full_name': name,
-        },
+        fullName: name,
       );
+
+      // Only create profile if user is authenticated with a session
+      if (response.user != null && response.session != null) {
+        await ProfileService().createProfile(
+          fullName: name,
+          email: email,
+        );
+      }
 
       if (!mounted) return;
 
+     Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (_) => EmailVerificationScreen(
+      email: email,
+      password: password,
+    ),
+  ),
+);
+    } on AuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Account created! Please check your email to verify your account.',
-          ),
-        ),
+        SnackBar(content: Text(e.message)),
       );
-    } catch (_) {
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Something went wrong.'),
-        ),
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -101,7 +106,7 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 20),
               Text(
                 'Create Your\nTravel Wallet',
-                style: AppTextStyles.heading1,
+                style: AppTextStyles.headline,
               ),
               const SizedBox(height: 12),
               const Text(

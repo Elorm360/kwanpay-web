@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
 
 class KwanTextField extends StatelessWidget {
   final String label;
@@ -28,21 +29,21 @@ class KwanTextField extends StatelessWidget {
           color: Colors.grey.shade700,
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.surface,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 20,
           horizontal: 18,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(AppRadius.medium),
+          borderSide: const BorderSide(
+            color: AppColors.border,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.medium),
           borderSide: const BorderSide(
-            color: AppColors.amber,
+            color: AppColors.accent,
             width: 2,
           ),
         ),

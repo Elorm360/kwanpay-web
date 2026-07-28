@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/password_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/services/supabase_service.dart';
-
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../../home/presentation/home_screen.dart';
+import '../../../core/services/auth_service.dart';
+import '../../../core/services/profile_service.dart';
+import '../../navigation/main_navigation_screen.dart';
 import 'forgot_password_screen.dart';
-
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,65 +19,47 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
-
   bool isLoading = false;
-  
 
   Future<void> signIn() async {
-  if (emailController.text.trim().isEmpty ||
-      passwordController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Please enter your email and password."),
-      ),
-    );
-    return;
-  }
+    if (emailController.text.trim().isEmpty ||
+        passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter your email and password.")),
+      );
+      return;
+    }
 
-  try {
-    setState(() {
-      isLoading = true;
-    });
+    try {
+      setState(() => isLoading = true);
 
-    await SupabaseService.client.auth.signInWithPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
+      await AuthService().signIn(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
 
-    if (!mounted) return;
+      await ProfileService().createProfileIfNotExists();
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const HomeScreen(),
-      ),
-    );
+      if (!mounted) return;
 
-
-  } on AuthException catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.message),
-      ),
-    );
-  } catch (_) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Something went wrong."),
-      ),
-    );
-  } finally {
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+      );
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
-}
 
   @override
   void dispose() {
@@ -100,10 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text(
-                "Welcome Back",
-                style: AppTextStyles.heading1,
-              ),
+              Text("Welcome Back", style: AppTextStyles.headline),
               const SizedBox(height: 12),
               const Text(
                 "Sign in to your KwanPay wallet.",
@@ -116,9 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: emailController,
               ),
               const SizedBox(height: 20),
-              PasswordTextField(
-                controller: passwordController,
-              ),
+              PasswordTextField(controller: passwordController),
               const SizedBox(height: 12),
               Align(
                 alignment: Alignment.centerRight,
@@ -131,28 +105,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-
                   child: const Text("Forgot Password?"),
                 ),
               ),
               const SizedBox(height: 24),
               isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : PrimaryButton(
-                      text: "Sign In",
-                      onPressed: signIn,
-                    ),
+                  ? const Center(child: CircularProgressIndicator())
+                  : PrimaryButton(text: "Sign In", onPressed: signIn),
               const SizedBox(height: 24),
               Center(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    "Don't have an account? Create Wallet",
-                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Don't have an account? Create Wallet"),
                 ),
               ),
             ],
