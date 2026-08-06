@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../pay/presentation/pay_screen.dart';
-import '../../send/presentation/send_screen.dart';
+import '../../send/presentation/send_money_screen.dart';
 import 'action_card.dart';
 import 'feature_placeholder_screen.dart';
 
@@ -55,7 +55,7 @@ class QuickActions extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const SendScreen(),
+                        builder: (_) => const SendMoneyScreen(),
                       ),
                     );
                   },

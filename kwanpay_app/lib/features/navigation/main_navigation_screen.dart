@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../home/presentation/home_screen.dart';
 import '../pay/presentation/pay_screen.dart';
 import '../profile/presentation/profile_screen.dart';
-import '../send/presentation/send_screen.dart';
+import '../send/presentation/send_money_screen.dart';
 import '../home/widgets/premium_bottom_nav.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class _MainNavigationScreenState
     const HomeScreen(),
     const PayScreen(),
 
-    const SendScreen(),
+    const SendMoneyScreen(),
 
     const Scaffold(
       body: Center(

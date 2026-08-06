@@ -1,0 +1,66 @@
+import 'package:flutter/material.dart';
+
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/primary_button.dart';
+import '../../navigation/main_navigation_screen.dart';
+
+class TransferSuccessScreen extends StatelessWidget {
+  final String recipientName;
+  final double amount;
+
+  const TransferSuccessScreen({
+    super.key,
+    required this.recipientName,
+    required this.amount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: AppSpacing.pagePadding,
+          child: Column(
+            children: [
+              const Spacer(),
+              const CircleAvatar(
+                radius: 44,
+                backgroundColor: Colors.green,
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 48,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                "Transfer Successful",
+                style: AppTextStyles.headline,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                "You sent USD ${amount.toStringAsFixed(2)} to\n$recipientName",
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body,
+              ),
+              const Spacer(),
+              PrimaryButton(
+                text: "Back to Dashboard",
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MainNavigationScreen(),
+                    ),
+                    (_) => false,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

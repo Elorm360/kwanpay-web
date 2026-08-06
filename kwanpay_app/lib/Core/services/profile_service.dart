@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/profile_model.dart';
+import 'wallet_service.dart';
 
 class ProfileService {
   final _supabase = Supabase.instance.client;
@@ -55,6 +56,8 @@ class ProfileService {
         'avatar_url': avatarUrl,
         'wallet_address': walletAddress,
       });
+
+      await WalletService().createWallet();
     } catch (e) {
       throw Exception('Failed to create profile: $e');
     }

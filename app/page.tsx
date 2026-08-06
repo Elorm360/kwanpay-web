@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import TrustStrip from "@/components/TrustStrip";
 import Problem from "@/components/Problem";
 import HowItWorks from "@/components/HowItWorks";
 import ForTravelers from "@/components/ForTravelers";
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
+      <TrustStrip />
       <Problem />
       <HowItWorks />
       <ForTravelers />

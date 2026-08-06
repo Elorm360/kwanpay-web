@@ -39,12 +39,7 @@ id="hero"
               background: "white",
             }}
           >
-            <span
-              className="h-2 w-2 rounded-full mr-3"
-              style={{
-                background: BRAND.amber,
-              }}
-            />
+            <span className="mr-3">🌍</span>
 
             <span
               className="text-sm font-semibold tracking-wide"
@@ -52,7 +47,7 @@ id="hero"
                 color: BRAND.indigo,
               }}
             >
-              Africa Payment Infrastructure for Tourism
+              Africa's Travel Wallet
             </span>
           </div>
 
@@ -62,11 +57,10 @@ id="hero"
               color: BRAND.indigo,
             }}
           >
-            Send money
+            One Wallet.
             <br />
 
-            for African travel
-
+            Every Journey.
             <br />
 
             <span
@@ -74,19 +68,28 @@ id="hero"
                 color: BRAND.amber,
               }}
             >
-              without the friction.
+              Across Africa.
             </span>
           </h1>
 
           <p className="max-w-3xl mx-auto mt-10 text-xl leading-9 text-slate-600">
 
-            KwanPay is cross-border payment infrastructure for African tourism.
+            KwanPay helps travelers pay for transport,
+            tours, hotels and experiences across Africa
+            using one secure digital wallet.
 
-            Pay any tourism operator across Africa quickly,
-
-            transparently and at a fraction of traditional transfer costs.
+            Send money, manage your travel funds and
+            pay trusted tourism businesses—all from one
+            premium mobile experience.
 
           </p>
+
+          <div
+            className="mt-6 text-sm font-medium"
+            style={{ color: BRAND.indigo }}
+          >
+            Currently in Private Beta • Launching Soon Across Africa
+          </div>
 
           <div className="flex justify-center gap-5 mt-12 flex-wrap">
 
@@ -98,19 +101,19 @@ id="hero"
                   color: "white",
                 }}
               >
-                Request Early Access
+                Request a Demo
               </button>
             </Link>
 
             <a
-              href="#how-it-works"
+              href="#features"
               className="rounded-full px-8 py-4 border font-semibold hover:bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
               style={{
                 borderColor: "#D7D7D7",
                 color: BRAND.indigo,
               }}
             >
-              See how it works
+              Explore Features
             </a>
 
           </div>

@@ -26,6 +26,12 @@ class AppTextStyles {
     color: AppColors.textSecondary,
   );
 
+  static const walletBalance = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
   static const button = TextStyle(
     fontSize: 17,
     fontWeight: FontWeight.w600,

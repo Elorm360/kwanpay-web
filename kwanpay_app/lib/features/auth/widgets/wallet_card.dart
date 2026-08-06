@@ -8,11 +8,17 @@ import '../../../core/theme/app_text_styles.dart';
 
 class WalletCard extends StatefulWidget {
   final double balance;
+  final String walletId;
+  final String status;
+  final String currency;
   final VoidCallback onAddMoney;
 
   const WalletCard({
     super.key,
     required this.balance,
+    required this.walletId,
+    required this.status,
+    required this.currency,
     required this.onAddMoney,
   });
 
@@ -21,7 +27,7 @@ class WalletCard extends StatefulWidget {
 }
 
 class _WalletCardState extends State<WalletCard> {
-  bool _isBalanceVisible = true;
+  bool hideBalance = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,27 +46,23 @@ class _WalletCardState extends State<WalletCard> {
         children: [
           // ── Balance Header Row ──────────────────────────────
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 "Available Balance",
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: AppTextStyles.body,
               ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
+              IconButton(
+                splashRadius: 18,
+                onPressed: () {
                   setState(() {
-                    _isBalanceVisible = !_isBalanceVisible;
+                    hideBalance = !hideBalance;
                   });
                 },
-                child: Icon(
-                  _isBalanceVisible
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: Colors.white54,
+                icon: Icon(
+                  hideBalance
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
                   size: 20,
                 ),
               ),
@@ -70,22 +72,15 @@ class _WalletCardState extends State<WalletCard> {
 
           // ── Balance Amount ─────────────────────────────────
           Text(
-            _isBalanceVisible
-                ? "USD ${widget.balance.toStringAsFixed(2)}"
-                : "•••••",
-            style: AppTextStyles.headline.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+hideBalance
+                ? "••••••"
+                : "${widget.currency} ${widget.balance.toStringAsFixed(2)}",
+            style: AppTextStyles.walletBalance,
           ),
 
-          // ── Subtle Divider ──────────────────────────────────
-          const Divider(
-            color: Colors.white24,
-            height: AppSpacing.xl,
-          ),
+          const SizedBox(height: 16),
 
-          // ── Wallet Status Row ───────────────────────────────
+          // ── Wallet ID Row ────────────────────────────────────
           Row(
             children: [
               const Icon(
@@ -95,21 +90,41 @@ class _WalletCardState extends State<WalletCard> {
               ),
               const SizedBox(width: AppSpacing.sm),
               const Text(
-                "Wallet",
+                "Wallet ID",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
                 ),
               ),
               const Spacer(),
-              const Text(
-                "Not Connected",
-                style: TextStyle(
+              Text(
+                widget.walletId,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                   letterSpacing: 1,
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // ── Status Row ──────────────────────────────────────
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.status,
+                style: AppTextStyles.body,
               ),
             ],
           ),

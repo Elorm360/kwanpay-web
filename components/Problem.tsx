@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Globe2, Wallet, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 
 export default function Problem() {
   return (
     <section
-id="problem"
+      id="problem"
       className="py-36 px-6"
       style={{ background: BRAND.paper }}
     >
@@ -30,13 +31,16 @@ id="problem"
             className="text-5xl md:text-6xl font-black mt-6"
             style={{ color: BRAND.indigo }}
           >
-            Cross-border payments still don’t work for African travel
+            Travel Should Be Easy.
+            <br />
+            Paying Should Be Even Easier.
           </h2>
 
           <p className="mt-6 text-lg text-slate-600 max-w-3xl mx-auto leading-8">
-            Global travel is growing fast — but payment infrastructure between
-            travelers and African tourism operators is still slow, expensive,
-            and unreliable.
+            Traveling across Africa should be exciting—not stressful.
+            From paying tour operators to booking transport and managing
+            travel funds, KwanPay removes payment barriers so you can focus
+            on the journey, not the transaction.
           </p>
         </motion.div>
 
@@ -45,48 +49,55 @@ id="problem"
 
           {[
             {
-              title: "High Fees",
+              icon: Globe2,
+              title: "Complicated Cross-Border Payments",
               desc:
-                "International transfers and card payments often lose 5–10% in hidden fees and FX charges.",
+                "Sending money across borders can be slow, expensive and unpredictable, especially when planning a trip.",
             },
             {
-              title: "Slow Settlement",
+              icon: Wallet,
+              title: "Too Many Payment Methods",
               desc:
-                "Payments take 3–5 business days to reach operators, delaying bookings and cash flow.",
+                "Travelers often switch between cash, bank transfers and multiple mobile money services just to complete one journey.",
             },
             {
-              title: "Limited Access",
+              icon: ShieldCheck,
+              title: "Limited Trust",
               desc:
-                "Many African tourism businesses cannot reliably accept international payments at all.",
+                "Paying unfamiliar tourism providers should feel safe and transparent, with clear records of every transaction.",
             },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="rounded-3xl p-10 bg-white border border-slate-200 shadow-lg hover:-translate-y-2 transition"
-            >
-              <div
-                className="text-sm font-bold tracking-widest"
-                style={{ color: BRAND.amber }}
-              >
-                0{i + 1}
-              </div>
+          ].map((item, i) => {
+            const Icon = item.icon;
 
-              <h3
-                className="text-2xl font-bold mt-5"
-                style={{ color: BRAND.indigo }}
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="rounded-3xl p-10 bg-white border border-slate-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
               >
-                {item.title}
-              </h3>
+                <div
+                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl"
+                  style={{ background: "rgba(217,142,59,0.12)" }}
+                >
+                  <Icon size={26} color={BRAND.amber} />
+                </div>
 
-              <p className="mt-5 text-slate-600 leading-7">
-                {item.desc}
-              </p>
-            </motion.div>
-          ))}
+                <h3
+                  className="text-2xl font-bold mt-6"
+                  style={{ color: BRAND.indigo }}
+                >
+                  {item.title}
+                </h3>
+
+                <p className="mt-5 text-slate-600 leading-7">
+                  {item.desc}
+                </p>
+              </motion.div>
+            );
+          })}
 
         </div>
 
