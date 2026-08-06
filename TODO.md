@@ -11,11 +11,12 @@
 - [x] Pointed local project to new `kwanpay-web` remote
 - [x] Pushed code to new `kwanpay-web` repo
 - [x] Reconnected Vercel project to `kwanpay-web` repo
-- [ ] Update README to reflect KwanPay project
-- [ ] Push trigger commit to verify auto-deploy on new repo
+- [x] Update README to reflect KwanPay project
+- [x] Push trigger commit to verify auto-deploy on new repo
+- [x] Verify auto-deploy fires on new repo (deployment `440ixhgn5`, HTTP 200)
+- [x] Confirm site is live
 
-## Next Steps
-- Update README
-- Commit and push a trigger change
-- Verify auto-deploy fires on new repo
-- Confirm site is live
+## Result
+- New private repo `kwanpay-web` created and connected to Vercel
+- Pushing to `kwanpay-web` triggers auto-deploy
+- Live site: https://transvista-landing-calebapedoh302-1072s-projects.vercel.app
