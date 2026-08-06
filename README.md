@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KwanPay Web
+
+KwanPay landing page built with [Next.js](https://nextjs.org) (App Router), React 19, Tailwind CSS, Framer Motion, and Supabase.
 
 ## Getting Started
 
