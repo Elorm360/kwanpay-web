@@ -156,7 +156,7 @@ export default function Hero() {
 
 <div className="flex justify-center gap-5 mt-12 flex-wrap">
 
-            <Link href="/waitlist">
+<Link href="/demo">
               <button
                 className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
                 style={{

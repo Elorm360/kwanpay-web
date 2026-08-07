@@ -34,8 +34,8 @@ const companyLinks = [
 const productLinks = [
   { label: "Features", href: "#features" },
   { label: "Security", href: "#trust" },
-  { label: "Roadmap", href: "#trust" },
-  { label: "Request a Demo", href: "/waitlist" },
+  { label: "Roadmap", href: "/roadmap" },
+  { label: "Request a Demo", href: "/demo" },
 ];
 
 const resourceLinks = [

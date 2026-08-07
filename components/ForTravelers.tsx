@@ -154,7 +154,7 @@ export default function ForTravelers() {
                 Experience the future of travel payments.
               </span>
               <Link
-                href="/waitlist"
+                href="/demo"
                 className="inline-flex items-center gap-2 font-semibold transition-colors hover:opacity-70"
                 style={{ color: BRAND.amber }}
               >

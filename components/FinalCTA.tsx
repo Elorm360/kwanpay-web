@@ -43,7 +43,7 @@ export default function FinalCTA() {
             </p>
 
 <div className="mt-12 flex justify-center lg:justify-start flex-wrap gap-5">
-              <Link href="/waitlist">
+              <Link href="/demo">
                 <button
                   className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
                   style={{

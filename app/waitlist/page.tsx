@@ -2,281 +2,208 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import ToastNotification from "@/components/ToastNotification";
-
-
-const BRAND = {
-  indigo: "#1E2340",
-  amber: "#D98E3B",
-  paper: "#EDEFF0",
-};
+import { motion } from "framer-motion";
+import { ArrowLeft, Mail, MapPin, User, Loader2 } from "lucide-react";
+import { BRAND } from "@/lib/brand";
+import { USER_TYPES } from "@/lib/constants";
+import { submitWaitlist } from "@/lib/waitlist";
+import FormCard from "@/components/forms/FormCard";
+import TextInput from "@/components/forms/TextInput";
+import SelectInput from "@/components/forms/SelectInput";
+import SuccessCard from "@/components/forms/SuccessCard";
 
 export default function WaitlistPage() {
-  const [loading, setLoading] = useState(false);
-
-  const [toast, setToast] = useState({
-    open: false,
-    kind: "success" as "success" | "error",
-    title: "",
-    messageLines: [] as string[],
-  });
-
-
   const [form, setForm] = useState({
     full_name: "",
     email: "",
     country: "",
     role: "Traveler",
-    company: "",
-    message: "",
   });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setLoading(true);
+    setError(null);
+    setSubmitting(true);
 
     try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
+      await submitWaitlist({
+        full_name: form.full_name,
+        email: form.email,
+        country: form.country,
+        role: form.role,
       });
-
-      type WaitlistResponse = { success?: boolean; error?: string };
-      let data: WaitlistResponse | null = null;
-      try {
-        data = (await res.json()) as WaitlistResponse;
-      } catch {
-        data = null;
-      }
-
-      if (res.ok && data?.success) {
-        setToast({
-          open: true,
-          kind: "success",
-          title: "Early Access Requested",
-          messageLines: [
-            "Thank you for joining the KwanPay waitlist.",
-            "We'll keep you updated.",
-          ],
-        });
-
-        setForm({
-          full_name: "",
-          email: "",
-          country: "",
-          role: "Traveler",
-          company: "",
-          message: "",
-        });
-      } else {
-        setToast({
-          open: true,
-          kind: "error",
-          title: "Request failed",
-          messageLines: [data?.error ?? "Something went wrong."],
-        });
-      }
+      setSubmitted(true);
     } catch (err) {
-      console.error(err);
-
-      setToast({
-        open: true,
-        kind: "error",
-        title: "Request failed",
-        messageLines: ["Something went wrong."],
-      });
+      console.error("WAITLIST SUBMIT ERROR:", err);
+      setError(
+        "Something went wrong while joining the waitlist. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    setLoading(false);
-  }; 
-
+  };
 
   return (
-    <>
-      <ToastNotification
-        open={toast.open}
-        kind={toast.kind}
-        title={toast.title}
-        messageLines={toast.messageLines}
-        onClose={() => setToast((t) => ({ ...t, open: false }))}
+    <main
+      className="min-h-screen px-6 py-20"
+      style={{ background: BRAND.paper }}
+    >
+      {/* Ambient glow */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 15% 10%, rgba(217,142,59,.10), transparent 40%), radial-gradient(circle at 85% 90%, rgba(30,35,64,.08), transparent 45%)",
+        }}
       />
 
-      <main
-        className="min-h-screen flex items-center justify-center px-6 py-20"
-        style={{ background: BRAND.paper }}
-      >
-        <div className="w-full max-w-3xl">
-          <div className="text-center">
-            <div
-              className="w-16 h-16 rounded-3xl mx-auto flex items-center justify-center"
-              style={{
-                background: BRAND.indigo,
-              }}
-            >
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M6 18C10 12 14 12 18 6"
-                stroke={BRAND.amber}
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-              <circle cx="18" cy="6" r="2" fill={BRAND.amber} />
-            </svg>
+      <div className="relative max-w-3xl mx-auto">
+        {/* Back link */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
+        >
+          <ArrowLeft size={16} />
+          Back to Home
+        </Link>
+
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="mt-10"
+        >
+          {/* Private Beta badge */}
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 border text-xs font-bold uppercase tracking-widest"
+            style={{
+              borderColor: "rgba(217,142,59,0.4)",
+              background: "rgba(217,142,59,0.1)",
+              color: BRAND.amber,
+            }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: BRAND.amber }}
+            />
+            Private Beta
           </div>
 
           <h1
-            className="mt-8 text-5xl font-black"
+            className="mt-6 text-4xl md:text-5xl font-black tracking-tight leading-tight"
             style={{ color: BRAND.indigo }}
           >
-            Join Early Access
+            Join the KwanPay
+            <br />
+            Early Access Community
           </h1>
 
-          <p className="mt-6 text-lg text-slate-600 leading-8">
-            Be among the first travelers, tourism businesses and platforms helping shape the future of cross-border tourism payments in Africa.
+          <p className="mt-6 text-lg text-slate-600 leading-8 max-w-2xl">
+            Be among the first travelers, tourism businesses and partners to
+            experience borderless travel payments across Africa.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-14 bg-white rounded-[32px] shadow-2xl border border-slate-200 p-10">
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-7"
-          >
-            <div>
-              <label className="block mb-2 font-medium text-slate-700">
-                Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="John Doe"
-                value={form.full_name}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    full_name: e.target.value,
-                  })
-                }
-                className="w-full rounded-2xl border border-slate-300 px-5 py-4 focus:outline-none focus:ring-2"
+        {/* Form card */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="mt-12"
+        >
+          <FormCard>
+            {submitted ? (
+              <SuccessCard
+                title="You're on the list!"
+                messageLines={[
+                  "Thank you for joining the KwanPay Early Access community.",
+                  "We'll keep you updated as we prepare for launch.",
+                ]}
+                primaryLabel="Return Home"
+                primaryHref="/"
+                icon="home"
               />
-            </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <TextInput
+                  label="Full Name"
+                  icon={User}
+                  value={form.full_name}
+                  onChange={(v) => setForm({ ...form, full_name: v })}
+                  required
+                  placeholder="John Doe"
+                />
 
-            <div>
-              <label className="block mb-2 font-medium text-slate-700">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="john@example.com"
-                value={form.email}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    email: e.target.value,
-                  })
-                }
-                className="w-full rounded-2xl border border-slate-300 px-5 py-4 focus:outline-none focus:ring-2"
-              />
-            </div>
+                <TextInput
+                  label="Email Address"
+                  icon={Mail}
+                  type="email"
+                  value={form.email}
+                  onChange={(v) => setForm({ ...form, email: v })}
+                  required
+                  placeholder="john@example.com"
+                />
 
-            <div>
-              <label className="block mb-2 font-medium text-slate-700">
-                Country
-              </label>
-              <input
-                type="text"
-                placeholder="Ghana"
-                value={form.country}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    country: e.target.value,
-                  })
-                }
-                className="w-full rounded-2xl border border-slate-300 px-5 py-4 focus:outline-none focus:ring-2"
-              />
-            </div>
+                <TextInput
+                  label="Country"
+                  icon={MapPin}
+                  value={form.country}
+                  onChange={(v) => setForm({ ...form, country: v })}
+                  required
+                  placeholder="Ghana"
+                />
 
-            <div>
-              <label className="block mb-2 font-medium text-slate-700">
-                I am a...
-              </label>
-              <select
-                value={form.role}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    role: e.target.value,
-                  })
-                }
-                className="w-full rounded-2xl border border-slate-300 px-5 py-4"
-              >
-                <option>Traveler</option>
-                <option>Tourism Operator</option>
-                <option>Platform Owner</option>
-                <option>Investor</option>
-                <option>Other</option>
-              </select>
-            </div>
+                <SelectInput
+                  label="I am a..."
+                  icon={User}
+                  options={USER_TYPES}
+                  value={form.role}
+                  onChange={(v) => setForm({ ...form, role: v })}
+                  required
+                />
 
-            <div>
-              <label className="block mb-2 font-medium text-slate-700">
-                Company (Optional)
-              </label>
-              <input
-                type="text"
-                placeholder="Company name"
-                value={form.company}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    company: e.target.value,
-                  })
-                }
-                className="w-full rounded-2xl border border-slate-300 px-5 py-4"
-              />
-            </div>
+                {error && (
+                  <p className="text-sm font-medium text-red-600">{error}</p>
+                )}
 
-            <div>
-              <label className="block mb-2 font-medium text-slate-700">
-                How would you use KwanPay?
-              </label>
-              <textarea
-                rows={5}
-                placeholder="Tell us a little about yourself..."
-                value={form.message}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    message: e.target.value,
-                  })
-                }
-                className="w-full rounded-2xl border border-slate-300 px-5 py-4"
-              />
-            </div>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full rounded-full py-4 text-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none inline-flex items-center justify-center gap-2"
+                  style={{
+                    background: "linear-gradient(135deg, #D98E3B, #B56F28)",
+                    boxShadow: "0 10px 30px -8px rgba(217,142,59,.6)",
+                  }}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    "Join Early Access"
+                  )}
+                </button>
+              </form>
+            )}
+          </FormCard>
+        </motion.div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-full py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.02]"
-              style={{ background: BRAND.amber }}
-            >
-              {loading ? "Submitting..." : "Request Early Access"}
-            </button>
-          </form>
-        </div>
-
-        <div className="text-center mt-10">
-          <Link href="/" className="text-slate-500 hover:underline">
-             Back to Home
-          </Link>
-        </div>
+        {/* Applications open note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="mt-8 text-center text-sm font-medium text-slate-500"
+        >
+          Applications Now Open
+        </motion.p>
       </div>
     </main>
-    </>
   );
 }
-
-

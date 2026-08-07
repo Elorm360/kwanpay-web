@@ -389,8 +389,8 @@ className="group relative rounded-3xl bg-white border border-slate-200 p-10 shad
           <span className="text-lg text-slate-600">
             Own a tourism business?
           </span>
-          <Link
-            href="/waitlist"
+<Link
+            href="/demo"
             className="inline-flex items-center gap-2 font-semibold transition-colors hover:opacity-70"
             style={{ color: BRAND.amber }}
           >
