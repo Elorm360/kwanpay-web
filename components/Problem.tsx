@@ -76,11 +76,23 @@ export default function Problem() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="rounded-3xl p-10 bg-white border border-slate-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+className="group relative rounded-3xl p-10 bg-white border border-slate-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden"
               >
+                {/* top accent */}
                 <div
-                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl"
-                  style={{ background: "rgba(217,142,59,0.12)" }}
+                  className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #D98E3B, #1E2340)",
+                  }}
+                />
+
+                <div
+                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(217,142,59,.15), rgba(30,35,64,.06))",
+                  }}
                 >
                   <Icon size={26} color={BRAND.amber} />
                 </div>

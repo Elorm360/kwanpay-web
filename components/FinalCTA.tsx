@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import { Flame, ArrowUpRight } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 
 export default function FinalCTA() {
@@ -42,20 +42,24 @@ export default function FinalCTA() {
               helping shape the future of borderless travel.
             </p>
 
-            <div className="mt-12 flex justify-center lg:justify-start flex-wrap gap-5">
+<div className="mt-12 flex justify-center lg:justify-start flex-wrap gap-5">
               <Link href="/waitlist">
                 <button
-                  className="rounded-full px-8 py-4 font-semibold text-white shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
+                  className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
                   style={{
-                    background: BRAND.amber,
+                    background: "linear-gradient(135deg, #D98E3B, #B56F28)",
+                    boxShadow: "0 12px 32px -10px rgba(217,142,59,.6)",
                   }}
                 >
-                  Request a Demo
+                  <span className="relative z-10 flex items-center gap-2">
+                    Request a Demo
+                    <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </span>
                 </button>
               </Link>
 
               <Link href="/waitlist">
-                <button className="rounded-full px-8 py-4 border border-white/30 text-white hover:bg-white/10 transition-all duration-300">
+                <button className="rounded-full px-9 py-4 border border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur transition-all duration-300">
                   Join Early Access
                 </button>
               </Link>
@@ -98,33 +102,56 @@ export default function FinalCTA() {
 
                 {/* Screen — Coming Soon */}
                 <div
-                  className="mt-6 rounded-[2rem] flex flex-col items-center justify-center text-center"
+                  className="relative mt-6 rounded-[2rem] flex flex-col items-center justify-center text-center overflow-hidden"
                   style={{
-                    background: BRAND.indigo,
+                    background:
+                      "linear-gradient(160deg, #1E2340, #13162B 55%, #241e3a)",
                     minHeight: "420px",
                   }}
                 >
+                  {/* ambient glow */}
                   <div
-                    className="w-16 h-16 rounded-3xl flex items-center justify-center"
-                    style={{ background: "rgba(217,142,59,0.15)" }}
-                  >
-                    <Flame size={30} style={{ color: BRAND.amber }} />
+                    className="absolute top-10 right-8 w-36 h-36 rounded-full blur-3xl opacity-50"
+                    style={{
+                      background:
+                        "radial-gradient(circle, rgba(217,142,59,.6), transparent 70%)",
+                    }}
+                  />
+                  <div
+                    className="absolute bottom-8 left-6 w-28 h-28 rounded-full blur-2xl opacity-30"
+                    style={{
+                      background:
+                        "radial-gradient(circle, rgba(217,142,59,.5), transparent 70%)",
+                    }}
+                  />
+
+                  <div className="relative">
+                    <div
+                      className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(217,142,59,.25), rgba(217,142,59,.08))",
+                        border: "1px solid rgba(217,142,59,.35)",
+                      }}
+                    >
+                      <Flame size={30} style={{ color: BRAND.amber }} />
+                    </div>
+
+                    <p
+                      className="mt-6 uppercase tracking-[0.3em] text-xs font-semibold"
+                      style={{ color: BRAND.amber }}
+                    >
+                      Coming Soon
+                    </p>
+
+                    <p className="mt-4 text-2xl font-black text-white">
+                      Your Travel Wallet
+                    </p>
+
+                    <p className="mt-3 max-w-[220px] text-sm text-slate-300 leading-6">
+                      Dashboard screenshot placeholder — the app UI will live here.
+                    </p>
                   </div>
-
-                  <p
-                    className="mt-6 uppercase tracking-[0.3em] text-xs font-semibold"
-                    style={{ color: BRAND.amber }}
-                  >
-                    Coming Soon
-                  </p>
-
-                  <p className="mt-4 text-2xl font-black text-white">
-                    Your Travel Wallet
-                  </p>
-
-                  <p className="mt-3 max-w-[220px] text-sm text-slate-300 leading-6">
-                    Dashboard screenshot placeholder — the app UI will live here.
-                  </p>
                 </div>
               </div>
 

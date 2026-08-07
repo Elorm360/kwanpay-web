@@ -25,13 +25,23 @@ const items = [
 export default function TrustStrip() {
   return (
     <section
-      className="border-y"
+      className="relative border-y overflow-hidden"
       style={{
-        background: "#ffffff",
+        background:
+          "linear-gradient(180deg, #FFFFFF, #FBFBFC)",
         borderColor: "#ECECEC",
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-5">
+      {/* Top gradient hairline */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(217,142,59,.4), transparent)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-6 py-6">
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
@@ -41,15 +51,20 @@ export default function TrustStrip() {
             return (
               <div
                 key={item.title}
-                className="flex items-center justify-center gap-3"
+                className="group flex items-center justify-center gap-3"
               >
-                <Icon
-                  size={20}
-                  color={BRAND.amber}
-                />
+                <span
+                  className="relative flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 group-hover:-translate-y-0.5"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(217,142,59,.15), rgba(30,35,64,.06))",
+                  }}
+                >
+                  <Icon size={18} color={BRAND.amber} />
+                </span>
 
                 <span
-                  className="font-medium"
+                  className="font-semibold text-sm tracking-wide"
                   style={{
                     color: BRAND.indigo,
                   }}

@@ -77,19 +77,33 @@ export default function HowItWorks() {
                 transition={{ delay: index * 0.15 }}
                 className="relative"
               >
-                <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-10 h-full flex flex-col items-center text-center">
+                <div className="group relative rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-10 h-full flex flex-col items-center text-center overflow-hidden hover:border-white/20 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
+
+                  {/* top gradient accent */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, transparent, rgba(217,142,59,.6), transparent)",
+                    }}
+                  />
 
                   <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center mb-8"
-                    style={{ background: BRAND.amber }}
+                    className="relative w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-300 group-hover:scale-110"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #D98E3B, #B56F28)",
+                      boxShadow: "0 8px 24px -6px rgba(217,142,59,.5)",
+                    }}
                   >
                     <Icon size={28} color="white" />
                   </div>
 
                   <span
-                    className="text-sm font-bold tracking-widest"
+                    className="inline-flex items-center gap-2 text-sm font-bold tracking-widest"
                     style={{ color: BRAND.amber }}
                   >
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: BRAND.amber }} />
                     STEP {index + 1}
                   </span>
 
@@ -105,7 +119,15 @@ export default function HowItWorks() {
 
                 {index < 3 && (
                   <div className="hidden lg:flex absolute top-1/2 -right-5 text-3xl text-white/20 z-10">
-                    →
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="opacity-60">
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        stroke="#D98E3B"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
                 )}
               </motion.div>

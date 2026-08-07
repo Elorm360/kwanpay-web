@@ -185,7 +185,7 @@ export default function ForPlatforms() {
                   </div>
                 </div>
 
-                {/* KPI cards */}
+{/* KPI cards */}
                 <div className="grid grid-cols-3 gap-3 mt-6">
                   {[
                     { icon: DollarSign, label: "Revenue", value: "$12.4k" },
@@ -196,7 +196,13 @@ export default function ForPlatforms() {
                     return (
                       <div
                         key={kpi.label}
-                        className="rounded-2xl border border-slate-200 p-3"
+                        className="relative overflow-hidden rounded-2xl p-3"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #FFFFFF, #F8F8FA)",
+                          border: "1px solid #ECECEC",
+                          boxShadow: "0 4px 12px -6px rgba(30,35,64,.12)",
+                        }}
                       >
                         <KpiIcon size={16} color={BRAND.amber} />
                         <p
@@ -214,12 +220,14 @@ export default function ForPlatforms() {
                 </div>
 
                 {/* Bar chart */}
-                <div className="mt-6 rounded-2xl border border-slate-200 p-5">
+                <div className="mt-6 rounded-2xl p-5"
+                  style={{
+                    background: BRAND.indigo,
+                    boxShadow: "0 10px 30px -12px rgba(30,35,64,.5)",
+                  }}
+                >
                   <div className="flex items-center justify-between">
-                    <p
-                      className="text-xs font-semibold"
-                      style={{ color: BRAND.indigo }}
-                    >
+                    <p className="text-xs font-semibold text-white">
                       Revenue — Last 7 Days
                     </p>
                     <CalendarDays size={14} color={BRAND.amber} />
@@ -228,13 +236,13 @@ export default function ForPlatforms() {
                     {bars.map((height, i) => (
                       <div
                         key={i}
-                        className="flex-1 rounded-t-lg"
+                        className="flex-1 rounded-t-lg transition-all duration-300"
                         style={{
                           height: `${height}%`,
                           background:
                             i === bars.length - 1
                               ? BRAND.amber
-                              : "rgba(30,35,64,0.15)",
+                              : "rgba(255,255,255,0.18)",
                         }}
                       />
                     ))}
@@ -304,11 +312,22 @@ export default function ForPlatforms() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group rounded-3xl bg-white border border-slate-200 p-10 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+className="group relative rounded-3xl bg-white border border-slate-200 p-10 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden"
               >
                 <div
-                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl"
-                  style={{ background: "rgba(217,142,59,0.12)" }}
+                  className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #D98E3B, #1E2340)",
+                  }}
+                />
+
+                <div
+                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(217,142,59,.15), rgba(30,35,64,.06))",
+                  }}
                 >
                   <Icon size={26} color={BRAND.amber} />
                 </div>

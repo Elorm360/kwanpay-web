@@ -221,22 +221,47 @@ export default function ForTravelers() {
 
                   {/* Balance card */}
                   <div
-                    className="mt-5 rounded-3xl p-6"
-                    style={{ background: BRAND.indigo }}
+                    className="relative mt-5 rounded-3xl p-6 overflow-hidden"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #1E2340, #13162B 60%, #2a2240)",
+                      boxShadow: "0 16px 40px -12px rgba(30,35,64,.55)",
+                    }}
                   >
-                    <p className="text-xs text-white/60">Total Balance</p>
-                    <p className="mt-1 text-3xl font-black text-white">
+                    {/* decorative radial */}
+                    <div
+                      className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-40 blur-2xl"
+                      style={{
+                        background:
+                          "radial-gradient(circle, rgba(217,142,59,.6), transparent 70%)",
+                      }}
+                    />
+
+                    <div className="relative flex items-center justify-between">
+                      <p className="text-xs text-white/60">Total Balance</p>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-white/70">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{ background: "#4ADE80" }}
+                        />
+                        Active
+                      </span>
+                    </div>
+                    <p className="relative mt-1 text-3xl font-black text-white tracking-tight">
                       $2,450.80
                     </p>
 
-                    <div className="flex gap-2 mt-6">
+                    <div className="relative flex gap-2 mt-6">
                       <span
-                        className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white"
-                        style={{ background: BRAND.amber }}
+                        className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white shadow-lg"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #D98E3B, #B56F28)",
+                        }}
                       >
                         <Send size={13} /> Send
                       </span>
-                      <span className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white bg-white/15">
+                      <span className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white bg-white/15 backdrop-blur">
                         <Plus size={13} /> Top Up
                       </span>
                     </div>
@@ -307,11 +332,22 @@ export default function ForTravelers() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group rounded-3xl bg-white border border-slate-200 p-10 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+className="group relative rounded-3xl bg-white border border-slate-200 p-10 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden"
               >
                 <div
-                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl"
-                  style={{ background: "rgba(217,142,59,0.12)" }}
+                  className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #D98E3B, #1E2340)",
+                  }}
+                />
+
+                <div
+                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(217,142,59,.15), rgba(30,35,64,.06))",
+                  }}
                 >
                   <Icon size={26} color={BRAND.amber} />
                 </div>
