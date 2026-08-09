@@ -58,7 +58,7 @@ export default function Problem() {
           {[
             {
               icon: Globe2,
-              title: "Complicated cross-border Payments",
+              title: "Complicated Cross-Border Payments",
               desc:
                 "Sending money across borders can be slow, expensive and unpredictable, especially when planning a trip.",
             },
