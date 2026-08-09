@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Wallet, UserCheck, CreditCard, Send } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 const steps = [
   {
@@ -41,9 +42,10 @@ export default function HowItWorks() {
       <div className="max-w-7xl mx-auto">
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
           className="text-center"
         >
           <p
@@ -63,21 +65,28 @@ export default function HowItWorks() {
           </p>
         </motion.div>
 
-        <div className="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-5">
+        <motion.div
+          variants={staggerContainer(0.15)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-5"
+        >
 
           {steps.map((step, index) => {
             const Icon = step.icon;
 
             return (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-                className="relative"
-              >
-                <div className="group relative rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-10 h-full flex flex-col items-center text-center overflow-hidden hover:border-white/20 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
+              <motion.div key={step.title} variants={fadeUp} className="relative">
+                <motion.div
+                  whileHover={{
+                    y: -10,
+                    borderColor: "rgba(255,255,255,0.2)",
+                    boxShadow: "0 30px 60px -20px rgba(0,0,0,0.4)",
+                  }}
+                  transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                  className="group relative rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-10 h-full flex flex-col items-center text-center overflow-hidden"
+                >
 
                   {/* top gradient accent */}
                   <div
@@ -88,8 +97,10 @@ export default function HowItWorks() {
                     }}
                   />
 
-                  <div
-                    className="relative w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-300 group-hover:scale-110"
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 6 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                    className="relative w-16 h-16 rounded-2xl flex items-center justify-center mb-8"
                     style={{
                       background:
                         "linear-gradient(135deg, #D98E3B, #B56F28)",
@@ -97,7 +108,7 @@ export default function HowItWorks() {
                     }}
                   >
                     <Icon size={28} color="white" />
-                  </div>
+                  </motion.div>
 
                   <span
                     className="inline-flex items-center gap-2 text-sm font-bold tracking-widest"
@@ -115,10 +126,16 @@ export default function HowItWorks() {
                     {step.description}
                   </p>
 
-                </div>
+                </motion.div>
 
                 {index < 3 && (
-                  <div className="hidden lg:flex absolute top-1/2 -right-5 text-3xl text-white/20 z-10">
+                  <motion.div
+                    initial={{ opacity: 0, x: -6 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={viewportOnce}
+                    transition={{ delay: 0.3 + index * 0.15, duration: 0.5 }}
+                    className="hidden lg:flex absolute top-1/2 -right-5 text-3xl text-white/20 z-10"
+                  >
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="opacity-60">
                       <path
                         d="M5 12h14M13 6l6 6-6 6"
@@ -128,19 +145,20 @@ export default function HowItWorks() {
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </div>
+                  </motion.div>
                 )}
               </motion.div>
             );
           })}
 
-        </div>
+        </motion.div>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="mt-20 text-center text-lg text-slate-300"
         >
           Everything you need for borderless African travel.

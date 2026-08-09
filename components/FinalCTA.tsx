@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Flame, ArrowUpRight } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import TiltCard from "@/components/TiltCard";
 
 export default function FinalCTA() {
   return (
@@ -44,8 +45,11 @@ export default function FinalCTA() {
 
 <div className="mt-12 flex justify-center lg:justify-start flex-wrap gap-5">
               <Link href="/demo">
-                <button
-                  className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                  className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white"
                   style={{
                     background: "linear-gradient(135deg, #D98E3B, #B56F28)",
                     boxShadow: "0 12px 32px -10px rgba(217,142,59,.6)",
@@ -55,13 +59,20 @@ export default function FinalCTA() {
                     Request a Demo
                     <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </span>
-                </button>
+                </motion.button>
               </Link>
 
               <Link href="/waitlist">
-                <button className="rounded-full px-9 py-4 border border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur transition-all duration-300">
+                <motion.button
+                  initial={{ background: "rgba(255,255,255,0)" }}
+                  whileHover={{ scale: 1.05, y: -3, background: "rgba(255,255,255,0.1)" }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                  className="rounded-full px-9 py-4 border backdrop-blur"
+                  style={{ borderColor: "rgba(255,255,255,0.3)", color: "white" }}
+                >
                   Join Early Access
-                </button>
+                </motion.button>
               </Link>
             </div>
 
@@ -76,17 +87,20 @@ export default function FinalCTA() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.15 }}
+            transition={{ delay: 0.15, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="flex justify-center"
+            style={{ perspective: 1000 }}
           >
-            <div className="relative">
+            <TiltCard className="relative" maxTilt={6}>
               {/* Glow */}
-              <div
+              <motion.div
                 className="absolute -inset-8 rounded-[3.5rem] opacity-40 blur-3xl"
                 style={{
                   background:
                     "radial-gradient(circle, rgba(217,142,59,.4), rgba(255,255,255,.08) 70%)",
                 }}
+                animate={{ opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
 
               {/* Phone frame */}
@@ -126,16 +140,18 @@ export default function FinalCTA() {
                   />
 
                   <div className="relative">
-                    <div
+                    <motion.div
                       className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto"
                       style={{
                         background:
                           "linear-gradient(135deg, rgba(217,142,59,.25), rgba(217,142,59,.08))",
                         border: "1px solid rgba(217,142,59,.35)",
                       }}
+                      animate={{ scale: [1, 1.08, 1] }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                     >
                       <Flame size={30} style={{ color: BRAND.amber }} />
-                    </div>
+                    </motion.div>
 
                     <p
                       className="mt-6 uppercase tracking-[0.3em] text-xs font-semibold"
@@ -159,7 +175,7 @@ export default function FinalCTA() {
               <p className="mt-6 text-center text-sm font-medium text-slate-400">
                 The KwanPay experience — coming soon.
               </p>
-            </div>
+            </TiltCard>
           </motion.div>
 
         </div>

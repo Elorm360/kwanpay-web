@@ -53,8 +53,11 @@ export default function SuccessCard({
       ))}
 
       <Link href={primaryHref}>
-        <button
-          className="group mt-8 inline-flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl"
+        <motion.button
+          whileHover={{ scale: 1.05, y: -3 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 340, damping: 22 }}
+          className="group mt-8 inline-flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white"
           style={{
             background: "linear-gradient(135deg, #D98E3B, #B56F28)",
             boxShadow: "0 10px 30px -8px rgba(217,142,59,.6)",
@@ -69,7 +72,7 @@ export default function SuccessCard({
           ) : (
             <ArrowLeft size={18} />
           )}
-        </button>
+        </motion.button>
       </Link>
     </motion.div>
   );

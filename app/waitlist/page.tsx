@@ -11,6 +11,7 @@ import FormCard from "@/components/forms/FormCard";
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
 import SuccessCard from "@/components/forms/SuccessCard";
+import { fadeUp, staggerContainer } from "@/lib/motion";
 
 export default function WaitlistPage() {
   const [form, setForm] = useState({
@@ -61,23 +62,25 @@ export default function WaitlistPage() {
         }}
       />
 
-      <div className="relative max-w-3xl mx-auto">
+      <motion.div
+        variants={staggerContainer(0.12)}
+        initial="hidden"
+        animate="show"
+        className="relative max-w-3xl mx-auto"
+      >
         {/* Back link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back to Home
-        </Link>
+        <motion.div variants={fadeUp}>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Back to Home
+          </Link>
+        </motion.div>
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="mt-10"
-        >
+        <motion.div variants={fadeUp} className="mt-10">
           {/* Private Beta badge */}
           <div
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 border text-xs font-bold uppercase tracking-widest"
@@ -110,12 +113,7 @@ export default function WaitlistPage() {
         </motion.div>
 
         {/* Form card */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-12"
-        >
+        <motion.div variants={fadeUp} className="mt-12">
           <FormCard>
             {submitted ? (
               <SuccessCard
@@ -171,10 +169,13 @@ export default function WaitlistPage() {
                   <p className="text-sm font-medium text-red-600">{error}</p>
                 )}
 
-                <button
+                <motion.button
                   type="submit"
                   disabled={submitting}
-                  className="w-full rounded-full py-4 text-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none inline-flex items-center justify-center gap-2"
+                  whileHover={submitting ? {} : { scale: 1.02, y: -2 }}
+                  whileTap={submitting ? {} : { scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                  className="w-full rounded-full py-4 text-lg font-semibold text-white disabled:opacity-60 inline-flex items-center justify-center gap-2"
                   style={{
                     background: "linear-gradient(135deg, #D98E3B, #B56F28)",
                     boxShadow: "0 10px 30px -8px rgba(217,142,59,.6)",
@@ -188,7 +189,7 @@ export default function WaitlistPage() {
                   ) : (
                     "Join Early Access"
                   )}
-                </button>
+                </motion.button>
               </form>
             )}
           </FormCard>
@@ -196,14 +197,12 @@ export default function WaitlistPage() {
 
         {/* Applications open note */}
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
+          variants={fadeUp}
           className="mt-8 text-center text-sm font-medium text-slate-500"
         >
           Applications Now Open
         </motion.p>
-      </div>
+      </motion.div>
     </main>
   );
 }

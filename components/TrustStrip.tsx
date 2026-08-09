@@ -1,7 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { ShieldCheck, Wallet, Globe2, Sparkles } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 const items = [
   {
@@ -43,14 +45,22 @@ export default function TrustStrip() {
 
       <div className="max-w-7xl mx-auto px-6 py-6">
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <motion.div
+          variants={staggerContainer(0.08)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6"
+        >
 
           {items.map((item) => {
             const Icon = item.icon;
 
             return (
-              <div
+              <motion.div
                 key={item.title}
+                variants={fadeUp}
+                whileHover={{ y: -2 }}
                 className="group flex items-center justify-center gap-3"
               >
                 <span
@@ -71,11 +81,11 @@ export default function TrustStrip() {
                 >
                   {item.title}
                 </span>
-              </div>
+              </motion.div>
             );
           })}
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

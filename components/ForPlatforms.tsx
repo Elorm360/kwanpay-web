@@ -14,6 +14,9 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import TiltCard from "@/components/TiltCard";
+import CountUp from "@/components/CountUp";
 
 const benefits = [
   {
@@ -68,9 +71,10 @@ export default function ForPlatforms() {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
           className="text-center"
         >
           <p
@@ -142,11 +146,12 @@ export default function ForPlatforms() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            viewport={viewportOnce}
+            transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="flex justify-center"
+            style={{ perspective: 1000 }}
           >
-            <div className="relative w-full max-w-lg">
+            <TiltCard className="relative w-full max-w-lg" maxTilt={5}>
               {/* Glow */}
               <div
                 className="absolute -inset-8 rounded-[3rem] opacity-40 blur-3xl"
@@ -186,16 +191,23 @@ export default function ForPlatforms() {
                 </div>
 
 {/* KPI cards */}
-                <div className="grid grid-cols-3 gap-3 mt-6">
+                <motion.div
+                  variants={staggerContainer(0.1)}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={viewportOnce}
+                  className="grid grid-cols-3 gap-3 mt-6"
+                >
                   {[
-                    { icon: DollarSign, label: "Revenue", value: "$12.4k" },
-                    { icon: Banknote, label: "Payouts", value: "$9.8k" },
-                    { icon: Users, label: "Customers", value: "342" },
+                    { icon: DollarSign, label: "Revenue", value: 12.4, prefix: "$", suffix: "k", decimals: 1 },
+                    { icon: Banknote, label: "Payouts", value: 9.8, prefix: "$", suffix: "k", decimals: 1 },
+                    { icon: Users, label: "Customers", value: 342, prefix: "", suffix: "", decimals: 0 },
                   ].map((kpi) => {
                     const KpiIcon = kpi.icon;
                     return (
-                      <div
+                      <motion.div
                         key={kpi.label}
+                        variants={fadeUp}
                         className="relative overflow-hidden rounded-2xl p-3"
                         style={{
                           background:
@@ -205,19 +217,21 @@ export default function ForPlatforms() {
                         }}
                       >
                         <KpiIcon size={16} color={BRAND.amber} />
-                        <p
-                          className="mt-2 text-sm font-black"
+                        <CountUp
+                          value={kpi.value}
+                          prefix={kpi.prefix}
+                          suffix={kpi.suffix}
+                          decimals={kpi.decimals}
+                          className="mt-2 block text-sm font-black"
                           style={{ color: BRAND.indigo }}
-                        >
-                          {kpi.value}
-                        </p>
+                        />
                         <p className="text-[10px] text-slate-400">
                           {kpi.label}
                         </p>
-                      </div>
+                      </motion.div>
                     );
                   })}
-                </div>
+                </motion.div>
 
                 {/* Bar chart */}
                 <div className="mt-6 rounded-2xl p-5"
@@ -234,11 +248,18 @@ export default function ForPlatforms() {
                   </div>
                   <div className="flex items-end justify-between gap-2 h-24 mt-4">
                     {bars.map((height, i) => (
-                      <div
+                      <motion.div
                         key={i}
-                        className="flex-1 rounded-t-lg transition-all duration-300"
+                        initial={{ height: "6%" }}
+                        whileInView={{ height: `${height}%` }}
+                        viewport={viewportOnce}
+                        transition={{
+                          duration: 0.8,
+                          delay: 0.4 + i * 0.07,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                        className="flex-1 rounded-t-lg"
                         style={{
-                          height: `${height}%`,
                           background:
                             i === bars.length - 1
                               ? BRAND.amber
@@ -294,25 +315,30 @@ export default function ForPlatforms() {
               <p className="mt-6 text-center text-sm font-medium text-slate-500">
                 Payouts, revenue &amp; customer records — in one dashboard.
               </p>
-            </div>
+            </TiltCard>
           </motion.div>
 
         </div>
 
         {/* Four Business Benefit Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-24">
+        <motion.div
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-24"
+        >
 
-          {benefits.map((item, index) => {
+          {benefits.map((item) => {
             const Icon = item.icon;
 
             return (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-className="group relative rounded-3xl bg-white border border-slate-200 p-10 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                variants={fadeUp}
+                whileHover={{ y: -10, boxShadow: "0 30px 60px -20px rgba(30,35,64,0.25)" }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="group relative rounded-3xl bg-white border border-slate-200 p-10 shadow-lg overflow-hidden"
               >
                 <div
                   className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -346,7 +372,7 @@ className="group relative rounded-3xl bg-white border border-slate-200 p-10 shad
             );
           })}
 
-        </div>
+        </motion.div>
 
         {/* Highlight Box */}
         <motion.div

@@ -23,6 +23,8 @@ import FormCard from "@/components/forms/FormCard";
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
 import SuccessCard from "@/components/forms/SuccessCard";
+import { fadeUp, staggerContainer } from "@/lib/motion";
+import TiltCard from "@/components/TiltCard";
 
 const transactions = [
   { label: "Serengeti Safari", sub: "Tour Operator", amount: "-$420.00" },
@@ -97,12 +99,13 @@ export default function DemoPage() {
         <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-start mt-10">
           {/* ---------- LEFT: copy + form ---------- */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            variants={staggerContainer(0.1)}
+            initial="hidden"
+            animate="show"
           >
             {/* Private Beta badge */}
-            <div
+            <motion.div
+              variants={fadeUp}
               className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 border text-xs font-bold uppercase tracking-widest"
               style={{
                 borderColor: "rgba(217,142,59,0.4)",
@@ -115,27 +118,28 @@ export default function DemoPage() {
                 style={{ background: BRAND.amber }}
               />
               Private Beta
-            </div>
+            </motion.div>
 
-            <h1
+            <motion.h1
+              variants={fadeUp}
               className="mt-6 text-4xl md:text-5xl font-black tracking-tight leading-tight"
               style={{ color: BRAND.indigo }}
             >
               See KwanPay
               <br />
               in Action
-            </h1>
+            </motion.h1>
 
-            <p className="mt-6 text-lg text-slate-600 leading-8 max-w-xl">
+            <motion.p variants={fadeUp} className="mt-6 text-lg text-slate-600 leading-8 max-w-xl">
               Discover how KwanPay simplifies travel payments across Africa.
-            </p>
-            <p className="mt-3 text-lg text-slate-600 leading-8 max-w-xl">
+            </motion.p>
+            <motion.p variants={fadeUp} className="mt-3 text-lg text-slate-600 leading-8 max-w-xl">
               Whether you&apos;re a traveler, tourism business or ecosystem
               partner, we&apos;d love to show you what&apos;s coming.
-            </p>
+            </motion.p>
 
             {/* Form card */}
-            <div className="mt-10">
+            <motion.div variants={fadeUp} className="mt-10">
               <FormCard>
                 {submitted ? (
                   <SuccessCard
@@ -209,10 +213,13 @@ export default function DemoPage() {
                       <p className="text-sm font-medium text-red-600">{error}</p>
                     )}
 
-                    <button
+                    <motion.button
                       type="submit"
                       disabled={submitting}
-                      className="w-full rounded-full py-4 text-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none inline-flex items-center justify-center gap-2"
+                      whileHover={submitting ? {} : { scale: 1.02, y: -2 }}
+                      whileTap={submitting ? {} : { scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                      className="w-full rounded-full py-4 text-lg font-semibold text-white disabled:opacity-60 inline-flex items-center justify-center gap-2"
                       style={{
                         background:
                           "linear-gradient(135deg, #D98E3B, #B56F28)",
@@ -227,11 +234,11 @@ export default function DemoPage() {
                       ) : (
                         "Request My Demo"
                       )}
-                    </button>
+                    </motion.button>
                   </form>
                 )}
               </FormCard>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* ---------- RIGHT: phone mockup placeholder ---------- */}
@@ -240,8 +247,9 @@ export default function DemoPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
             className="hidden lg:flex justify-center lg:sticky lg:top-24"
+            style={{ perspective: 1000 }}
           >
-            <div className="relative">
+            <TiltCard className="relative" maxTilt={6}>
               {/* Glow */}
               <div
                 className="absolute -inset-8 rounded-[3.5rem] opacity-40 blur-3xl"
@@ -385,7 +393,7 @@ export default function DemoPage() {
               <p className="mt-6 text-center text-sm font-medium text-slate-500">
                 Your travel wallet &amp; dashboard — in one place.
               </p>
-            </div>
+            </TiltCard>
           </motion.div>
         </div>
 

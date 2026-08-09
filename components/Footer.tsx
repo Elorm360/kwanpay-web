@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Mail, ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 const LinkedinIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -115,9 +117,15 @@ export default function Footer() {
 
       <div className="relative max-w-7xl mx-auto">
         {/* Top — 4 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
+        <motion.div
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12"
+        >
           {/* Brand — spans wider */}
-          <div className="lg:col-span-4">
+          <motion.div variants={fadeUp} className="lg:col-span-4">
             <div className="flex items-center gap-4">
               <div
                 className="h-11 w-11 rounded-2xl flex items-center justify-center shadow-lg"
@@ -185,10 +193,10 @@ export default function Footer() {
               <ShieldCheck size={15} style={{ color: BRAND.amber }} />
               <span className="text-sm">PCI-secured payments on Stellar</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Company */}
-          <div className="lg:col-span-2">
+          <motion.div variants={fadeUp} className="lg:col-span-2">
             <ColumnHeading>Company</ColumnHeading>
             <ul className="space-y-4">
               {companyLinks.map((link) => (
@@ -200,10 +208,10 @@ export default function Footer() {
                 />
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Product */}
-          <div className="lg:col-span-2">
+          <motion.div variants={fadeUp} className="lg:col-span-2">
             <ColumnHeading>Product</ColumnHeading>
             <ul className="space-y-4">
               {productLinks.map((link) => (
@@ -214,10 +222,10 @@ export default function Footer() {
                 />
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Resources */}
-          <div className="lg:col-span-2">
+          <motion.div variants={fadeUp} className="lg:col-span-2">
             <ColumnHeading>Resources</ColumnHeading>
             <ul className="space-y-4">
               {resourceLinks.map((link) => (
@@ -229,10 +237,10 @@ export default function Footer() {
                 />
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Contact */}
-          <div className="lg:col-span-2">
+          <motion.div variants={fadeUp} className="lg:col-span-2">
             <ColumnHeading>Contact</ColumnHeading>
             <ul className="space-y-4">
               <li>
@@ -267,31 +275,27 @@ export default function Footer() {
               {socials.map((social) => {
                 const Icon = social.icon;
                 return (
-                  <a
+                  <motion.a
                     key={social.label}
                     href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    initial={{ background: "rgba(255,255,255,0)" }}
+                    whileHover={{ y: -3, scale: 1.08, background: BRAND.amber, borderColor: BRAND.amber }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                    className="w-10 h-10 rounded-full flex items-center justify-center border"
                     style={{
                       borderColor: "rgba(255,255,255,0.15)",
                       color: "white",
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = BRAND.amber;
-                      e.currentTarget.style.borderColor = BRAND.amber;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "transparent";
-                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
-                    }}
                   >
                     <Icon size={16} />
-                  </a>
+                  </motion.a>
                 );
               })}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Bottom divider */}
         <div

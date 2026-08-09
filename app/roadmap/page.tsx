@@ -11,6 +11,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer } from "@/lib/motion";
 
 type Status = "done" | "progress" | "todo";
 
@@ -166,23 +167,25 @@ export default function RoadmapPage() {
       className="min-h-screen px-6 py-24"
       style={{ background: "#ffffff" }}
     >
-      <div className="max-w-5xl mx-auto">
+      <motion.div
+        variants={staggerContainer(0.12)}
+        initial="hidden"
+        animate="show"
+        className="max-w-5xl mx-auto"
+      >
         {/* Back link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back to Home
-        </Link>
+        <motion.div variants={fadeUp}>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Back to Home
+          </Link>
+        </motion.div>
 
         {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-center mt-10"
-        >
+        <motion.div variants={fadeUp} className="text-center mt-10">
           {/* Status badge */}
           <div
             className="inline-flex items-center gap-2 rounded-full px-5 py-2 border text-xs font-bold uppercase tracking-widest"
@@ -300,7 +303,11 @@ export default function RoadmapPage() {
                 {idx + 1}
               </div>
 
-              <div className="rounded-3xl bg-white border border-slate-200 shadow-lg p-8 hover:shadow-2xl transition-shadow duration-300">
+              <motion.div
+                whileHover={{ y: -6, boxShadow: "0 30px 60px -20px rgba(30,35,64,0.25)" }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="rounded-3xl bg-white border border-slate-200 shadow-lg p-8"
+              >
                 {/* Phase header */}
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-4">
@@ -365,7 +372,7 @@ export default function RoadmapPage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
@@ -415,8 +422,11 @@ export default function RoadmapPage() {
 
           <div className="mt-10 flex justify-center gap-5 flex-wrap">
             <Link href="/waitlist">
-              <button
-                className="group inline-flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl"
+              <motion.button
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                className="group inline-flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white"
                 style={{
                   background:
                     "linear-gradient(135deg, #D98E3B, #B56F28)",
@@ -428,12 +438,15 @@ export default function RoadmapPage() {
                   size={18}
                   className="transition-transform group-hover:translate-x-0.5"
                 />
-              </button>
+              </motion.button>
             </Link>
 
             <Link href="/demo">
-              <button
-                className="rounded-full px-8 py-4 border-2 font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+              <motion.button
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                className="rounded-full px-8 py-4 border-2 font-semibold"
                 style={{
                   borderColor: "#D7D7D7",
                   color: BRAND.indigo,
@@ -441,11 +454,11 @@ export default function RoadmapPage() {
                 }}
               >
                 Request a Demo
-              </button>
+              </motion.button>
             </Link>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </main>
   );
 }

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Globe2, Wallet, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 export default function Problem() {
   return (
@@ -15,9 +16,10 @@ export default function Problem() {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
           className="text-center"
         >
           <p
@@ -45,7 +47,13 @@ export default function Problem() {
         </motion.div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-10 mt-20">
+        <motion.div
+          variants={staggerContainer(0.12)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="grid md:grid-cols-3 gap-10 mt-20"
+        >
 
           {[
             {
@@ -72,11 +80,10 @@ export default function Problem() {
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-className="group relative rounded-3xl p-10 bg-white border border-slate-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                variants={fadeUp}
+                whileHover={{ y: -10, boxShadow: "0 30px 60px -20px rgba(30,35,64,0.25)" }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="group relative rounded-3xl p-10 bg-white border border-slate-200 shadow-lg overflow-hidden"
               >
                 {/* top accent */}
                 <div
@@ -111,7 +118,7 @@ className="group relative rounded-3xl p-10 bg-white border border-slate-200 shad
             );
           })}
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

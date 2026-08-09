@@ -15,6 +15,8 @@ import {
   Bus,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import TiltCard from "@/components/TiltCard";
 
 const experiences = [
   {
@@ -77,9 +79,10 @@ export default function ForTravelers() {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
           className="text-center"
         >
           <p
@@ -168,11 +171,12 @@ export default function ForTravelers() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            viewport={viewportOnce}
+            transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="flex justify-center"
+            style={{ perspective: 1000 }}
           >
-            <div className="relative">
+            <TiltCard className="relative" maxTilt={6}>
               {/* Glow */}
               <div
                 className="absolute -inset-8 rounded-[3.5rem] opacity-40 blur-3xl"
@@ -314,25 +318,30 @@ export default function ForTravelers() {
               <p className="mt-6 text-center text-sm font-medium text-slate-500">
                 Your dashboard, wallet &amp; send money — in one place.
               </p>
-            </div>
+            </TiltCard>
           </motion.div>
 
         </div>
 
         {/* Four Experience Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-24">
+        <motion.div
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-24"
+        >
 
-          {experiences.map((item, index) => {
+          {experiences.map((item) => {
             const Icon = item.icon;
 
             return (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-className="group relative rounded-3xl bg-white border border-slate-200 p-10 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                variants={fadeUp}
+                whileHover={{ y: -10, boxShadow: "0 30px 60px -20px rgba(30,35,64,0.25)" }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="group relative rounded-3xl bg-white border border-slate-200 p-10 shadow-lg overflow-hidden"
               >
                 <div
                   className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -366,7 +375,7 @@ className="group relative rounded-3xl bg-white border border-slate-200 p-10 shad
             );
           })}
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

@@ -1,6 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import Link from "next/link";
 import {
   Globe2,
@@ -10,47 +17,98 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { EASE_OUT, fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+
+const headline = staggerContainer(0.12, 0.35);
+
+const word: import("framer-motion").Variants = {
+  hidden: { opacity: 0, y: "100%" },
+  show: { opacity: 1, y: "0%", transition: { duration: 0.8, ease: EASE_OUT } },
+};
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLElement>) {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mx.set((e.clientX - rect.left) / rect.width);
+    my.set((e.clientY - rect.top) / rect.height);
+  }
+
+  const spotlight = useMotionTemplate`radial-gradient(560px circle at ${useTransform(
+    mx,
+    (v) => `${v * 100}%`
+  )} ${useTransform(my, (v) => `${v * 100}%`)}, rgba(217,142,59,.16), transparent 65%)`;
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   return (
     <section
       id="hero"
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
       className="relative overflow-hidden pt-44 pb-36 px-6"
       style={{ background: BRAND.paper }}
     >
       {/* Background */}
-      <div
-        className="absolute inset-0 opacity-50"
-        style={{
-          background: `
-          radial-gradient(circle at 20% 15%, rgba(30,35,64,.14), transparent 45%),
-          radial-gradient(circle at 85% 30%, rgba(217,142,59,.16), transparent 40%),
-          radial-gradient(circle at 50% 95%, rgba(217,142,59,.10), transparent 45%)
-        `,
-        }}
+      <motion.div style={{ y: bgY }} className="absolute inset-0 opacity-50">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+            radial-gradient(circle at 20% 15%, rgba(30,35,64,.14), transparent 45%),
+            radial-gradient(circle at 85% 30%, rgba(217,142,59,.16), transparent 40%),
+            radial-gradient(circle at 50% 95%, rgba(217,142,59,.10), transparent 45%)
+          `,
+          }}
+        />
+      </motion.div>
+
+      {/* Cursor spotlight */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none hidden md:block"
+        style={{ background: spotlight }}
       />
 
       {/* Subtle grid texture for depth */}
-      <div
+      <motion.div
+        style={{ y: bgY }}
         className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(30,35,64,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(30,35,64,.6) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(30,35,64,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(30,35,64,.6) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+      </motion.div>
 
-      <div className="relative max-w-7xl mx-auto">
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="relative max-w-7xl mx-auto"
+      >
 
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: .8 }}
+          variants={headline}
+          initial="hidden"
+          animate="show"
           className="text-center"
         >
 
           {/* Premium badge with gradient border, glow, live dot & shimmer */}
-          <div className="inline-flex justify-center mb-8">
+          <motion.div variants={fadeUp} className="inline-flex justify-center mb-8">
             <div
               className="relative rounded-full p-px"
               style={{
@@ -60,12 +118,7 @@ export default function Hero() {
                   "0 8px 30px -8px rgba(217,142,59,.45), 0 4px 16px -6px rgba(30,35,64,.25)",
               }}
             >
-              <motion.div
-                initial={{ opacity: 0, scale: .9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: .6, delay: .2 }}
-                className="relative flex items-center gap-3 rounded-full bg-white/95 backdrop-blur px-5 py-2 pr-6 overflow-hidden"
-              >
+              <div className="relative flex items-center gap-3 rounded-full bg-white/95 backdrop-blur px-5 py-2 pr-6 overflow-hidden">
                 {/* Shimmer sweep */}
                 <motion.span
                   className="absolute inset-y-0 w-1/3 -skew-x-12 pointer-events-none"
@@ -110,72 +163,86 @@ export default function Hero() {
                     Private Beta
                   </span>
                 </span>
-              </motion.div>
+              </div>
             </div>
-          </div>
+          </motion.div>
 
           <h1
             className="text-6xl md:text-8xl font-black leading-[1.05] tracking-tight"
-            style={{
-              color: BRAND.indigo,
-            }}
+            style={{ color: BRAND.indigo }}
           >
-            One Wallet.
-            <br />
-
-            Every Journey.
-            <br />
-
-            <span
-              style={{
-                color: BRAND.amber,
-              }}
-            >
-              Across Africa.
+            <span className="block overflow-hidden">
+              <motion.span variants={word} className="block">
+                One Wallet.
+              </motion.span>
+            </span>
+            <span className="block overflow-hidden">
+              <motion.span variants={word} className="block">
+                Every Journey.
+              </motion.span>
+            </span>
+            <span className="block overflow-hidden">
+              <motion.span
+                variants={word}
+                className="block bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(90deg, #D98E3B, #F2B463, #D98E3B, #B56F28)",
+                  backgroundSize: "300% 100%",
+                  animation: "gradient-shift 6s ease-in-out infinite",
+                }}
+              >
+                Across Africa.
+              </motion.span>
             </span>
           </h1>
 
-          <p className="max-w-3xl mx-auto mt-10 text-xl leading-9 text-slate-600">
+          <motion.p
+            variants={fadeUp}
+            className="max-w-3xl mx-auto mt-10 text-xl leading-9 text-slate-600"
+          >
+            KwanPay helps travelers pay for transport, tours, hotels and
+            experiences across Africa using one secure digital wallet. Send
+            money, manage your travel funds and pay trusted tourism
+            businesses—all from one premium mobile experience.
+          </motion.p>
 
-            KwanPay helps travelers pay for transport,
-            tours, hotels and experiences across Africa
-            using one secure digital wallet.
-
-            Send money, manage your travel funds and
-            pay trusted tourism businesses—all from one
-            premium mobile experience.
-
-          </p>
-
-          <div
+          <motion.div
+            variants={fadeUp}
             className="mt-6 text-sm font-medium"
             style={{ color: BRAND.indigo }}
           >
             Currently in Private Beta • Launching Soon Across Africa
-          </div>
+          </motion.div>
 
-<div className="flex justify-center gap-5 mt-12 flex-wrap">
-
-<Link href="/demo">
-              <button
-                className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+          <motion.div
+            variants={fadeUp}
+            className="flex justify-center gap-5 mt-12 flex-wrap"
+          >
+            <Link href="/demo">
+              <motion.button
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 340, damping: 22 }}
+                className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white"
                 style={{
-                  background:
-                    "linear-gradient(135deg, #D98E3B, #B56F28)",
-                  boxShadow:
-                    "0 10px 30px -8px rgba(217,142,59,.6)",
+                  background: "linear-gradient(135deg, #D98E3B, #B56F28)",
+                  boxShadow: "0 10px 30px -8px rgba(217,142,59,.6)",
                 }}
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Request a Demo
                   <Sparkles size={17} className="transition-transform group-hover:rotate-12" />
                 </span>
-              </button>
+              </motion.button>
             </Link>
 
-            <a
+            <motion.a
               href="#features"
-              className="rounded-full px-9 py-4 border-2 font-semibold hover:bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+              whileHover={{ scale: 1.05, y: -3 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 340, damping: 22 }}
+              className="rounded-full px-9 py-4 border-2 font-semibold"
               style={{
                 borderColor: "#D7D7D7",
                 color: BRAND.indigo,
@@ -184,28 +251,27 @@ export default function Hero() {
               }}
             >
               Explore Features
-            </a>
+            </motion.a>
 
-          </div>
+          </motion.div>
 
         </motion.div>
 
         {/* Payment Flow */}
 
         <motion.div
-          initial={{ opacity: 0, y: 70 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: .8 }}
+          variants={staggerContainer(0.15)}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
           className="mt-28"
         >
 
           <div className="grid lg:grid-cols-3 gap-8">
 
-{[
+            {[
               {
                 number: "01",
-                icon: "pays",
                 title: "Traveler Pays",
                 body:
                   "The traveler pays using their local currency from anywhere in the world.",
@@ -213,7 +279,6 @@ export default function Hero() {
 
               {
                 number: "02",
-                icon: "settles",
                 title: "KwanPay Settles",
                 body:
                   "Payments are routed securely over Stellar with transparent settlement.",
@@ -221,14 +286,17 @@ export default function Hero() {
 
               {
                 number: "03",
-                icon: "paid",
                 title: "Operator Gets Paid",
                 body:
                   "Tourism operators receive funds quickly, improving cash flow and reducing payment friction.",
               },
             ].map((step, i) => (
-              <div key={step.number} className="relative group">
-                <div className="relative h-full rounded-3xl bg-white p-10 border border-slate-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 hover:border-amber-200 transition-all duration-500 overflow-hidden">
+              <motion.div key={step.number} variants={fadeUp} className="relative group">
+                <motion.div
+                  whileHover={{ y: -10, boxShadow: "0 30px 60px -18px rgba(30,35,64,0.28)" }}
+                  transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                  className="relative h-full rounded-3xl bg-white p-10 border border-slate-100 shadow-lg hover:border-amber-200 overflow-hidden"
+                >
                   {/* top accent line */}
                   <div
                     className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -253,7 +321,9 @@ export default function Hero() {
                       {step.number}
                     </span>
 
-                    <span
+                    <motion.span
+                      whileHover={{ scale: 1.1, rotate: 6 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
                       className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md"
                       style={{
                         background:
@@ -268,7 +338,7 @@ export default function Hero() {
                       ) : (
                         <BadgeCheck size={22} />
                       )}
-                    </span>
+                    </motion.span>
                   </div>
 
                   <h3
@@ -281,7 +351,7 @@ export default function Hero() {
                   <p className="mt-4 leading-7 text-slate-600">
                     {step.body}
                   </p>
-                </div>
+                </motion.div>
 
                 {/* connector */}
                 {i < 2 && (
@@ -297,14 +367,14 @@ export default function Hero() {
                     </svg>
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
 
           </div>
 
         </motion.div>
 
-      </div>
+      </motion.div>
 
     </section>
   );
