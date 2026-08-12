@@ -7,6 +7,7 @@ import { ArrowLeft, Mail, MapPin, User, Loader2 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { USER_TYPES } from "@/lib/constants";
 import { submitWaitlist } from "@/lib/waitlist";
+import type { WaitlistRequestData } from "@/lib/waitlist-schema";
 import FormCard from "@/components/forms/FormCard";
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
@@ -14,7 +15,7 @@ import SuccessCard from "@/components/forms/SuccessCard";
 import { fadeUp, staggerContainer } from "@/lib/motion";
 
 export default function WaitlistPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<WaitlistRequestData>({
     full_name: "",
     email: "",
     country: "",
@@ -161,7 +162,12 @@ export default function WaitlistPage() {
                   icon={User}
                   options={USER_TYPES}
                   value={form.role}
-                  onChange={(v) => setForm({ ...form, role: v })}
+                  onChange={(v) =>
+                    setForm({
+                      ...form,
+                      role: v as WaitlistRequestData["role"],
+                    })
+                  }
                   required
                 />
 

@@ -12,27 +12,37 @@ const BRAND = {
 export default function AdminLogin() {
   const router = useRouter();
 
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-
+    setError(null);
     setLoading(true);
 
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      body: JSON.stringify({ password }),
-    });
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
 
-    const data = await res.json();
+      if (res.ok && data.success) {
+        router.push("/admin");
+        router.refresh();
+        return;
+      }
 
-    setLoading(false);
-
-    if (data.success) {
-      router.push("/admin");
-    } else {
-      alert("Incorrect password");
+      setError(data.error ?? "Unable to sign in.");
+    } catch {
+      setError("Unable to reach the server. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,21 +61,40 @@ export default function AdminLogin() {
         </h1>
 
         <p className="mt-3 text-center text-slate-500">
-          Enter your administrator password.
+          Sign in with your administrator account.
         </p>
 
         <form
           onSubmit={handleLogin}
           className="mt-10 space-y-6"
         >
+          <input
+            type="email"
+            placeholder="Email address"
+            aria-label="Administrator email"
+            autoComplete="email"
+            required
+            className="w-full rounded-2xl border border-slate-300 px-5 py-4"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
           <input
             type="password"
             placeholder="Password"
+            aria-label="Administrator password"
+            autoComplete="current-password"
+            required
             className="w-full rounded-2xl border border-slate-300 px-5 py-4"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+          {error && (
+            <p role="alert" className="text-sm font-medium text-red-600">
+              {error}
+            </p>
+          )}
 
           <button
             disabled={loading}

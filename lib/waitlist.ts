@@ -1,19 +1,24 @@
-import { supabase } from "@/lib/supabase";
-
-export type WaitlistRequestData = {
-  full_name: string;
-  email: string;
-  country: string;
-  role: string;
-};
+import type { WaitlistRequestData } from "@/lib/waitlist-schema";
 
 export async function submitWaitlist(data: WaitlistRequestData) {
-  const { error } = await supabase.from("early_access").insert([data]);
+  const response = await fetch("/api/leads", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      source: "waitlist",
+      full_name: data.full_name,
+      email: data.email,
+      country: data.country,
+      audience_role: data.role,
+    }),
+  });
 
-  if (error) {
-    throw error;
+  if (!response.ok) {
+    const result = await response.json().catch(() => null);
+    throw new Error(result?.error ?? "Unable to join the waitlist");
   }
 
   return true;
 }
-

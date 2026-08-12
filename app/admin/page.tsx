@@ -1,127 +1,63 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import AdminDashboard from "@/components/admin/AdminDashboard";
 import DashboardHeader from "@/components/admin/DashboardHeader";
-import DashboardContent from "@/components/admin/DashboardContent";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
-
-
-const BRAND = {
-  paper: "#EDEFF0",
-};
-
-
-function isSameLocalDay(createdAt: string | null | undefined, now: Date) {
-  if (!createdAt) return false;
-  const created = new Date(createdAt);
-  if (Number.isNaN(created.getTime())) return false;
-  return created.toDateString() === now.toDateString();
-}
-
-function isInLastNDays(createdAt: string | null | undefined, now: Date, days: number) {
-  if (!createdAt) return false;
-  const created = new Date(createdAt);
-  if (Number.isNaN(created.getTime())) return false;
-
-  const weekAgo = new Date(now);
-  weekAgo.setDate(weekAgo.getDate() - days);
-
-  return created >= weekAgo;
-}
-
-function isSameMonth(createdAt: string | null | undefined, now: Date) {
-  if (!createdAt) return false;
-  const created = new Date(createdAt);
-  if (Number.isNaN(created.getTime())) return false;
-
-  return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-}
+import { getCurrentAdmin } from "@/lib/admin-auth";
+import type { AdminUser, LeadRecord } from "@/lib/admin-types";
+import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 export default async function AdminPage() {
-  const cookieStore = await cookies();
+  const currentAdmin = await getCurrentAdmin();
+  if (!currentAdmin) redirect("/admin/login");
 
-  const loggedIn = cookieStore.get("admin-auth")?.value === "true";
+  const supabaseAdmin = getSupabaseAdmin();
+  const [leadsResult, adminsResult] = await Promise.all([
+    supabaseAdmin
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1000),
+    supabaseAdmin
+      .from("admin_users")
+      .select(
+        "id, email, display_name, role, is_active, last_login_at, created_at"
+      )
+      .order("created_at"),
+  ]);
 
-  if (!loggedIn) {
-    redirect("/admin/login");
-  }
+  if (leadsResult.error || adminsResult.error) {
+    console.error("ADMIN CRM LOAD ERROR:", {
+      leads: leadsResult.error,
+      admins: adminsResult.error,
+    });
 
-  if (!supabaseAdmin) {
     return (
-      <main
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: BRAND.paper }}
-      >
-        <h1 className="text-2xl font-bold">Supabase is not configured.</h1>
+      <main className="min-h-screen bg-[#EDEFF0] px-6 py-20">
+        <div className="mx-auto max-w-2xl rounded-3xl border border-red-200 bg-white p-10">
+          <h1 className="text-2xl font-black text-[#1E2340]">
+            Admin CRM is not ready
+          </h1>
+          <p className="mt-4 leading-7 text-slate-600">
+            Apply the latest Supabase migration, then refresh this page. The
+            required file is{" "}
+            <code>supabase/migrations/202608120002_admin_crm.sql</code>.
+          </p>
+        </div>
       </main>
     );
   }
 
-
-  const { data: waitlist, error } = await supabaseAdmin
-  .from("waitlist")
-  .select("*")
-  .order("created_at", { ascending: false });
-
-if (error) {
-  console.error("ADMIN WAITLIST ERROR:", error);
-}
-
-  const safeWaitlist = waitlist ?? [];
-
-  // Compute statistics once (instead of filtering inside JSX)
-  const now = new Date();
-  const totalWaitlistCount = safeWaitlist.length;
-  const joinedTodayCount = safeWaitlist.filter((user) => isSameLocalDay(user.created_at, now)).length;
-  const thisWeekCount = safeWaitlist.filter((user) => isInLastNDays(user.created_at, now, 7)).length;
-  const thisMonthCount = safeWaitlist.filter((user) => isSameMonth(user.created_at, now)).length;
-
   return (
-    <main
-      className="min-h-screen py-14 px-6"
-      style={{ background: BRAND.paper }}
-    >
-      <div className="max-w-7xl mx-auto">
-        <DashboardHeader />
-
-        {/* Statistics */}
-
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4 mb-10">
-          {/* Total */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-            <p className="text-sm text-slate-500">Total Waitlist</p>
-            <h2 className="mt-3 text-4xl font-black text-[#1E2340]">{totalWaitlistCount}</h2>
-            <p className="mt-2 text-sm text-slate-500">Total registrations</p>
-          </div>
-
-          {/* Today */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-            <p className="text-sm text-slate-500">Joined Today</p>
-            <h2 className="mt-3 text-4xl font-black text-green-600">{joinedTodayCount}</h2>
-            <p className="mt-2 text-sm text-slate-500">New today</p>
-          </div>
-
-          {/* This Week */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-            <p className="text-sm text-slate-500">This Week</p>
-            <h2 className="mt-3 text-4xl font-black text-blue-600">{thisWeekCount}</h2>
-            <p className="mt-2 text-sm text-slate-500">Last 7 days</p>
-          </div>
-
-          {/* This Month */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-            <p className="text-sm text-slate-500">This Month</p>
-            <h2 className="mt-3 text-4xl font-black text-amber-600">{thisMonthCount}</h2>
-            <p className="mt-2 text-sm text-slate-500">Current month</p>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <DashboardContent people={safeWaitlist} />
-        </div>
+    <main className="min-h-screen bg-[#EDEFF0] px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mx-auto max-w-[1500px]">
+        <DashboardHeader admin={currentAdmin} />
+        <AdminDashboard
+          initialLeads={leadsResult.data as LeadRecord[]}
+          initialAdmins={adminsResult.data as AdminUser[]}
+          currentAdmin={currentAdmin}
+          now={new Date().toISOString()}
+        />
       </div>
     </main>
   );
 }
-
-

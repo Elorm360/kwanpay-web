@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 type ToastKind = "success" | "error";
@@ -22,17 +22,12 @@ export default function ToastNotification({
   durationMs = 5000,
   onClose,
 }: ToastNotificationProps) {
-  // Keep this component purely controlled by `open` to avoid sync state updates warnings.
-  const [timerId, setTimerId] = useState<number | null>(null);
-
   useEffect(() => {
     if (!open) return;
 
     const id = window.setTimeout(() => {
       onClose();
     }, durationMs);
-
-    setTimerId(id);
 
     return () => {
       window.clearTimeout(id);

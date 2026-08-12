@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { USER_TYPES } from "@/lib/constants";
-import { submitDemo } from "@/lib/demo";
+import { submitDemo, type DemoRequestData } from "@/lib/demo";
 import FormCard from "@/components/forms/FormCard";
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
@@ -33,7 +33,14 @@ const transactions = [
 ];
 
 export default function DemoPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    full_name: string;
+    email: string;
+    country: string;
+    company: string;
+    user_type: DemoRequestData["user_type"];
+    message: string;
+  }>({
     full_name: "",
     email: "",
     country: "",
@@ -196,7 +203,12 @@ export default function DemoPage() {
                       icon={User}
                       options={USER_TYPES}
                       value={form.user_type}
-                      onChange={(v) => setForm({ ...form, user_type: v })}
+                      onChange={(v) =>
+                        setForm({
+                          ...form,
+                          user_type: v as DemoRequestData["user_type"],
+                        })
+                      }
                       required
                     />
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Mail, ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
+import { Mail, MapPin, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 

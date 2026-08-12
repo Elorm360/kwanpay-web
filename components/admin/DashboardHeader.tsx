@@ -1,13 +1,14 @@
 import LogoutButton from "@/components/admin/LogoutButton";
+import type { AdminUser } from "@/lib/admin-types";
 
 const BRAND = {
   indigo: "#1E2340",
   amber: "#D98E3B",
 };
 
-export default function DashboardHeader() {
+export default function DashboardHeader({ admin }: { admin: AdminUser }) {
   return (
-    <div className="flex items-center justify-between mb-12">
+    <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-10">
 
       <div>
 
@@ -26,16 +27,18 @@ export default function DashboardHeader() {
         </h1>
 
         <p className="mt-4 text-slate-500 text-lg">
-          Monitor your early access community.
+          Manage leads, follow-ups, and your operations team.
         </p>
 
       </div>
 
       <div className="flex items-center gap-4">
-
-        <span className="text-sm text-slate-500">
-          Administrator
-        </span>
+        <div className="text-right">
+          <p className="text-sm font-semibold text-slate-700">
+            {admin.display_name}
+          </p>
+          <p className="text-xs capitalize text-slate-500">{admin.role}</p>
+        </div>
 
         <LogoutButton />
 
