@@ -7,6 +7,18 @@ import {
 } from "@/lib/admin-session";
 
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.hostname === "transvista-landing.vercel.app") {
+    const destination = request.nextUrl.clone();
+    destination.hostname = "kwanpay.vercel.app";
+    destination.protocol = "https:";
+    destination.port = "";
+
+    return NextResponse.redirect(destination, 308);
+  }
+
+  const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
+  if (!isAdminPath) return NextResponse.next();
+
   const isLoginPage = request.nextUrl.pathname === "/admin/login";
   const session = await verifyAdminSessionToken(
     request.cookies.get(ADMIN_SESSION_COOKIE)?.value,
@@ -27,5 +39,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|icon.svg|robots.txt|sitemap.xml).*)",
+  ],
 };
