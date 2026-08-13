@@ -41,6 +41,8 @@ export type LeadRecord = {
   assigned_admin_id: string | null;
   internal_notes: string | null;
   follow_up_at: string | null;
+  archived_at: string | null;
+  archived_by_admin_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -66,6 +68,12 @@ export const leadPatchSchema = z
   .refine((value) => Object.keys(value).length > 0, {
     message: "At least one field is required.",
   });
+
+export const leadArchiveSchema = z
+  .object({
+    archived: z.boolean(),
+  })
+  .strict();
 
 export const adminCreateSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),

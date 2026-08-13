@@ -38,9 +38,7 @@ export default async function AdminPage() {
             Admin CRM is not ready
           </h1>
           <p className="mt-4 leading-7 text-slate-600">
-            Apply the latest Supabase migration, then refresh this page. The
-            required file is{" "}
-            <code>supabase/migrations/202608120002_admin_crm.sql</code>.
+            Apply the latest Supabase migrations, then refresh this page.
           </p>
         </div>
       </main>

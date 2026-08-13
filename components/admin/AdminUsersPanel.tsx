@@ -7,6 +7,7 @@ import {
   type AdminRole,
   type AdminUser,
 } from "@/lib/admin-types";
+import AdminUserPanel from "./AdminUserPanel";
 
 export default function AdminUsersPanel({
   currentAdmin,
@@ -23,6 +24,7 @@ export default function AdminUsersPanel({
   const [role, setRole] = useState<AdminRole>("operator");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   if (currentAdmin.role !== "owner") return null;
 
@@ -68,11 +70,32 @@ export default function AdminUsersPanel({
 
     if (!response.ok) {
       setError(data.error ?? "Unable to update administrator.");
-      return;
+      return false;
     }
 
     onUsersChange(users.map((user) => (user.id === id ? data.user : user)));
+    return true;
   }
+
+  async function deleteUser(id: string) {
+    setError(null);
+    const response = await fetch(`/api/admin/users/${id}`, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error ?? "Unable to delete administrator.");
+      return false;
+    }
+
+    onUsersChange(users.filter((user) => user.id !== id));
+    setSelectedUserId(null);
+    return true;
+  }
+
+  const selectedUser =
+    users.find((user) => user.id === selectedUserId) ?? null;
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
@@ -93,6 +116,7 @@ export default function AdminUsersPanel({
               <th className="pb-3 font-medium">Role</th>
               <th className="pb-3 font-medium">Access</th>
               <th className="pb-3 font-medium">Last login</th>
+              <th className="pb-3 font-medium">Details</th>
             </tr>
           </thead>
           <tbody>
@@ -142,6 +166,15 @@ export default function AdminUsersPanel({
                   {user.last_login_at
                     ? new Date(user.last_login_at).toLocaleDateString()
                     : "Never"}
+                </td>
+                <td className="py-4">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUserId(user.id)}
+                    className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-600"
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
@@ -196,6 +229,16 @@ export default function AdminUsersPanel({
         </button>
       </form>
       {error && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
+      {selectedUser && (
+        <AdminUserPanel
+          key={selectedUser.id}
+          currentAdmin={currentAdmin}
+          user={selectedUser}
+          onClose={() => setSelectedUserId(null)}
+          onDeleted={deleteUser}
+          onUpdated={updateUser}
+        />
+      )}
     </section>
   );
 }

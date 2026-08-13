@@ -67,3 +67,43 @@ export async function PATCH(
 
   return NextResponse.json({ lead: lead as LeadRecord });
 }
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const admin = await getCurrentAdmin("owner");
+  if (!admin) {
+    return NextResponse.json({ error: "Owner access required." }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const supabaseAdmin = getSupabaseAdmin();
+  const { data: deleted, error } = await supabaseAdmin
+    .from("leads")
+    .delete()
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    console.error("LEAD DELETE ERROR:", error);
+    return NextResponse.json({ error: "Unable to delete lead." }, { status: 500 });
+  }
+  if (!deleted) {
+    return NextResponse.json({ error: "Lead not found." }, { status: 404 });
+  }
+
+  const { error: auditError } = await supabaseAdmin
+    .from("member_deletion_events")
+    .insert({
+      entity_type: "lead",
+      entity_id: id,
+      actor_admin_id: admin.id,
+    });
+  if (auditError) {
+    console.error("LEAD DELETE AUDIT ERROR:", auditError);
+  }
+
+  return NextResponse.json({ deleted: true });
+}
