@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   hasAdminRole,
+  leadArchiveSchema,
   leadPatchSchema,
 } from "../lib/admin-types";
 import { leadSubmissionSchema } from "../lib/lead-schema";
@@ -38,5 +39,13 @@ describe("admin CRM validation", () => {
     expect(hasAdminRole("owner", "admin")).toBe(true);
     expect(hasAdminRole("operator", "operator")).toBe(true);
     expect(hasAdminRole("viewer", "operator")).toBe(false);
+  });
+
+  it("accepts only explicit lead archive actions", () => {
+    expect(leadArchiveSchema.safeParse({ archived: true }).success).toBe(true);
+    expect(
+      leadArchiveSchema.safeParse({ archived: true, email: "x@example.com" })
+        .success
+    ).toBe(false);
   });
 });

@@ -60,6 +60,11 @@ export default function LeadsTable({
                     {lead.full_name}
                   </p>
                   <p className="mt-1 text-sm text-slate-500">{lead.email}</p>
+                  {lead.archived_at && (
+                    <span className="mt-2 inline-block rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                      Archived
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-5">
                   <div className="flex flex-wrap gap-1">

@@ -74,3 +74,71 @@ export async function PATCH(
 
   return NextResponse.json({ user: data as AdminUser });
 }
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const admin = await getCurrentAdmin("owner");
+  if (!admin) {
+    return NextResponse.json({ error: "Owner access required." }, { status: 403 });
+  }
+
+  const { id } = await params;
+  if (id === admin.id) {
+    return NextResponse.json(
+      { error: "You cannot delete your own account." },
+      { status: 400 }
+    );
+  }
+
+  const supabaseAdmin = getSupabaseAdmin();
+  const { data: target, error: readError } = await supabaseAdmin
+    .from("admin_users")
+    .select("id, role, is_active")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (readError || !target) {
+    return NextResponse.json(
+      { error: "Administrator not found." },
+      { status: 404 }
+    );
+  }
+
+  if (target.role === "owner" && target.is_active) {
+    const { count } = await supabaseAdmin
+      .from("admin_users")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "owner")
+      .eq("is_active", true);
+
+    if ((count ?? 0) <= 1) {
+      return NextResponse.json(
+        { error: "At least one active owner is required." },
+        { status: 400 }
+      );
+    }
+  }
+
+  const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(id);
+  if (deleteError) {
+    return NextResponse.json(
+      { error: "Unable to delete administrator." },
+      { status: 500 }
+    );
+  }
+
+  const { error: auditError } = await supabaseAdmin
+    .from("member_deletion_events")
+    .insert({
+      entity_type: "admin_user",
+      entity_id: id,
+      actor_admin_id: admin.id,
+    });
+  if (auditError) {
+    console.error("ADMIN DELETE AUDIT ERROR:", auditError);
+  }
+
+  return NextResponse.json({ deleted: true });
+}

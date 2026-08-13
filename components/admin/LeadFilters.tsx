@@ -7,12 +7,14 @@ type Props = {
   source: string;
   status: string;
   owner: string;
+  archive: string;
   pageSize: number;
   admins: AdminUser[];
   onSearchChange: (value: string) => void;
   onSourceChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   onOwnerChange: (value: string) => void;
+  onArchiveChange: (value: string) => void;
   onPageSizeChange: (value: number) => void;
   onExport: () => void;
 };
@@ -22,7 +24,7 @@ const inputClass =
 
 export default function LeadFilters(props: Props) {
   return (
-    <div className="grid gap-3 rounded-3xl border border-slate-200 bg-white p-5 lg:grid-cols-[minmax(220px,2fr)_repeat(4,minmax(130px,1fr))_auto]">
+    <div className="grid gap-3 rounded-3xl border border-slate-200 bg-white p-5 lg:grid-cols-[minmax(220px,2fr)_repeat(5,minmax(130px,1fr))_auto]">
       <input
         type="search"
         value={props.search}
@@ -70,6 +72,16 @@ export default function LeadFilters(props: Props) {
               {admin.display_name}
             </option>
           ))}
+      </select>
+      <select
+        value={props.archive}
+        onChange={(event) => props.onArchiveChange(event.target.value)}
+        aria-label="Filter by archive state"
+        className={inputClass}
+      >
+        <option value="active">Active members</option>
+        <option value="archived">Archived members</option>
+        <option value="all">All members</option>
       </select>
       <select
         value={props.pageSize}
