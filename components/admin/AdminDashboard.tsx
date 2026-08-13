@@ -38,6 +38,7 @@ export default function AdminDashboard({
   const [source, setSource] = useState("all");
   const [status, setStatus] = useState("all");
   const [owner, setOwner] = useState("all");
+  const [archive, setArchive] = useState("active");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -64,10 +65,19 @@ export default function AdminDashboard({
         (owner === "unassigned"
           ? !lead.assigned_admin_id
           : lead.assigned_admin_id === owner);
+      const matchesArchive =
+        archive === "all" ||
+        (archive === "archived" ? Boolean(lead.archived_at) : !lead.archived_at);
 
-      return matchesSearch && matchesSource && matchesStatus && matchesOwner;
+      return (
+        matchesSearch &&
+        matchesSource &&
+        matchesStatus &&
+        matchesOwner &&
+        matchesArchive
+      );
     });
-  }, [leads, owner, search, source, status]);
+  }, [archive, leads, owner, search, source, status]);
 
   const pageCount = Math.max(1, Math.ceil(filteredLeads.length / pageSize));
   const currentPage = Math.min(page, pageCount);
@@ -78,15 +88,18 @@ export default function AdminDashboard({
 
   const metrics = useMemo(() => {
     const nowTime = new Date(now).getTime();
-    const waitlist = leads.filter((lead) =>
+    const activeLeads = leads.filter((lead) => !lead.archived_at);
+    const waitlist = activeLeads.filter((lead) =>
       lead.sources.includes("waitlist")
     ).length;
-    const demo = leads.filter((lead) => lead.sources.includes("demo")).length;
-    const both = leads.filter(
+    const demo = activeLeads.filter((lead) =>
+      lead.sources.includes("demo")
+    ).length;
+    const both = activeLeads.filter(
       (lead) =>
         lead.sources.includes("waitlist") && lead.sources.includes("demo")
     ).length;
-    const overdue = leads.filter(
+    const overdue = activeLeads.filter(
       (lead) =>
         lead.follow_up_at &&
         new Date(lead.follow_up_at).getTime() < nowTime &&
@@ -98,13 +111,19 @@ export default function AdminDashboard({
       demo,
       both,
       overdue,
-      conversion: leads.length ? Math.round((both / leads.length) * 100) : 0,
+      active: activeLeads.length,
+      archived: leads.length - activeLeads.length,
+      conversion: activeLeads.length
+        ? Math.round((both / activeLeads.length) * 100)
+        : 0,
     };
   }, [leads, now]);
 
   const statusCounts = LEAD_STATUSES.map((leadStatus) => ({
     status: leadStatus,
-    count: leads.filter((lead) => lead.status === leadStatus).length,
+    count: leads.filter(
+      (lead) => !lead.archived_at && lead.status === leadStatus
+    ).length,
   }));
   const largestStatus = Math.max(1, ...statusCounts.map((item) => item.count));
 
@@ -118,6 +137,11 @@ export default function AdminDashboard({
       current.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead))
     );
     setSelectedLead(updatedLead);
+  }
+
+  function removeLead(id: string) {
+    setLeads((current) => current.filter((lead) => lead.id !== id));
+    setSelectedLead(null);
   }
 
   function exportCsv() {
@@ -166,7 +190,11 @@ export default function AdminDashboard({
   return (
     <div className="space-y-8">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard title="Total leads" value={leads.length} helper="Unique email addresses" />
+        <StatCard
+          title="Active members"
+          value={metrics.active}
+          helper={`${metrics.archived} archived`}
+        />
         <StatCard title="Early access" value={metrics.waitlist} helper="Waitlist signups" />
         <StatCard title="Demo requests" value={metrics.demo} helper="Sales conversations" />
         <StatCard title="Cross-funnel rate" value={`${metrics.conversion}%`} helper={`${metrics.both} appear in both`} />
@@ -180,6 +208,7 @@ export default function AdminDashboard({
             source={source}
             status={status}
             owner={owner}
+            archive={archive}
             pageSize={pageSize}
             admins={admins}
             onSearchChange={(value) =>
@@ -193,6 +222,9 @@ export default function AdminDashboard({
             }
             onOwnerChange={(value) =>
               resetFilterPage(() => setOwner(value))
+            }
+            onArchiveChange={(value) =>
+              resetFilterPage(() => setArchive(value))
             }
             onPageSizeChange={(value) =>
               resetFilterPage(() => setPageSize(value))
@@ -248,7 +280,9 @@ export default function AdminDashboard({
           lead={selectedLead}
           admins={admins}
           canEdit={hasAdminRole(currentAdmin.role, "operator")}
+          canDelete={currentAdmin.role === "owner"}
           onClose={() => setSelectedLead(null)}
+          onDeleted={removeLead}
           onUpdated={updateLead}
         />
       )}

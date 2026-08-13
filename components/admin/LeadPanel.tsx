@@ -23,13 +23,17 @@ export default function LeadPanel({
   lead,
   admins,
   canEdit,
+  canDelete,
   onClose,
+  onDeleted,
   onUpdated,
 }: {
   lead: LeadRecord;
   admins: AdminUser[];
   canEdit: boolean;
+  canDelete: boolean;
   onClose: () => void;
+  onDeleted: (id: string) => void;
   onUpdated: (lead: LeadRecord) => void;
 }) {
   const [status, setStatus] = useState<LeadStatus>(lead.status);
@@ -39,6 +43,9 @@ export default function LeadPanel({
   const [followUp, setFollowUp] = useState(toLocalDateTime(lead.follow_up_at));
   const [events, setEvents] = useState<LeadAuditEvent[]>([]);
   const [saving, setSaving] = useState(false);
+  const [managing, setManaging] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   async function loadAudit() {
@@ -83,6 +90,58 @@ export default function LeadPanel({
     setSaving(false);
   }
 
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(lead.email);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError("Unable to copy the email address.");
+    }
+  }
+
+  async function setArchived(archived: boolean) {
+    setManaging(true);
+    setError(null);
+    const response = await fetch(`/api/admin/leads/${lead.id}/archive`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ archived }),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(
+        data.error ?? (archived ? "Unable to archive lead." : "Unable to restore lead.")
+      );
+      setManaging(false);
+      return;
+    }
+
+    onUpdated(data.lead);
+    await loadAudit();
+    setManaging(false);
+  }
+
+  async function deleteLead() {
+    if (deleteConfirmation !== lead.email) return;
+
+    setManaging(true);
+    setError(null);
+    const response = await fetch(`/api/admin/leads/${lead.id}`, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error ?? "Unable to delete lead.");
+      setManaging(false);
+      return;
+    }
+
+    onDeleted(lead.id);
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/30">
       <button
@@ -100,7 +159,26 @@ export default function LeadPanel({
             <h2 className="mt-2 text-3xl font-black text-[#1E2340]">
               {lead.full_name}
             </h2>
-            <p className="mt-1 text-slate-500">{lead.email}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <a
+                href={`mailto:${lead.email}`}
+                className="text-slate-500 underline-offset-4 hover:underline"
+              >
+                {lead.email}
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-600"
+              >
+                {copied ? "Copied" : "Copy email"}
+              </button>
+            </div>
+            {lead.archived_at && (
+              <p className="mt-3 text-sm font-semibold text-slate-500">
+                Archived {new Date(lead.archived_at).toLocaleString()}
+              </p>
+            )}
           </div>
           <button
             type="button"
@@ -257,6 +335,55 @@ export default function LeadPanel({
             )}
           </div>
         </div>
+
+        {canEdit && (
+          <div className="mt-10 border-t border-slate-200 pt-8">
+            <h3 className="text-lg font-bold text-[#1E2340]">
+              Member management
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              Archive members to remove them from the active list while keeping
+              their history.
+            </p>
+            <button
+              type="button"
+              disabled={managing}
+              onClick={() => setArchived(!lead.archived_at)}
+              className="mt-4 rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 disabled:opacity-50"
+            >
+              {managing
+                ? "Updating..."
+                : lead.archived_at
+                  ? "Restore member"
+                  : "Archive member"}
+            </button>
+          </div>
+        )}
+
+        {canDelete && (
+          <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5">
+            <h3 className="font-bold text-red-800">Delete permanently</h3>
+            <p className="mt-2 text-sm leading-6 text-red-700">
+              This removes the member and their activity history. Enter{" "}
+              <strong>{lead.email}</strong> to confirm.
+            </p>
+            <input
+              type="email"
+              value={deleteConfirmation}
+              onChange={(event) => setDeleteConfirmation(event.target.value)}
+              placeholder={lead.email}
+              className="mt-4 w-full rounded-xl border border-red-200 bg-white px-4 py-3 text-sm"
+            />
+            <button
+              type="button"
+              disabled={managing || deleteConfirmation !== lead.email}
+              onClick={deleteLead}
+              className="mt-3 rounded-full bg-red-700 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+            >
+              Delete member permanently
+            </button>
+          </div>
+        )}
       </aside>
     </div>
   );
