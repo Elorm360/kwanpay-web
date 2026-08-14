@@ -46,6 +46,10 @@ class ProfileService {
       throw Exception('No authenticated user.');
     }
 
+    if (user.emailConfirmedAt == null) {
+      throw Exception('Verify your email before creating a wallet.');
+    }
+
     try {
       await _supabase.from('profiles').upsert({
         'id': user.id,
@@ -68,7 +72,7 @@ class ProfileService {
   Future<void> createProfileIfNotExists() async {
     final user = currentUser;
 
-    if (user == null) return;
+    if (user == null || user.emailConfirmedAt == null) return;
 
     final profile = await getProfile();
 

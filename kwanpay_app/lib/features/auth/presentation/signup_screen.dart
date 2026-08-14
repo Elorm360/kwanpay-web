@@ -8,6 +8,7 @@ import '../../../core/widgets/password_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/profile_service.dart';
+import '../../navigation/main_navigation_screen.dart';
 import 'email_verification_screen.dart';
 import 'welcome_screen.dart';
 
@@ -44,31 +45,40 @@ class _SignupScreenState extends State<SignupScreen> {
         isLoading = true; 
       });
 
-      final response = await AuthService().signUp(
+      final authService = AuthService();
+      final response = await authService.signUp(
         email: email,
         password: password,
         fullName: name,
       );
 
-      // Only create profile if user is authenticated with a session
-      if (response.user != null && response.session != null) {
+      if (!mounted) return;
+
+      final user = response.user;
+      if (user != null &&
+          response.session != null &&
+          authService.isEmailVerified(user)) {
         await ProfileService().createProfile(
           fullName: name,
           email: email,
         );
+
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MainNavigationScreen(),
+          ),
+        );
+        return;
       }
 
-      if (!mounted) return;
-
-     Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (_) => EmailVerificationScreen(
-      email: email,
-      password: password,
-    ),
-  ),
-);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => EmailVerificationScreen(email: email),
+        ),
+      );
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),

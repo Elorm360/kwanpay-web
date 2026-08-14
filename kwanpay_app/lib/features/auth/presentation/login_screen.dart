@@ -9,6 +9,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/profile_service.dart';
 import '../../navigation/main_navigation_screen.dart';
+import 'email_verification_screen.dart';
 import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,10 +36,25 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       setState(() => isLoading = true);
 
-      await AuthService().signIn(
-        email: emailController.text.trim(),
+      final email = emailController.text.trim();
+      final authService = AuthService();
+      final response = await authService.signIn(
+        email: email,
         password: passwordController.text,
       );
+
+      final user = response.user ?? Supabase.instance.client.auth.currentUser;
+      if (!mounted) return;
+
+      if (!authService.isEmailVerified(user)) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmailVerificationScreen(email: email),
+          ),
+        );
+        return;
+      }
 
       await ProfileService().createProfileIfNotExists();
 
@@ -49,6 +65,20 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
       );
     } on AuthException catch (e) {
+      if (!mounted) return;
+      final message = e.message.toLowerCase();
+      if (message.contains('email not confirmed') ||
+          message.contains('email_not_confirmed')) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmailVerificationScreen(
+              email: emailController.text.trim(),
+            ),
+          ),
+        );
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
       );

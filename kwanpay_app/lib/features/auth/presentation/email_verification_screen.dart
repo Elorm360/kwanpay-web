@@ -3,22 +3,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/services/auth_service.dart';
+import '../../../core/services/profile_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/secondary_button.dart';
-import '../../../core/services/profile_service.dart';
 import '../../navigation/main_navigation_screen.dart';
+import '../widgets/otp_code_field.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
-  final String password;
 
   const EmailVerificationScreen({
     super.key,
     required this.email,
-    required this.password,
   });
 
   @override
@@ -27,42 +27,98 @@ class EmailVerificationScreen extends StatefulWidget {
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+  final _codeController = TextEditingController();
+  final _authService = AuthService();
+
   StreamSubscription<AuthState>? _authSubscription;
+  Timer? _resendTimer;
+
+  bool _isVerifying = false;
   bool _isResending = false;
-  bool _isChecking = false;
+  bool _completed = false;
+  int _resendSeconds = 0;
 
   @override
   void initState() {
     super.initState();
+    _startResendCooldown();
     _listenToAuthChanges();
   }
 
   void _listenToAuthChanges() {
     _authSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (!mounted) return;
-
       final session = data.session;
-      if (session != null && session.user.emailConfirmedAt != null) {
-        _navigateToDashboard();
+      if (session != null && _authService.isEmailVerified(session.user)) {
+        unawaited(_completeVerifiedSignup(session.user));
       }
     });
   }
 
-  Future<void> _resendEmail() async {
+  void _startResendCooldown() {
+    _resendTimer?.cancel();
+    setState(() => _resendSeconds = 60);
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_resendSeconds <= 1) {
+        timer.cancel();
+        if (mounted) setState(() => _resendSeconds = 0);
+        return;
+      }
+      if (mounted) setState(() => _resendSeconds -= 1);
+    });
+  }
+
+  Future<void> _verifyCode([String? value]) async {
+    final token = (value ?? _codeController.text).trim();
+    if (token.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter the 6-digit code from your email.')),
+      );
+      return;
+    }
+
+    setState(() => _isVerifying = true);
+
+    try {
+      final response = await _authService.verifySignupOtp(
+        email: widget.email,
+        token: token,
+      );
+
+      final user = response.user ?? Supabase.instance.client.auth.currentUser;
+      if (user == null || !_authService.isEmailVerified(user)) {
+        throw Exception('Email is not verified yet.');
+      }
+
+      await _completeVerifiedSignup(user);
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => _isVerifying = false);
+    }
+  }
+
+  Future<void> _resendCode() async {
+    if (_resendSeconds > 0) return;
+
     setState(() => _isResending = true);
 
     try {
-      await Supabase.instance.client.auth.resend(
-        type: OtpType.signup,
-        email: widget.email,
-      );
-
+      await _authService.resendSignupOtp(email: widget.email);
       if (!mounted) return;
 
+      _startResendCooldown();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Verification email resent! Please check your inbox.'),
+          content: Text('A new verification code was sent to your email.'),
         ),
       );
     } on AuthException catch (e) {
@@ -80,60 +136,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     }
   }
 
-  Future<void> _checkVerification() async {
-    setState(() => _isChecking = true);
-
-    try {
-      // After email confirmation, the user can sign in.
-      // Attempt sign-in; if successful, the email was confirmed.
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: widget.email,
-        password: widget.password,
-      );
-
-      final user = response.user;
-      if (user != null && user.emailConfirmedAt != null) {
-        await _ensureProfileCreated(user);
-        _navigateToDashboard();
-        return;
-      }
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Email not yet verified. Please check your inbox and click the confirmation link.',
-          ),
-        ),
-      );
-    } on AuthException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.message.contains('Invalid login credentials')
-                ? 'Email not yet verified. Please check your inbox and click the confirmation link.'
-                : e.message,
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-    } finally {
-      if (mounted) setState(() => _isChecking = false);
-    }
-  }
-
-  Future<void> _ensureProfileCreated(User user) async {
-    try {
-      final profileService = ProfileService();
-      await profileService.createProfileIfNotExists();
-    } catch (_) {
-      // Profile might already exist, that's okay
-    }
+  Future<void> _completeVerifiedSignup(User user) async {
+    if (_completed) return;
+    _completed = true;
+    await ProfileService().createProfileIfNotExists();
+    _navigateToDashboard();
   }
 
   void _navigateToDashboard() {
@@ -150,6 +157,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void dispose() {
     _authSubscription?.cancel();
+    _resendTimer?.cancel();
+    _codeController.dispose();
     super.dispose();
   }
 
@@ -163,8 +172,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           child: Column(
             children: [
               const SizedBox(height: 60),
-
-              // Mail Icon
               Container(
                 width: 100,
                 height: 100,
@@ -173,32 +180,23 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  Icons.email_rounded,
+                  Icons.mark_email_read_rounded,
                   size: 50,
                   color: AppColors.accent,
                 ),
               ),
-
               const SizedBox(height: 40),
-
-              // Title
               const Text(
-                'Check Your Email',
+                'Verify Your Email',
                 style: AppTextStyles.headline,
               ),
-
               const SizedBox(height: 20),
-
-              // Description
-              Text(
-                'We\'ve sent a verification email to:',
+              const Text(
+                'Enter the 6-digit code we sent to:',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body,
               ),
-
               const SizedBox(height: 12),
-
-              // Email address
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -218,38 +216,28 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   ),
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              const Text(
-                'Please click the confirmation link in the email to verify your account, then tap the button below.',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.caption,
+              const SizedBox(height: 32),
+              OtpCodeField(
+                controller: _codeController,
+                onCompleted: _verifyCode,
               ),
-
-              const SizedBox(height: 40),
-
-              // Continue button
-              _isChecking
+              const SizedBox(height: 32),
+              _isVerifying
                   ? const Center(child: CircularProgressIndicator())
                   : PrimaryButton(
-                      text: "I've Verified My Email",
-                      onPressed: _checkVerification,
+                      text: 'Verify Email',
+                      onPressed: _verifyCode,
                     ),
-
               const SizedBox(height: 16),
-
-              // Resend button
               _isResending
                   ? const Center(child: CircularProgressIndicator())
                   : SecondaryButton(
-                      text: 'Resend Email',
-                      onPressed: _resendEmail,
+                      text: _resendSeconds > 0
+                          ? 'Resend code in ${_resendSeconds}s'
+                          : 'Resend Code',
+                      onPressed: _resendCode,
                     ),
-
               const SizedBox(height: 40),
-
-              // Back to sign in
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -269,4 +257,3 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 }
-

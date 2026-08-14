@@ -30,6 +30,10 @@ class WalletService {
       throw Exception("No authenticated user.");
     }
 
+    if (user.emailConfirmedAt == null) {
+      throw Exception("Verify your email before creating a wallet.");
+    }
+
     final walletId = generateWalletId();
 
 await _supabase.from('wallets').insert({

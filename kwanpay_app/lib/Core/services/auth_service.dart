@@ -27,6 +27,30 @@ class AuthService {
     );
   }
 
+  Future<AuthResponse> verifySignupOtp({
+    required String email,
+    required String token,
+  }) async {
+    return await _supabase.auth.verifyOTP(
+      type: OtpType.signup,
+      email: email,
+      token: token,
+    );
+  }
+
+  Future<void> resendSignupOtp({
+    required String email,
+  }) async {
+    await _supabase.auth.resend(
+      type: OtpType.signup,
+      email: email,
+    );
+  }
+
+  bool isEmailVerified(User? user) {
+    return user?.emailConfirmedAt != null;
+  }
+
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
