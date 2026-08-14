@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_shadows.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../models/operator_model.dart';
 
 class OperatorCard extends StatelessWidget {
@@ -16,24 +19,18 @@ class OperatorCard extends StatelessWidget {
       width: 260,
       margin: const EdgeInsets.only(right: 18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 150,
-            decoration: BoxDecoration(
-              color: const Color(0xFFEDEDED),
-              borderRadius: const BorderRadius.vertical(
+            decoration: const BoxDecoration(
+              color: AppColors.paper,
+              borderRadius: BorderRadius.vertical(
                 top: Radius.circular(24),
               ),
             ),
@@ -41,7 +38,7 @@ class OperatorCard extends StatelessWidget {
               child: Icon(
                 Icons.image_outlined,
                 size: 45,
-                color: Colors.grey,
+                color: AppColors.textSecondary,
               ),
             ),
           ),
@@ -52,17 +49,15 @@ class OperatorCard extends StatelessWidget {
               children: [
                 Text(
                   operatorModel.name,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   operatorModel.category,
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                  ),
+                  style: AppTextStyles.caption,
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -70,7 +65,7 @@ class OperatorCard extends StatelessWidget {
                     const Icon(
                       Icons.location_on,
                       size: 18,
-                      color: Colors.orange,
+                      color: AppColors.accent,
                     ),
                     const SizedBox(width: 4),
                     Expanded(
@@ -79,7 +74,7 @@ class OperatorCard extends StatelessWidget {
                     const Icon(
                       Icons.star,
                       size: 18,
-                      color: Colors.amber,
+                      color: AppColors.accent,
                     ),
                     Text(
                       operatorModel.rating.toString(),
@@ -91,7 +86,7 @@ class OperatorCard extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {},
-                    child: const Text("View Details"),
+                    child: const Text("Coming later"),
                   ),
                 ),
               ],
@@ -102,4 +97,3 @@ class OperatorCard extends StatelessWidget {
     );
   }
 }
-

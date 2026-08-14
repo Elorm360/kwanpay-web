@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/services/auth_service.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/kwanpay_lockup.dart';
 import '../auth/presentation/email_verification_screen.dart';
 import '../navigation/main_navigation_screen.dart';
 import '../onboarding/onboarding_screen.dart';
@@ -20,7 +21,6 @@ class _SplashScreenState extends State<SplashScreen> {
   String? _error;
   bool _navigated = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -29,12 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-
   Future<void> _bootstrap() async {
     try {
-      // Show the splash for branding.
-      await Future.delayed(const Duration(seconds: 4));
-
+      await Future.delayed(const Duration(seconds: 3));
 
       if (!mounted) return;
 
@@ -49,8 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     }
   }
-
-
 
   void _navigate(User? user) {
     if (!mounted) return;
@@ -76,46 +71,45 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.paper,
+      backgroundColor: AppColors.primary,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                "assets/images/kwanpay_logo.png",
-                width: 180,
+                'assets/images/kwanpay_lockup.png',
+                width: 320,
+                errorBuilder: (_, __, ___) {
+                  return const KwanPayLockup(
+                    onDark: true,
+                    showTagline: true,
+                    markSize: 88,
+                    wordmarkSize: 40,
+                  );
+                },
               ),
-              const SizedBox(height: 30),
-              const Text(
-                "KwanPay",
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                "Cross-border payments for African travel",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              if (_error != null) ...[
-                const SizedBox(height: 12),
+              const SizedBox(height: 40),
+              if (_error != null)
                 Text(
                   _error!,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.red,
+                    color: AppColors.error,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
+                )
+              else
+                const SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: AppColors.accent,
+                  ),
                 ),
-              ] else ...[
-                const SizedBox(height: 16),
-                const CircularProgressIndicator(),
-              ],
             ],
           ),
         ),

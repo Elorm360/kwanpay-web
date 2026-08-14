@@ -70,9 +70,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   Future<void> _verifyCode([String? value]) async {
     final token = (value ?? _codeController.text).trim();
-    if (token.length != 6) {
+    if (token.length < 6 || token.length > 8) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter the 6-digit code from your email.')),
+        const SnackBar(content: Text('Enter the verification code from your email.')),
       );
       return;
     }
@@ -192,7 +192,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Enter the 6-digit code we sent to:',
+                'Enter the 8-digit verification code we sent to:',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body,
               ),
@@ -215,6 +215,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     color: AppColors.primary,
                   ),
                 ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Check your inbox and spam folder. The code expires after a short time.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.caption,
               ),
               const SizedBox(height: 32),
               OtpCodeField(

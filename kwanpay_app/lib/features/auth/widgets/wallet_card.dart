@@ -12,6 +12,7 @@ class WalletCard extends StatefulWidget {
   final String status;
   final String currency;
   final VoidCallback onAddMoney;
+  final VoidCallback onPay;
 
   const WalletCard({
     super.key,
@@ -20,6 +21,7 @@ class WalletCard extends StatefulWidget {
     required this.status,
     required this.currency,
     required this.onAddMoney,
+    required this.onPay,
   });
 
   @override
@@ -50,7 +52,10 @@ class _WalletCardState extends State<WalletCard> {
             children: [
               const Text(
                 "Available Balance",
-                style: AppTextStyles.body,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
               ),
               IconButton(
                 splashRadius: 18,
@@ -64,6 +69,7 @@ class _WalletCardState extends State<WalletCard> {
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined,
                   size: 20,
+                  color: Colors.white70,
                 ),
               ),
             ],
@@ -117,14 +123,17 @@ hideBalance
                 width: 10,
                 height: 10,
                 decoration: const BoxDecoration(
-                  color: Colors.green,
+                  color: AppColors.success,
                   shape: BoxShape.circle,
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 widget.status,
-                style: AppTextStyles.body,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
               ),
             ],
           ),
@@ -138,7 +147,7 @@ hideBalance
                 child: SizedBox(
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: widget.onPay,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.accent,
                       foregroundColor: AppColors.primary,

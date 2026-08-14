@@ -33,11 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    final email = emailController.text.trim();
+    final authService = AuthService();
+
     try {
       setState(() => isLoading = true);
-
-      final email = emailController.text.trim();
-      final authService = AuthService();
       final response = await authService.signIn(
         email: email,
         password: passwordController.text,
@@ -47,6 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       if (!authService.isEmailVerified(user)) {
+        try {
+          await authService.resendSignupOtp(email: email);
+        } catch (_) {}
+
+        if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -69,6 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
       final message = e.message.toLowerCase();
       if (message.contains('email not confirmed') ||
           message.contains('email_not_confirmed')) {
+        try {
+          await authService.resendSignupOtp(
+            email: emailController.text.trim(),
+          );
+        } catch (_) {}
+
+        if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -112,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text("Welcome Back", style: AppTextStyles.headline),
               const SizedBox(height: 12),
               const Text(
-                "Sign in to your KwanPay wallet.",
+                "Sign in to your KwanPay account.",
                 style: AppTextStyles.body,
               ),
               const SizedBox(height: 40),
@@ -146,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Don't have an account? Create Wallet"),
+                  child: const Text("Don't have an account? Create Account"),
                 ),
               ),
             ],

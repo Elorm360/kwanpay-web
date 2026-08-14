@@ -51,6 +51,11 @@ class AuthService {
     return user?.emailConfirmedAt != null;
   }
 
+  bool isNewSignup(AuthResponse response) {
+    return response.user != null &&
+        (response.user!.identities?.isNotEmpty ?? false);
+  }
+
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }

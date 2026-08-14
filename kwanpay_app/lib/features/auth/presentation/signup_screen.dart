@@ -10,6 +10,7 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/services/profile_service.dart';
 import '../../navigation/main_navigation_screen.dart';
 import 'email_verification_screen.dart';
+import 'login_screen.dart';
 import 'welcome_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -73,6 +74,37 @@ class _SignupScreenState extends State<SignupScreen> {
         return;
       }
 
+      if (!authService.isNewSignup(response)) {
+        try {
+          await authService.resendSignupOtp(email: email);
+        } on AuthException catch (e) {
+          if (!mounted) return;
+          final message = e.message.toLowerCase();
+          final alreadyRegistered = message.contains('already') ||
+              message.contains('confirmed') ||
+              message.contains('registered');
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                alreadyRegistered
+                    ? 'This email already has an account. Sign in instead.'
+                    : e.message,
+              ),
+            ),
+          );
+
+          if (alreadyRegistered) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginScreen()),
+            );
+          }
+          return;
+        }
+      }
+
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -105,7 +137,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Your Travel Wallet'),
+        title: const Text('Create your account'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -115,12 +147,12 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               const SizedBox(height: 20),
               Text(
-                'Create Your\nTravel Wallet',
+                'Create your\nKwanPay account',
                 style: AppTextStyles.headline,
               ),
               const SizedBox(height: 12),
               const Text(
-                'Create your secure KwanPay wallet and start sending, receiving and paying across Africa.',
+                'Confirm your email, then you can send money to other KwanPay users.',
                 style: AppTextStyles.body,
               ),
               const SizedBox(height: 40),
@@ -145,7 +177,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: CircularProgressIndicator(),
                     )
                   : PrimaryButton(
-                      text: 'Create My Wallet',
+                      text: 'Create Account',
                       onPressed: () {
                         signUp();
                       },

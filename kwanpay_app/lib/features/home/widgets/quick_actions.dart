@@ -66,6 +66,7 @@ class QuickActions extends StatelessWidget {
                 child: ActionCard(
                   icon: Icons.currency_exchange_rounded,
                   title: "Convert",
+                  badge: "Soon",
                   onTap: () {
                     Navigator.push(
                       context,
@@ -84,6 +85,7 @@ class QuickActions extends StatelessWidget {
                 child: ActionCard(
                   icon: Icons.account_balance_wallet_outlined,
                   title: "Top Up",
+                  badge: "Soon",
                   onTap: () {
                     Navigator.push(
                       context,

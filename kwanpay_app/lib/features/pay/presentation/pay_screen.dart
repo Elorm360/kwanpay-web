@@ -33,7 +33,7 @@ class PayScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Text(
-                  "Find who you want to pay",
+                  "Find who you want to pay. Operator checkout is not live yet.",
                   style: AppTextStyles.caption.copyWith(
                     color: context.colorTextSecondary,
                   ),

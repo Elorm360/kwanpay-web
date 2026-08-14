@@ -21,11 +21,11 @@ class OtpCodeField extends StatelessWidget {
       autofocus: true,
       keyboardType: TextInputType.number,
       textAlign: TextAlign.center,
-      maxLength: 6,
+      maxLength: 8,
       style: const TextStyle(
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: FontWeight.w700,
-        letterSpacing: 10,
+        letterSpacing: 8,
         color: AppColors.primary,
       ),
       inputFormatters: [
@@ -33,11 +33,11 @@ class OtpCodeField extends StatelessWidget {
       ],
       decoration: InputDecoration(
         counterText: '',
-        hintText: '000000',
+        hintText: '00000000',
         hintStyle: TextStyle(
-          fontSize: 28,
+          fontSize: 26,
           fontWeight: FontWeight.w700,
-          letterSpacing: 10,
+          letterSpacing: 8,
           color: AppColors.textSecondary.withValues(alpha: 0.35),
         ),
         filled: true,
@@ -56,7 +56,7 @@ class OtpCodeField extends StatelessWidget {
         ),
       ),
       onChanged: (value) {
-        if (value.length == 6) {
+        if (value.length == 8) {
           onCompleted?.call(value);
         }
       },

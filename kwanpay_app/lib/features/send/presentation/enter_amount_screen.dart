@@ -147,7 +147,7 @@ class EnterAmountScreen extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Payment processing coming in Sprint 8"),
+                  content: Text("This send flow is not connected yet. Use Send from the home tab with a KwanPay ID."),
                 ),
               );
             },

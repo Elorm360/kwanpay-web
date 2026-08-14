@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../home/widgets/feature_placeholder_screen.dart';
 import '../models/category_model.dart';
 import '../services/mock_data.dart';
 
@@ -23,17 +24,6 @@ class CategorySection extends StatelessWidget {
               const Text(
                 "Payment Categories",
                 style: AppTextStyles.title,
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.accent,
-                ),
-                child: const Text(
-                  "See All",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
               ),
             ],
           ),
@@ -60,7 +50,17 @@ class _CategoryTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppRadius.medium),
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.medium),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FeaturePlaceholderScreen(
+                title: category.name,
+                icon: category.icon,
+              ),
+            ),
+          );
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
           decoration: BoxDecoration(

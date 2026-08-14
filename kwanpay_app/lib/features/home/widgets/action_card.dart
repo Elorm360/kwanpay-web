@@ -10,12 +10,14 @@ class ActionCard extends StatefulWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final String? badge;
 
   const ActionCard({
     super.key,
     required this.icon,
     required this.title,
     required this.onTap,
+    this.badge,
   });
 
   @override
@@ -46,22 +48,41 @@ class _ActionCardState extends State<ActionCard> {
             borderRadius: BorderRadius.circular(AppRadius.large),
             boxShadow: AppShadows.card,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              Icon(
-                widget.icon,
-                color: AppColors.primary,
-                size: 28,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body.copyWith(
-                  fontWeight: FontWeight.w600,
+              SizedBox.expand(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      widget.icon,
+                      color: AppColors.primary,
+                      size: 28,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      widget.title,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              if (widget.badge != null)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Text(
+                    widget.badge!,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.accent,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

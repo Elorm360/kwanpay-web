@@ -26,7 +26,7 @@ class KwanTextField extends StatelessWidget {
         labelText: label,
         prefixIcon: Icon(
           icon,
-          color: Colors.grey.shade700,
+          color: AppColors.textSecondary,
         ),
         filled: true,
         fillColor: AppColors.surface,

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-
-import 'signup_screen.dart';
-
+import '../../../core/widgets/kwanpay_lockup.dart';
 import 'login_screen.dart';
+import 'signup_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -22,37 +21,13 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-
-              Image.asset(
-                'assets/images/kwanpay_logo.png',
-                width: 160,
+              const KwanPayLockup(
+                onDark: false,
+                showTagline: true,
+                markSize: 88,
+                wordmarkSize: 40,
               ),
-
-              const SizedBox(height: 40),
-
-              const Text(
-                'Welcome to KwanPay',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-
-              const SizedBox(height: 18),
-
-              const Text(
-                'Send money, pay operators, and travel across Africa.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17,
-                  height: 1.6,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
+              const SizedBox(height: 48),
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -64,25 +39,10 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                  child: const Text(
-                    'Create Account',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: const Text('Create Account'),
                 ),
               ),
-
               const SizedBox(height: 16),
-
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -95,24 +55,10 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                  child: const Text(
-                    'Sign In',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                    ),
-                  ),
+                  child: const Text('Sign In'),
                 ),
               ),
-
-              const SizedBox(height: 40),
+              const Spacer(),
             ],
           ),
         ),
@@ -120,4 +66,3 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
-

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/models/profile_model.dart';
 import '../../../core/models/transaction_model.dart';
@@ -9,6 +10,8 @@ import '../../../core/services/transaction_service.dart';
 import '../../../core/services/wallet_service.dart';
 import '../../auth/widgets/dashboard_header.dart';
 import '../../auth/widgets/wallet_card.dart';
+import '../../pay/presentation/pay_screen.dart';
+import '../widgets/feature_placeholder_screen.dart';
 import '../widgets/quick_actions.dart';
 import '../widgets/recent_activity.dart';
 
@@ -112,23 +115,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  Future<void> simulateTopUp() async {
-    if (wallet == null) return;
-
-    final newBalance = wallet!.balance + 100;
-
-    await WalletService().updateBalance(newBalance);
-    await TransactionService().createTransaction(
-      type: "Top Up",
-      amount: 100,
-      currency: "USD",
-      description: "Wallet Top Up",
-    );
-
-    await loadWallet();
-    await loadTransactions();
-  }
-
   Widget _buildAnimatedSection({
     required Widget child,
     required double beginInterval,
@@ -167,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen>
     final userName = profile?.fullName ?? '';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.paper,
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -193,8 +179,24 @@ class _HomeScreenState extends State<HomeScreen>
                   walletId: wallet?.walletId ?? "Loading...",
                   status: wallet?.status ?? "Active",
                   currency: wallet?.currency ?? "USD",
-                  onAddMoney: () async {
-                    await simulateTopUp();
+                  onPay: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PayScreen(),
+                      ),
+                    );
+                  },
+                  onAddMoney: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FeaturePlaceholderScreen(
+                          title: "Add Funds",
+                          icon: Icons.account_balance_wallet_outlined,
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -208,8 +210,12 @@ class _HomeScreenState extends State<HomeScreen>
               _buildAnimatedSection(
                 beginInterval: 0.50,
                 endInterval: 1.00,
-                child: RecentActivity(
-                  transactions: transactions,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  child: RecentActivity(
+                    transactions: transactions,
+                    limit: 5,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),

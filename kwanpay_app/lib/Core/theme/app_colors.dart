@@ -6,6 +6,7 @@ class AppColors {
   // Brand
   static const Color primary = Color(0xFF1E2340);      // Route Indigo
   static const Color accent = Color(0xFFD98E3B);       // Amber Route
+  static const Color markTile = Color(0xFF2A3154);     // Slightly lighter indigo tile
 
   // Backgrounds
   static const Color paper = Color(0xFFEDEFF0);

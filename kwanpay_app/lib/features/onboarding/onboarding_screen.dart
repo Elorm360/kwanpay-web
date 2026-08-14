@@ -65,7 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             child: Text(
                               'Failed to load asset: ${page.image}',
                               textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.red),
+                              style: const TextStyle(color: AppColors.error),
                             ),
                           );
                         },
@@ -151,7 +151,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             decoration: BoxDecoration(
                               color: selected
                                   ? AppColors.accent
-                                  : Colors.grey.shade300,
+                                  : AppColors.border,
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),

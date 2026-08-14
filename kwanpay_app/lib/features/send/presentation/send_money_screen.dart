@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/wallet_model.dart';
 import '../../../core/services/wallet_service.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/kwan_text_field.dart';
@@ -211,7 +212,7 @@ Navigator.push(
                           Icon(
                             Icons.person_search,
                             size: 48,
-                            color: Colors.grey.shade400,
+                            color: AppColors.textSecondary,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -265,7 +266,7 @@ Navigator.push(
                                   children: const [
                                     Icon(
                                       Icons.verified,
-                                      color: Colors.green,
+                                      color: AppColors.success,
                                       size: 18,
                                     ),
                                     SizedBox(width: 6),
