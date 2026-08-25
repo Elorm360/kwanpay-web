@@ -27,61 +27,6 @@ class TransactionService {
         .toList();
   }
 
-  Future<TransactionModel> createTransaction({
-    required String type,
-    required double amount,
-    required String currency,
-    required String description,
-    String? reference,
-    String? provider,
-    String? providerReference,
-  }) async {
-    final user = currentUser;
-
-    if (user == null) {
-      throw Exception("No authenticated user.");
-    }
-
-    final resolvedReference = reference ?? generateTransactionReference();
-
-    try {
-      final data = await _supabase
-          .from('transactions')
-          .insert({
-            'wallet_id': user.id,
-            'type': type,
-            'amount': amount,
-            'currency': currency,
-            'description': description,
-            'status': TransactionStatus.pending,
-            'reference': resolvedReference,
-            'provider': provider,
-            'provider_reference': providerReference,
-          })
-          .select()
-          .single();
-
-      return TransactionModel.fromJson(data);
-    } on PostgrestException catch (error) {
-      if (error.code != '23505') {
-        rethrow;
-      }
-
-      final existing = await _supabase
-          .from('transactions')
-          .select()
-          .eq('wallet_id', user.id)
-          .eq('reference', resolvedReference)
-          .maybeSingle();
-
-      if (existing == null) {
-        rethrow;
-      }
-
-      return TransactionModel.fromJson(existing);
-    }
-  }
-
   Future<TransactionModel> initiateTestFunding({
     required double amount,
     required String currency,
