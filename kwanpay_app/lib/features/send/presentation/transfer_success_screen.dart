@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../navigation/main_navigation_screen.dart';
 
-class TransferSuccessScreen extends StatelessWidget {
+class TransferSuccessScreen extends ConsumerWidget {
   final String recipientName;
   final double amount;
+  final String currency;
 
   const TransferSuccessScreen({
     super.key,
     required this.recipientName,
     required this.amount,
+    required this.currency,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -41,14 +45,16 @@ class TransferSuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                "You sent USD ${amount.toStringAsFixed(2)} to\n$recipientName",
+                "You sent $currency ${amount.toStringAsFixed(2)} to\n$recipientName",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body,
               ),
               const Spacer(),
               PrimaryButton(
                 text: "Back to Dashboard",
-                onPressed: () {
+                onPressed: () async {
+                  await ref.read(walletDashboardProvider.notifier).refresh();
+                  if (!context.mounted) return;
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

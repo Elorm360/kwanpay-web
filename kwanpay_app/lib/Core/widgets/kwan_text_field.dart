@@ -8,6 +8,7 @@ class KwanTextField extends StatelessWidget {
   final IconData icon;
   final bool obscure;
   final TextEditingController controller;
+  final Widget? suffix;
 
   const KwanTextField({
     super.key,
@@ -15,6 +16,7 @@ class KwanTextField extends StatelessWidget {
     required this.icon,
     required this.controller,
     this.obscure = false,
+    this.suffix,
   });
 
   @override
@@ -28,6 +30,7 @@ class KwanTextField extends StatelessWidget {
           icon,
           color: AppColors.textSecondary,
         ),
+        suffixIcon: suffix,
         filled: true,
         fillColor: AppColors.surface,
         contentPadding: const EdgeInsets.symmetric(

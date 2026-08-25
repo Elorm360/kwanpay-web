@@ -1,42 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/services/transaction_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/primary_button.dart';
 import 'transfer_success_screen.dart';
 
-class ReviewTransferScreen extends StatefulWidget {
+class ReviewTransferScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> recipient;
   final double amount;
+  final String currency;
 
   const ReviewTransferScreen({
     super.key,
     required this.recipient,
     required this.amount,
+    required this.currency,
   });
 
   @override
-  State<ReviewTransferScreen> createState() =>
+  ConsumerState<ReviewTransferScreen> createState() =>
       _ReviewTransferScreenState();
 }
 
 class _ReviewTransferScreenState
-    extends State<ReviewTransferScreen> {
+    extends ConsumerState<ReviewTransferScreen> {
+  final _transactionService = TransactionService();
 
+  late final String _transferReference;
   bool isSending = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _transferReference =
+        _transactionService.generateTransactionReference();
+  }
+
   Future<void> executeTransfer() async {
-    setState(() {
-      isSending = true;
-    });
+    if (isSending) return;
+
+    isSending = true;
+    setState(() {});
 
     try {
-      await TransactionService().transferFunds(
+      await _transactionService.transferFunds(
         receiverWalletId:
             widget.recipient['wallet']['wallet_id'],
         amount: widget.amount,
+        currency: widget.currency,
+        reference: _transferReference,
       );
+
+      await ref.read(walletDashboardProvider.notifier).refresh();
 
       if (!mounted) return;
 
@@ -47,6 +65,7 @@ class _ReviewTransferScreenState
             recipientName:
                 widget.recipient['profile']['full_name'],
             amount: widget.amount,
+            currency: widget.currency,
           ),
         ),
       );
@@ -104,7 +123,7 @@ class _ReviewTransferScreenState
               ),
               const SizedBox(height: 8),
               Text(
-                "USD ${widget.amount.toStringAsFixed(2)}",
+                "${widget.currency} ${widget.amount.toStringAsFixed(2)}",
                 style: AppTextStyles.title,
               ),
               const SizedBox(height: 24),
@@ -113,8 +132,8 @@ class _ReviewTransferScreenState
                 style: AppTextStyles.caption,
               ),
               const SizedBox(height: 8),
-              const Text(
-                "USD 0.00",
+              Text(
+                "${widget.currency} 0.00",
                 style: AppTextStyles.body,
               ),
               const Divider(height: 40),
@@ -124,8 +143,18 @@ class _ReviewTransferScreenState
               ),
               const SizedBox(height: 8),
               Text(
-                "USD ${widget.amount.toStringAsFixed(2)}",
+                "${widget.currency} ${widget.amount.toStringAsFixed(2)}",
                 style: AppTextStyles.headline,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Reference",
+                style: AppTextStyles.caption,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _transferReference,
+                style: AppTextStyles.body,
               ),
               const Spacer(),
               isSending

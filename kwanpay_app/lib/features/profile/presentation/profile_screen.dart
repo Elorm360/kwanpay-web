@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/profile_model.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/profile_service.dart';
 import '../../../core/theme/app_colors.dart';
@@ -16,6 +17,7 @@ import '../widgets/profile_info_card.dart';
 import '../widgets/profile_section.dart';
 import '../widgets/profile_tile.dart';
 import 'edit_profile_screen.dart';
+import 'payment_methods_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -153,6 +155,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
+    final dashboard = ref.watch(walletDashboardProvider);
+    final wallet = dashboard.wallet;
+    final defaultMethod = dashboard.defaultPaymentMethod;
 
     return Scaffold(
       backgroundColor: context.colorPaper,
@@ -208,14 +213,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ProfileTile(
                     icon: Icons.account_balance_wallet_outlined,
                     title: "Wallet Status",
-                    subtitle: "Not Connected",
+                    subtitle: wallet == null
+                        ? "Not created"
+                        : "${wallet.status} · ${wallet.walletId}",
                     onTap: () {},
                   ),
                   ProfileTile(
                     icon: Icons.link_outlined,
-                    title: "Linked Accounts",
-                    subtitle: "Coming Soon",
-                    onTap: () {},
+                    title: "Payment methods",
+                    subtitle: defaultMethod == null
+                        ? "Add Mobile Money"
+                        : "${defaultMethod.network.name} · ${defaultMethod.displayNumber}",
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentMethodsScreen(),
+                        ),
+                      );
+                      await ref
+                          .read(walletDashboardProvider.notifier)
+                          .refresh();
+                    },
                   ),
                 ],
               ),

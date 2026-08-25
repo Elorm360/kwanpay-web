@@ -4,6 +4,7 @@ class WalletModel {
   final double balance;
   final String status;
   final String currency;
+  final String? stellarPublicKey;
 
   const WalletModel({
     required this.id,
@@ -11,6 +12,7 @@ class WalletModel {
     required this.balance,
     required this.status,
     required this.currency,
+    this.stellarPublicKey,
   });
 
   factory WalletModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class WalletModel {
       balance: (json['balance'] ?? 0).toDouble(),
       status: json['status'] ?? 'Active',
       currency: json['currency'] ?? 'USD',
+      stellarPublicKey: json['stellar_public_key'] as String?,
     );
   }
 }

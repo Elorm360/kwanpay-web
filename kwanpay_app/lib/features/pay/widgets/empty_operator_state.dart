@@ -34,14 +34,14 @@ class EmptyOperatorState extends StatelessWidget {
           SizedBox(height: AppSpacing.md),
 
           Text(
-            "No operators available",
+            "No matching operators",
             style: AppTextStyles.title,
           ),
 
           SizedBox(height: AppSpacing.sm),
 
           Text(
-            "Operators that accept KwanPay\nwill appear here.",
+            "No operators in this category yet.",
             textAlign: TextAlign.center,
             style: AppTextStyles.caption,
           ),

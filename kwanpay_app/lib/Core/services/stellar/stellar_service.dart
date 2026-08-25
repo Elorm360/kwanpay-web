@@ -66,4 +66,19 @@ class StellarService {
       );
     }
   }
+
+  Future<List<Map<String, dynamic>>> getBalances({
+    required String publicKey,
+  }) async {
+    final account = await getAccount(publicKey: publicKey);
+
+    return account.balances.map((balance) {
+      return {
+        'assetType': balance.assetType,
+        'balance': balance.balance,
+        'assetCode': balance.assetCode,
+        'assetIssuer': balance.assetIssuer,
+      };
+    }).toList();
+  }
 }

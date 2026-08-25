@@ -6,6 +6,7 @@ class ProfileModel {
   final String country;
   final String avatarUrl;
   final String walletAddress;
+  final String? preferredCurrency;
 
   const ProfileModel({
     required this.id,
@@ -15,6 +16,7 @@ class ProfileModel {
     required this.country,
     required this.avatarUrl,
     required this.walletAddress,
+    this.preferredCurrency,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class ProfileModel {
       country: json['country'] ?? '',
       avatarUrl: json['avatar_url'] ?? '',
       walletAddress: json['wallet_address'] ?? '',
+      preferredCurrency: json['preferred_currency'] as String?,
     );
   }
 
@@ -38,6 +41,7 @@ class ProfileModel {
       'country': country,
       'avatar_url': avatarUrl,
       'wallet_address': walletAddress,
+      'preferred_currency': preferredCurrency,
     };
   }
 }

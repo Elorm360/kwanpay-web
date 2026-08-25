@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/transaction_model.dart';
+import '../../../core/models/transaction_status.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
@@ -23,11 +24,13 @@ class RecentActivity extends StatelessWidget {
       case "Send":
         return Icons.north_east_rounded;
       case "Receive":
+      case "Convert In":
         return Icons.south_west_rounded;
-      case "Payment":
-        return Icons.credit_card_rounded;
+      case "Convert Out":
       case "Exchange":
         return Icons.currency_exchange;
+      case "Payment":
+        return Icons.credit_card_rounded;
       default:
         return Icons.receipt_long;
     }
@@ -37,9 +40,11 @@ class RecentActivity extends StatelessWidget {
     switch (type) {
       case "Top Up":
       case "Receive":
+      case "Convert In":
         return AppColors.success;
       case "Send":
       case "Payment":
+      case "Convert Out":
         return AppColors.primary;
       case "Exchange":
         return AppColors.accent;
@@ -49,7 +54,22 @@ class RecentActivity extends StatelessWidget {
   }
 
   bool _isOutgoing(String type) {
-    return type == 'Send' || type == 'Payment' || type == 'Exchange';
+    return type == 'Send' ||
+        type == 'Payment' ||
+        type == 'Exchange' ||
+        type == 'Convert Out';
+  }
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case TransactionStatus.completed:
+        return AppColors.success;
+      case TransactionStatus.failed:
+      case TransactionStatus.cancelled:
+        return AppColors.error;
+      default:
+        return AppColors.textSecondary;
+    }
   }
 
   String _formatDate(DateTime date) {
@@ -87,7 +107,7 @@ class RecentActivity extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Transfers you send and receive will appear here.",
+              "Transfers, top-ups, and payments will appear here.",
               style: AppTextStyles.body.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -125,6 +145,7 @@ class RecentActivity extends StatelessWidget {
               final tx = visible[index];
               final outgoing = _isOutgoing(tx.type);
               final sign = outgoing ? '-' : '+';
+              final completed = tx.isCompleted;
 
               return Row(
                 children: [
@@ -151,15 +172,35 @@ class RecentActivity extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        if (TransactionProviders.isTest(tx.provider)) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            'TEST',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 4),
                         Text(
                           tx.description,
                           style: AppTextStyles.caption,
                         ),
+                        if (tx.reference != null &&
+                            tx.reference!.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            tx.reference!,
+                            style: AppTextStyles.caption,
+                          ),
+                        ],
                         const SizedBox(height: 4),
                         Text(
                           "${_formatDate(tx.createdAt)} • ${tx.status}",
-                          style: AppTextStyles.caption,
+                          style: AppTextStyles.caption.copyWith(
+                            color: _statusColor(tx.status),
+                          ),
                         ),
                       ],
                     ),
@@ -167,9 +208,11 @@ class RecentActivity extends StatelessWidget {
                   Text(
                     "$sign ${tx.currency} ${tx.amount.toStringAsFixed(2)}",
                     style: AppTextStyles.body.copyWith(
-                      color: outgoing
-                          ? AppColors.textPrimary
-                          : AppColors.success,
+                      color: !completed
+                          ? AppColors.textSecondary
+                          : outgoing
+                              ? AppColors.textPrimary
+                              : AppColors.success,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

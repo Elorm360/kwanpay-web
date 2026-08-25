@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'operator_model.dart';
+
 class CategoryModel {
   final String name;
   final IconData icon;
@@ -12,3 +14,12 @@ class CategoryModel {
   });
 }
 
+class TourismCategories {
+  static const List<CategoryModel> all = [
+    CategoryModel(
+      name: TourismOperators.transport,
+      icon: Icons.directions_bus_rounded,
+      subtitle: 'Tourism transport',
+    ),
+  ];
+}

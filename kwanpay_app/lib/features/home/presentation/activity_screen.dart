@@ -1,50 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/models/transaction_model.dart';
-import '../../../core/services/transaction_service.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../widgets/recent_activity.dart';
 
-class ActivityScreen extends StatefulWidget {
+class ActivityScreen extends ConsumerWidget {
   const ActivityScreen({super.key});
 
   @override
-  State<ActivityScreen> createState() => _ActivityScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dashboard = ref.watch(walletDashboardProvider);
 
-class _ActivityScreenState extends State<ActivityScreen> {
-  List<TransactionModel> transactions = [];
-  bool isLoading = true;
-  String? error;
-
-  @override
-  void initState() {
-    super.initState();
-    loadTransactions();
-  }
-
-  Future<void> loadTransactions() async {
-    try {
-      final result = await TransactionService().getTransactions();
-      if (!mounted) return;
-      setState(() {
-        transactions = result;
-        isLoading = false;
-        error = null;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-        error = 'Could not load activity.';
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.paper,
       appBar: AppBar(
@@ -53,7 +22,9 @@ class _ActivityScreenState extends State<ActivityScreen> {
       ),
       body: RefreshIndicator(
         color: AppColors.accent,
-        onRefresh: loadTransactions,
+        onRefresh: () {
+          return ref.read(walletDashboardProvider.notifier).refresh();
+        },
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.lg,
@@ -62,25 +33,27 @@ class _ActivityScreenState extends State<ActivityScreen> {
             AppSpacing.xxl,
           ),
           children: [
-            if (isLoading)
+            if (dashboard.loading && dashboard.transactions.isEmpty)
               const Padding(
                 padding: EdgeInsets.only(top: 80),
                 child: Center(child: CircularProgressIndicator()),
               )
-            else if (error != null)
+            else if (dashboard.error != null && dashboard.transactions.isEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 80),
                 child: Column(
                   children: [
                     Text(
-                      error!,
+                      dashboard.error!,
                       style: AppTextStyles.body.copyWith(
                         color: AppColors.error,
                       ),
                     ),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: loadTransactions,
+                      onPressed: () {
+                        ref.read(walletDashboardProvider.notifier).refresh();
+                      },
                       child: const Text('Try again'),
                     ),
                   ],
@@ -88,7 +61,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
               )
             else
               RecentActivity(
-                transactions: transactions,
+                transactions: dashboard.transactions,
                 title: 'Your activity',
               ),
           ],

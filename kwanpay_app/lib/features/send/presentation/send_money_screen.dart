@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/models/wallet_model.dart';
+import '../../../core/models/app_currency.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/services/wallet_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -9,16 +12,16 @@ import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import 'review_transfer_screen.dart';
 
-class SendMoneyScreen extends StatefulWidget {
+class SendMoneyScreen extends ConsumerStatefulWidget {
   const SendMoneyScreen({super.key});
 
   @override
-  State<SendMoneyScreen> createState() =>
+  ConsumerState<SendMoneyScreen> createState() =>
       _SendMoneyScreenState();
 }
 
 class _SendMoneyScreenState
-    extends State<SendMoneyScreen> {
+    extends ConsumerState<SendMoneyScreen> {
 
   final walletController =
       TextEditingController();
@@ -29,21 +32,13 @@ class _SendMoneyScreenState
   Map<String, dynamic>? recipient;
 
   bool searching = false;
-
-  WalletModel? myWallet;
+  late String _sendCurrency;
 
   @override
   void initState() {
     super.initState();
-    loadMyWallet();
-  }
-
-  Future<void> loadMyWallet() async {
-    myWallet = await WalletService().getWallet();
-
-    if (mounted) {
-      setState(() {});
-    }
+    _sendCurrency = AppCurrencies.home.code;
+    ref.read(walletDashboardProvider.notifier).refresh();
   }
 
   @override
@@ -53,7 +48,29 @@ class _SendMoneyScreenState
     super.dispose();
   }
 
+  Future<void> pasteWalletId() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final pasted = data?.text?.trim() ?? '';
+
+    if (pasted.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nothing to paste. Copy a wallet ID first.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      walletController.text = pasted;
+      recipient = null;
+    });
+  }
+
   Future<void> searchWallet() async {
+    if (searching) return;
+
     if (walletController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -63,50 +80,56 @@ class _SendMoneyScreenState
       return;
     }
 
-    setState(() {
-      searching = true;
-    });
+    searching = true;
+    setState(() {});
 
-    final result =
-        await WalletService().findWalletById(
-      walletController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      recipient = result;
-      searching = false;
-    });
-
-    if (result != null &&
-        result['wallet']['id'] ==
-            WalletService().currentUser?.id) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "You cannot send money to your own wallet.",
-          ),
-        ),
+    try {
+      final result = await WalletService().findWalletById(
+        walletController.text.trim(),
       );
+
+      if (!mounted) return;
+
+      setState(() {
+        recipient = result;
+        searching = false;
+      });
+
+      if (result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Wallet not found."),
+          ),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
 
       setState(() {
         recipient = null;
+        searching = false;
       });
 
-      return;
-    }
-
-    if (result == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Wallet not found."),
+        SnackBar(
+          content: Text(
+            error.toString().replaceFirst('Exception: ', ''),
+          ),
         ),
       );
     }
   }
 
   void validateTransfer() {
+    if (recipient == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Search for a recipient first."),
+        ),
+      );
+      return;
+    }
+
     if (amountController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -128,7 +151,7 @@ class _SendMoneyScreenState
       return;
     }
 
-    if (amount > (myWallet?.balance ?? 0)) {
+    if (amount > ref.read(walletDashboardProvider).canonicalBalance) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Insufficient balance."),
@@ -137,12 +160,13 @@ class _SendMoneyScreenState
       return;
     }
 
-Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ReviewTransferScreen(
           recipient: recipient!,
           amount: amount,
+          currency: _sendCurrency,
         ),
       ),
     );
@@ -178,7 +202,7 @@ Navigator.push(
               const SizedBox(height: 8),
 
               const Text(
-                "Send funds securely to another KwanPay wallet.",
+                "Send funds securely to another KwanPay wallet in USD, GHS, or NGN. This does not convert currencies.",
                 style: AppTextStyles.body,
               ),
 
@@ -188,6 +212,14 @@ Navigator.push(
                 label: "Recipient Wallet ID",
                 icon: Icons.account_balance_wallet_outlined,
                 controller: walletController,
+                suffix: IconButton(
+                  tooltip: 'Paste wallet ID',
+                  onPressed: pasteWalletId,
+                  icon: const Icon(
+                    Icons.content_paste_rounded,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -294,8 +326,7 @@ Navigator.push(
 
                 Text(
                   "Available Balance: "
-                  "${myWallet?.currency ?? "USD"} "
-                  "${myWallet?.balance.toStringAsFixed(2) ?? "0.00"}",
+                  "${AppCurrencies.home.code} ${ref.watch(walletDashboardProvider).canonicalBalance.toStringAsFixed(2)}",
                   style: AppTextStyles.body,
                 ),
 

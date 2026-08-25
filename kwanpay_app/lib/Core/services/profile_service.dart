@@ -107,4 +107,19 @@ class ProfileService {
         })
         .eq('id', user.id);
   }
+
+  Future<void> updatePreferredCurrency(String currency) async {
+    final user = currentUser;
+
+    if (user == null) {
+      throw Exception("No authenticated user.");
+    }
+
+    await _supabase
+        .from('profiles')
+        .update({
+          'preferred_currency': currency,
+        })
+        .eq('id', user.id);
+  }
 }
