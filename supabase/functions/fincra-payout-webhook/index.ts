@@ -16,10 +16,13 @@ Deno.serve(async (req) => {
   const signature = req.headers.get("signature") ?? "";
   const expected = await hmac(webhookSecret, rawBody);
   if (!equal(signature.toLowerCase(), expected.toLowerCase())) return json({ error: "Invalid webhook signature." }, 401);
-  let payload: any; try { payload = JSON.parse(rawBody); } catch { return json({ error: "Invalid JSON payload." }, 400); }
-  const event = String(payload?.event ?? "").toLowerCase(), data = record(payload?.data);
+  let parsed: unknown; try { parsed = JSON.parse(rawBody); } catch { return json({ error: "Invalid JSON payload." }, 400); }
+  const payload = record(parsed);
+  const event = String(payload?.event ?? "").toLowerCase();
+  const data = record(payload?.data);
   if (!data) return json({ received: true, processed: false });
-  const customerReference = String(data.customerReference ?? "").trim().toUpperCase(), providerReference = String(data.reference ?? "").trim();
+  const customerReference = String(data.customerReference ?? "").trim().toUpperCase();
+  const providerReference = String(data.reference ?? "").trim();
   if (!customerReference.startsWith("KWP-TXN-") || !providerReference) return json({ received: true, processed: false, reason: "unknown_reference" });
   const admin = createClient(supabaseUrl, serviceKey);
   const { data: payout, error } = await admin.from("payout_intents").select("*").eq("reference", customerReference).maybeSingle();
@@ -28,10 +31,14 @@ Deno.serve(async (req) => {
   if (payout.provider !== "fincra" || payout.currency !== "GHS" || payout.destination_kind !== "momo") return json({ received: true, processed: false, reason: "payout_mismatch" });
   if (payout.provider_reference && String(payout.provider_reference).trim() !== providerReference) return json({ received: true, processed: false, reason: "provider_reference_mismatch" });
   const verification = await fetch(`https://api.fincra.com/disbursements/payouts/customer-reference/${encodeURIComponent(customerReference)}`, { headers: { accept: "application/json", "api-key": apiKey } });
-  let verifiedPayload: any; try { verifiedPayload = await verification.json(); } catch { return json({ error: "Invalid Fincra payout verification response." }, 502); }
+  let verifiedParsed: unknown; try { verifiedParsed = await verification.json(); } catch { return json({ error: "Invalid Fincra payout verification response." }, 502); }
+  const verifiedPayload = record(verifiedParsed);
   const verified = record(verifiedPayload?.data);
   if (!verification.ok || verifiedPayload?.success !== true || !verified) return json({ received: true, processed: false, reason: "provider_verification_failed" });
-  const verifiedReference = String(verified.reference ?? "").trim(), verifiedCustomerReference = String(verified.customerReference ?? "").trim().toUpperCase(), verifiedStatus = String(verified.status ?? "").trim().toLowerCase(), verifiedAmount = amount(verified.amountReceived ?? verified.amount);
+  const verifiedReference = String(verified.reference ?? "").trim();
+  const verifiedCustomerReference = String(verified.customerReference ?? "").trim().toUpperCase();
+  const verifiedStatus = String(verified.status ?? "").trim().toLowerCase();
+  const verifiedAmount = amount(verified.amount);
   if (verifiedReference !== providerReference || verifiedCustomerReference !== customerReference) return json({ received: true, processed: false, reason: "reference_mismatch" });
   if (verifiedAmount == null || Math.abs(verifiedAmount - Number(payout.amount)) > 0.005) return json({ received: true, processed: false, reason: "amount_mismatch" });
   let finalStatus: string | null = null;
