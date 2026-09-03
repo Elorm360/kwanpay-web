@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Image.asset(
                 'assets/images/kwanpay_lockup.png',
                 width: 320,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return const KwanPayLockup(
                     onDark: true,
                     showTagline: true,

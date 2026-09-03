@@ -118,28 +118,13 @@ class WalletService {
 
     final walletId = generateWalletId();
 
-await _supabase.from('wallets').insert({
+    await _supabase.from('wallets').insert({
       'id': user.id,
       'wallet_id': walletId,
       'balance': 0,
       'status': 'Active',
       'currency': 'USD',
     });
-  }
-
-  Future<void> updateBalance(double newBalance) async {
-    final user = currentUser;
-
-    if (user == null) {
-      throw Exception("No authenticated user.");
-    }
-
-    await _supabase
-        .from('wallets')
-        .update({
-          'balance': newBalance,
-        })
-        .eq('id', user.id);
   }
 
   Future<void> updateStellarPublicKey(String publicKey) async {

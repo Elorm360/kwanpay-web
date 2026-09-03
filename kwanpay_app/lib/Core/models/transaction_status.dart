@@ -12,23 +12,16 @@ class TransactionStatus {
 }
 
 class TransactionProviders {
-  static const kwanpayTest = 'kwanpay_test';
-  static const ghanaMomoTest = 'ghana_momo_test';
-  static const kwanpayFxTest = 'kwanpay_fx_test';
   static const kwanpayFx = 'kwanpay_fx';
   static const kwanpayTransfer = 'kwanpay_transfer';
-  static const kwanpayOperatorTest = 'kwanpay_operator_test';
-  static const ghanaCollectorTest = 'ghana_collector_test';
   static const kwanpayMerchant = 'kwanpay_merchant';
   static const flutterwave = 'flutterwave';
+
+  // Development blockchain network for Sprint 13.
+  // This is not a fake KwanPay funding provider.
   static const stellarTestnet = 'stellar_testnet';
 
-  static bool isTest(String? provider) {
-    return provider == kwanpayTest ||
-        provider == ghanaMomoTest ||
-        provider == kwanpayFxTest ||
-        provider == kwanpayOperatorTest ||
-        provider == ghanaCollectorTest ||
-        provider == stellarTestnet;
+  static bool isDevelopmentNetwork(String? provider) {
+    return provider == stellarTestnet;
   }
 }
