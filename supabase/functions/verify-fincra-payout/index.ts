@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     { headers: { accept: "application/json", "api-key": apiKey } },
   );
 
-  let payload: any;
+  let payload: unknown;
   try {
     payload = await response.json();
   } catch {
@@ -101,7 +101,8 @@ Deno.serve(async (req) => {
     }, 202);
   }
 
-  if (!response.ok || payload?.success !== true) {
+  const responsePayload = record(payload);
+  if (!response.ok || responsePayload?.success !== true) {
     if (response.status === 404) {
       return json({
         success: true,
@@ -123,7 +124,7 @@ Deno.serve(async (req) => {
     }, 202);
   }
 
-  const verified = record(payload?.data);
+  const verified = record(responsePayload?.data);
   if (!verified) {
     return json({
       success: true,
