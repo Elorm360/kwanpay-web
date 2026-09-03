@@ -42,6 +42,17 @@ const failAndRefund = async (
   return json({ error: userMessage }, 422);
 };
 
+const pendingResponse = (
+  transaction: Record<string, unknown>,
+  payout: Record<string, unknown>,
+) => json({
+  success: true,
+  status: "Pending",
+  transaction,
+  payout,
+  message: "Withdrawal is being checked. Your reserved funds remain protected.",
+}, 202);
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
@@ -129,22 +140,14 @@ Deno.serve(async (req) => {
     { headers: { accept: "application/json", "api-key": apiKey } },
   );
 
-  let providersPayload: any;
+  let providersParsed: unknown;
   try {
-    providersPayload = await providersResponse.json();
+    providersParsed = await providersResponse.json();
   } catch {
-    return json(
-      {
-        success: true,
-        status: "Pending",
-        transaction,
-        payout,
-        message: "Withdrawal is being checked. Your reserved funds remain protected.",
-      },
-      202,
-    );
+    return pendingResponse(transaction, payout);
   }
 
+  const providersPayload = record(providersParsed);
   if (!providersResponse.ok || providersPayload?.success !== true) {
     if (providersResponse.status >= 400 && providersResponse.status < 500) {
       return failAndRefund(
@@ -154,27 +157,20 @@ Deno.serve(async (req) => {
         "This Mobile Money network is not currently available for withdrawal. Your funds were returned to your wallet.",
       );
     }
-    return json(
-      {
-        success: true,
-        status: "Pending",
-        transaction,
-        payout,
-        message: "Withdrawal is being checked. Your reserved funds remain protected.",
-      },
-      202,
-    );
+    return pendingResponse(transaction, payout);
   }
 
   const providers = Array.isArray(providersPayload?.data) ? providersPayload.data : [];
-  const provider = providers.find((item: any) => {
-    const name = String(item?.name ?? "").toLowerCase();
-    const code = String(item?.code ?? "").toLowerCase();
-    if (rail === "mtn") return code === "mtn" || name.includes("mtn");
-    if (rail === "telecel") return code === "vodafone" || name.includes("vodafone") || name.includes("telecel");
-    if (rail === "airteltigo") return code === "airtel" || name.includes("airtel");
-    return false;
-  });
+  const provider = providers
+    .map((item) => record(item))
+    .find((item) => {
+      const name = String(item?.name ?? "").toLowerCase();
+      const code = String(item?.code ?? "").toLowerCase();
+      if (rail === "mtn") return code === "mtn" || name.includes("mtn");
+      if (rail === "telecel") return code === "vodafone" || name.includes("vodafone") || name.includes("telecel");
+      if (rail === "airteltigo") return code === "airtel" || name.includes("airtel");
+      return false;
+    });
 
   const mobileMoneyCode = String(provider?.code ?? "").trim();
   if (!mobileMoneyCode) {
@@ -201,22 +197,14 @@ Deno.serve(async (req) => {
     }),
   });
 
-  let resolvePayload: any;
+  let resolveParsed: unknown;
   try {
-    resolvePayload = await resolveResponse.json();
+    resolveParsed = await resolveResponse.json();
   } catch {
-    return json(
-      {
-        success: true,
-        status: "Pending",
-        transaction,
-        payout,
-        message: "Withdrawal is being checked. Your reserved funds remain protected.",
-      },
-      202,
-    );
+    return pendingResponse(transaction, payout);
   }
 
+  const resolvePayload = record(resolveParsed);
   const resolved = record(resolvePayload?.data);
   const accountName = String(resolved?.accountName ?? "").trim();
   const resolvedNumber = String(resolved?.accountNumber ?? msisdn).trim();
@@ -230,16 +218,7 @@ Deno.serve(async (req) => {
         "We could not verify the Mobile Money destination. Your funds were returned to your wallet.",
       );
     }
-    return json(
-      {
-        success: true,
-        status: "Pending",
-        transaction,
-        payout,
-        message: "Withdrawal is being checked. Your reserved funds remain protected.",
-      },
-      202,
-    );
+    return pendingResponse(transaction, payout);
   }
 
   const nameParts = accountName.split(/\s+/).filter(Boolean);
@@ -272,22 +251,14 @@ Deno.serve(async (req) => {
     }),
   });
 
-  let providerPayload: any;
+  let providerParsed: unknown;
   try {
-    providerPayload = await providerResponse.json();
+    providerParsed = await providerResponse.json();
   } catch {
-    return json(
-      {
-        success: true,
-        status: "Pending",
-        transaction,
-        payout,
-        message: "Withdrawal is being checked. Your reserved funds remain protected.",
-      },
-      202,
-    );
+    return pendingResponse(transaction, payout);
   }
 
+  const providerPayload = record(providerParsed);
   const providerData = record(providerPayload?.data);
   const providerReference = String(providerData?.reference ?? "").trim();
   const providerStatus = String(providerData?.status ?? "").trim().toLowerCase();
@@ -301,17 +272,10 @@ Deno.serve(async (req) => {
         "The withdrawal could not be processed. Your funds were returned to your wallet.",
       );
     }
-    return json(
-      {
-        success: true,
-        status: "Pending",
-        transaction,
-        payout,
-        message: "Withdrawal is being checked. Your reserved funds remain protected.",
-      },
-      202,
-    );
+    return pendingResponse(transaction, payout);
   }
+
+  if (!providerReference) return pendingResponse(transaction, payout);
 
   const attach = await admin.rpc("attach_ghana_payout_provider_reference", {
     p_reference: reference,
@@ -320,9 +284,7 @@ Deno.serve(async (req) => {
   });
   if (attach.error) {
     return json(
-      {
-        error: "Withdrawal was accepted but could not be recorded safely. Please contact support.",
-      },
+      { error: "Withdrawal was accepted but could not be recorded safely. Please contact support." },
       500,
     );
   }
@@ -337,16 +299,7 @@ Deno.serve(async (req) => {
     });
 
     if (settled.error) {
-      return json(
-        {
-          success: true,
-          status: "Pending",
-          transaction,
-          payout: attach.data,
-          message: "Withdrawal was accepted and is awaiting final confirmation.",
-        },
-        202,
-      );
+      return pendingResponse(transaction, record(attach.data) ?? payout);
     }
 
     const { data: finalTransaction } = await admin
@@ -359,7 +312,7 @@ Deno.serve(async (req) => {
       success: true,
       status: "Completed",
       transaction: finalTransaction ?? transaction,
-      payout: settled.data ?? attach.data,
+      payout: settled.data ?? attach.data ?? payout,
     });
   }
 
@@ -377,7 +330,7 @@ Deno.serve(async (req) => {
       success: true,
       status: "Processing",
       transaction,
-      payout: attach.data,
+      payout: attach.data ?? payout,
       message: "Withdrawal is processing. We will update your activity when it is complete.",
     },
     202,
