@@ -51,49 +51,57 @@ class _PayScreenState extends State<PayScreen> {
       appBar: AppBar(
         title: const Text(
           'Pay',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
       ),
       body: SafeArea(
         child: ListView(
+          padding: const EdgeInsets.only(bottom: AppSpacing.xl),
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Text(
-                'Pay a tourism business in Ghana cedis from your KwanPay wallet. TransVista Africa Ltd is the first live operator.',
-                style: AppTextStyles.caption.copyWith(
-                  color: context.colorTextSecondary,
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+                0,
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                decoration: BoxDecoration(
+                  color: context.colorSurface,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Pay for your trip', style: AppTextStyles.title),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      'Find a tourism business and pay from your KwanPay wallet. You will review the amount before anything is confirmed.',
+                      style: AppTextStyles.caption.copyWith(
+                        color: context.colorTextSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
             SearchSection(
               controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _query = value;
-                });
-              },
+              onChanged: (value) => setState(() => _query = value),
             ),
             const SizedBox(height: AppSpacing.xl),
             CategorySection(
               selectedCategory: _selectedCategory,
-              onSelected: (category) {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
+              onSelected: (category) =>
+                  setState(() => _selectedCategory = category),
             ),
             const SizedBox(height: AppSpacing.xl),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Text(
-                'Operators',
-                style: AppTextStyles.title,
-              ),
+              child: Text('Tourism businesses', style: AppTextStyles.title),
             ),
             const SizedBox(height: AppSpacing.md),
             if (operators.isEmpty)
@@ -112,7 +120,6 @@ class _PayScreenState extends State<PayScreen> {
                   },
                 ),
               ),
-            const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
