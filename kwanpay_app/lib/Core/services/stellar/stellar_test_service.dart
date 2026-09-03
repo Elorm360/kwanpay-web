@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'stellar_service.dart';
 
 class StellarTestService {
@@ -11,9 +13,9 @@ class StellarTestService {
       publicKey: testPublicKey,
     );
 
-    print('STELLAR TESTNET CONNECTION SUCCESS');
-    print('Account ID: ${account.accountId}');
-    print('Sequence: ${account.sequenceNumber}');
-    print('Balances: ${account.balances.length}');
+    developer.log('STELLAR TESTNET CONNECTION SUCCESS');
+    developer.log('Account ID: ${account.accountId}');
+    developer.log('Sequence: ${account.sequenceNumber}');
+    developer.log('Balances: ${account.balances.length}');
   }
 }
