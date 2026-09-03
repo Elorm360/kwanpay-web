@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
   const customerReference = String(verified.customerReference ?? "").trim().toUpperCase();
   const status = String(verified.status ?? "").trim().toLowerCase();
   const verifiedCurrency = String(verified.destinationCurrency ?? verified.currency ?? "").trim().toUpperCase();
-  const verifiedAmount = amount(verified.amount ?? verified.amountReceived);
+  const verifiedAmount = amount(verified.amount);
 
   if (!providerReference || customerReference !== reference) {
     return json({ error: "Withdrawal verification returned an unexpected reference." }, 502);
