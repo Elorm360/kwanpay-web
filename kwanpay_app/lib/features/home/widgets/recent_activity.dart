@@ -172,16 +172,6 @@ class RecentActivity extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        if (TransactionProviders.isTest(tx.provider)) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            'TEST',
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
                         const SizedBox(height: 4),
                         Text(
                           tx.description,
