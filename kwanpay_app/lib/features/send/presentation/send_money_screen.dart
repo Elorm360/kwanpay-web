@@ -23,7 +23,6 @@ class SendMoneyScreen extends ConsumerStatefulWidget {
 class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
   final walletController = TextEditingController();
   final amountController = TextEditingController();
-
   Map<String, dynamic>? recipient;
   bool searching = false;
   late String _sendCurrency;
@@ -67,7 +66,6 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
       );
       return;
     }
-
     setState(() => searching = true);
     try {
       final result = await WalletService().findWalletById(walletId);
@@ -101,7 +99,6 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
       );
       return;
     }
-
     final amount = double.tryParse(amountController.text.trim());
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -109,7 +106,6 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
       );
       return;
     }
-
     final balance = ref.read(walletDashboardProvider).canonicalBalance;
     if (amount > balance) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +113,6 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
       );
       return;
     }
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -141,9 +136,7 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
 
   String _recipientWalletId() {
     final wallet = recipient?['wallet'];
-    if (wallet is Map && wallet['wallet_id'] != null) {
-      return wallet['wallet_id'].toString();
-    }
+    if (wallet is Map && wallet['wallet_id'] != null) return wallet['wallet_id'].toString();
     return walletController.text.trim();
   }
 
@@ -157,12 +150,7 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
       appBar: AppBar(title: const Text('Send Money')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.md,
-            AppSpacing.lg,
-            AppSpacing.xxl,
-          ),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
           children: [
             Text('Send money securely', style: AppTextStyles.headline),
             const SizedBox(height: AppSpacing.sm),
@@ -184,9 +172,15 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            PrimaryButton(
-              text: searching ? 'Searching…' : 'Find recipient',
-              onPressed: searching ? null : searchWallet,
+            IgnorePointer(
+              ignoring: searching,
+              child: Opacity(
+                opacity: searching ? 0.6 : 1,
+                child: PrimaryButton(
+                  text: searching ? 'Searching…' : 'Find recipient',
+                  onPressed: searchWallet,
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             if (recipient == null)
@@ -250,13 +244,13 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
               Text('AMOUNT', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w700)),
               const SizedBox(height: AppSpacing.sm),
               KwanTextField(
-                label: 'Amount in ${_sendCurrency}',
+                label: 'Amount in $_sendCurrency',
                 icon: Icons.payments_outlined,
                 controller: amountController,
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Available · ${_sendCurrency} ${balance.toStringAsFixed(2)}',
+                'Available · $_sendCurrency ${balance.toStringAsFixed(2)}',
                 style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.xl),
