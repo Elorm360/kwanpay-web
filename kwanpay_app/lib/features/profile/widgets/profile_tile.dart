@@ -10,18 +10,20 @@ class ProfileTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const ProfileTile({
     super.key,
     required this.icon,
     required this.title,
     this.subtitle,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isInteractive = onTap != null;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -39,8 +41,7 @@ class ProfileTile extends StatelessWidget {
                 height: 46,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.08),
-                  borderRadius:
-                      BorderRadius.circular(AppRadius.medium),
+                  borderRadius: BorderRadius.circular(AppRadius.medium),
                 ),
                 child: Icon(
                   icon,
@@ -48,13 +49,10 @@ class ProfileTile extends StatelessWidget {
                   size: 22,
                 ),
               ),
-
               const SizedBox(width: AppSpacing.md),
-
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
@@ -63,10 +61,8 @@ class ProfileTile extends StatelessWidget {
                         color: context.colorTextPrimary,
                       ),
                     ),
-
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
-
                       Text(
                         subtitle!,
                         style: AppTextStyles.caption.copyWith(
@@ -77,11 +73,11 @@ class ProfileTile extends StatelessWidget {
                   ],
                 ),
               ),
-
-              Icon(
-                Icons.chevron_right_rounded,
-                color: context.colorTextSecondary,
-              ),
+              if (isInteractive)
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: context.colorTextSecondary,
+                ),
             ],
           ),
         ),
@@ -89,4 +85,3 @@ class ProfileTile extends StatelessWidget {
     );
   }
 }
-
