@@ -37,3 +37,31 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  supabase-functions:
+    name: Supabase / Deno type-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Edge Functions
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t functions < <(find supabase/functions -type f -name '*.ts' -print | sort)
+          if [ "${#functions[@]}" -eq 0 ]; then
+            echo "No Supabase Edge Function TypeScript files found."
+            exit 0
+          fi
+          for file in "${functions[@]}"; do
+            echo "Checking $file"
+            deno check "$file"
+          done
