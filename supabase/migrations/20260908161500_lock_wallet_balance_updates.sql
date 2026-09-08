@@ -33,5 +33,6 @@ $$;
 
 revoke update on public.wallets from authenticated;
 revoke update on public.wallets from anon;
+revoke execute on function public.set_stellar_public_key(text) from public;
 revoke execute on function public.set_stellar_public_key(text) from anon;
 grant execute on function public.set_stellar_public_key(text) to authenticated;
