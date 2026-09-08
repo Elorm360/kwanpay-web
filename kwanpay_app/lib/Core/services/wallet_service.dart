@@ -134,18 +134,18 @@ class WalletService {
       throw Exception("No authenticated user.");
     }
 
-    final normalizedPublicKey = publicKey.trim();
+    final normalizedPublicKey = publicKey.trim().toUpperCase();
 
-    if (normalizedPublicKey.isEmpty) {
-      throw Exception("Stellar public key cannot be empty.");
+    if (!RegExp(r'^G[A-Z2-7]{55}$').hasMatch(normalizedPublicKey)) {
+      throw Exception("Invalid Stellar public key.");
     }
 
-    await _supabase
-        .from('wallets')
-        .update({
-          'stellar_public_key': normalizedPublicKey,
-        })
-        .eq('id', user.id);
+    await _supabase.rpc(
+      'set_stellar_public_key',
+      params: {
+        'p_public_key': normalizedPublicKey,
+      },
+    );
   }
 
   Future<Map<String, dynamic>?> findWalletById(String walletId) async {
@@ -203,8 +203,7 @@ class WalletService {
   String generateWalletId() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
 
-    final suffix =
-        timestamp.toRadixString(36).toUpperCase();
+    final suffix = timestamp.toRadixString(36).toUpperCase();
 
     return "KWP-$suffix";
   }
