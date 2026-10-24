@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/models/app_currency.dart';
 import '../../../core/models/transaction_model.dart';
@@ -30,6 +31,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
 
   TransactionModel? _transaction;
   String? _fundingReference;
+  String? _checkoutUrl;
 
   bool _submitting = false;
   bool _fincraOtpRequired = false;
@@ -46,7 +48,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
 
   Future<void> _recoverPendingTransaction() async {
     try {
-      final transaction = await _transactionService.getPendingFincraTopUp();
+      final transaction = await _transactionService.getPendingFiatsendTopUp();
 
       if (!mounted) return;
 
@@ -100,7 +102,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     try {
       _fundingReference ??= _transactionService.generateTransactionReference();
 
-      final result = await _transactionService.initiateFincraMomo(
+      final result = await _transactionService.initiateFiatsendCollection(
         amount: amount,
         reference: _fundingReference!,
         rail: method.rail,
@@ -113,10 +115,12 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
 
       setState(() {
         _transaction = result.transaction;
-        _fincraOtpRequired = result.otpRequired;
+        _checkoutUrl = result.checkoutUrl;
         _submitting = false;
         _error = null;
       });
+
+      await _openCheckout();
     } catch (error) {
       if (!mounted) return;
 
@@ -125,6 +129,18 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
         _fundingReference = null;
         _error = error.toString().replaceFirst('Exception: ', '');
       });
+    }
+  }
+
+  Future<void> _openCheckout() async {
+    final url = _checkoutUrl;
+    if (url == null) return;
+    final uri = Uri.tryParse(url);
+    final opened = uri != null &&
+        uri.scheme == 'https' &&
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!opened && mounted) {
+      setState(() => _error = 'Could not open the payment page. Tap "Open payment page" to try again.');
     }
   }
 
@@ -236,7 +252,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     });
 
     try {
-      final result = await _transactionService.verifyFincraMomo(
+      final result = await _transactionService.verifyFiatsendCollection(
         reference: reference,
       );
 
@@ -246,6 +262,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
 
       setState(() {
         _transaction = updated;
+        _checkoutUrl = result.checkoutUrl ?? _checkoutUrl;
         _submitting = false;
         _error = null;
       });
@@ -259,7 +276,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
       final message = updated.status == TransactionStatus.completed
           ? 'Payment confirmed. GHS ${updated.amount.toStringAsFixed(2)} is in your wallet.'
           : updated.isPending
-          ? 'Payment is still pending. Approve the Mobile Money request on your phone, then refresh again.'
+          ? (result.message ?? 'Payment is still pending. Finish the payment on the Fiatsend page, then refresh again.')
           : 'This payment is ${updated.status}. Your wallet was not credited.';
 
       ScaffoldMessenger.of(
@@ -332,7 +349,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     final waitingForProvider =
         transaction != null &&
         transaction.isPending &&
-        transaction.provider == 'fincra';
+        transaction.provider == 'fiatsend';
 
     return Scaffold(
       backgroundColor: AppColors.paper,
@@ -467,7 +484,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Check your phone and approve the Mobile Money request with your PIN.',
+                'Finish paying on the secure Fiatsend page, then come back and tap Refresh status. Your wallet is credited only after Fiatsend confirms the payment.',
                 style: AppTextStyles.body.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -484,6 +501,14 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
                   ),
                 ),
               ] else ...[
+                if (_checkoutUrl != null) ...[
+                  OutlinedButton.icon(
+                    onPressed: _openCheckout,
+                    icon: const Icon(Icons.open_in_new_rounded),
+                    label: const Text('Open payment page'),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
                 PrimaryButton(
                   text: 'Refresh status',
                   onPressed: _refreshStatus,

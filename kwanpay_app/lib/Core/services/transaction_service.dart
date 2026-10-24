@@ -208,6 +208,41 @@ class TransactionService {
     return _transactionFromRpc(payload, 'Could not create the withdrawal request.');
   }
 
+  Future<TransactionModel?> getPendingFiatsendTopUp() async {
+    final user = currentUser;
+    if (user == null) throw Exception('No authenticated user.');
+    final data = await _supabase.from('transactions').select().eq('wallet_id', user.id).eq('provider', 'fiatsend').eq('type', 'Top Up').eq('status', 'Pending').eq('currency', 'GHS').order('created_at', ascending: false).limit(1);
+    if (data.isEmpty) return null;
+    return TransactionModel.fromJson(Map<String, dynamic>.from(data.first as Map));
+  }
+
+  Future<FiatsendCheckoutResult> initiateFiatsendCollection({required double amount, required String reference, required String rail, required String msisdn}) {
+    return _invokeFiatsend('initiate-fiatsend-collection', {'amount': amount, 'reference': reference.trim(), 'rail': rail, 'msisdn': msisdn}, 'Could not start the Mobile Money payment.');
+  }
+
+  Future<FiatsendCheckoutResult> verifyFiatsendCollection({required String reference}) {
+    return _invokeFiatsend('verify-fiatsend-collection', {'reference': reference.trim()}, 'Could not check the payment.');
+  }
+
+  Future<FiatsendCheckoutResult> _invokeFiatsend(String fn, Map<String, dynamic> body, String fallback) async {
+    if (currentUser == null) throw Exception('No authenticated user.');
+    try {
+      final response = await _supabase.functions.invoke(fn, body: body);
+      final data = response.data;
+      if (data is! Map) throw Exception('Payment service returned an invalid response.');
+      final payload = Map<String, dynamic>.from(data);
+      if (payload['error'] != null) throw Exception(payload['error'].toString());
+      final transaction = payload['transaction'];
+      if (transaction is! Map) throw Exception('Payment service did not return the transaction.');
+      final url = payload['checkout_url']?.toString();
+      return FiatsendCheckoutResult(transaction: TransactionModel.fromJson(Map<String, dynamic>.from(transaction)), checkoutUrl: (url == null || url.isEmpty) ? null : url, message: payload['message']?.toString());
+    } on FunctionException catch (error) {
+      final details = error.details;
+      if (details is Map && details['error'] != null) throw Exception(details['error'].toString());
+      throw Exception(error.reasonPhrase ?? fallback);
+    }
+  }
+
   Future<FlutterwaveChargeResult> initiateFlutterwaveMomo({required String reference}) async {
     final user = currentUser;
     if (user == null) throw Exception('No authenticated user.');
@@ -314,3 +349,4 @@ class FlutterwaveChargeResult { final bool configured; final bool alreadyInitiat
 class FincraMomoInitiationResult { final TransactionModel transaction; final String? authModel; final String? message; final bool verificationRequired; const FincraMomoInitiationResult({required this.transaction, this.authModel, this.message, required this.verificationRequired}); bool get otpRequired => verificationRequired || (authModel ?? '').toUpperCase() == 'OTP'; }
 class FincraMomoVerificationResult { final TransactionModel transaction; final String message; final String? authModel; const FincraMomoVerificationResult({required this.transaction, required this.message, this.authModel}); bool get otpRequired => (authModel ?? '').toUpperCase() == 'OTP'; }
 class FincraMomoResendResult { final TransactionModel? transaction; final String message; const FincraMomoResendResult({this.transaction, required this.message}); }
+class FiatsendCheckoutResult { final TransactionModel transaction; final String? checkoutUrl; final String? message; const FiatsendCheckoutResult({required this.transaction, this.checkoutUrl, this.message}); }

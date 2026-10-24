@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../Core/models/payment_method.dart';
 import '../../../Core/providers/wallet_dashboard_provider.dart';
-import '../../../Core/services/fincra_payout_service.dart';
+import '../../../Core/services/fiatsend_payout_service.dart';
 import '../../../Core/theme/app_colors.dart';
 import '../../../Core/theme/app_radius.dart';
 import '../../../Core/theme/app_spacing.dart';
@@ -18,7 +18,7 @@ class WithdrawFundsScreen extends ConsumerStatefulWidget {
 
 class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
   final _amountController = TextEditingController();
-  final _payoutService = FincraPayoutService();
+  final _payoutService = FiatsendPayoutService();
   PaymentMethod? _selectedMethod;
   bool _submitting = false;
   String? _error;
@@ -65,6 +65,10 @@ class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
 
     if (amount <= 0) {
       setState(() => _error = 'Enter a withdrawal amount.');
+      return;
+    }
+    if (amount < 50) {
+      setState(() => _error = 'The minimum withdrawal is GHS 50.00.');
       return;
     }
     if (amount > balance + 0.000001) {
