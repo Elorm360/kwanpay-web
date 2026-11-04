@@ -102,7 +102,9 @@ Deno.serve(async (req) => {
   if (existing?.provider === "fiatsend" && !existing?.provider_reference) {
     try {
       const list = await fiatsend(CHECKOUT_BASE_URL, "/checkout/sessions?limit=100");
-      const sessions = Array.isArray(list.data) ? list.data.map(record).filter(Boolean) : [];
+      const sessions = Array.isArray(list.data)
+        ? list.data.map(record).filter((item): item is Record<string, unknown> => item !== null)
+        : [];
       const recovered = sessions.find((session) => session?.client_reference_id === reference);
 
       if (recovered) {
