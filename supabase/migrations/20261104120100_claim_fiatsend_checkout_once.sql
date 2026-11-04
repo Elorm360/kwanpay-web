@@ -37,10 +37,10 @@ begin
     raise exception 'Funding transaction not found';
   end if;
 
-  if v_tx.type <> 'Top Up'
-     or v_tx.provider <> 'fiatsend'
-     or v_tx.currency <> 'GHS'
-     or v_tx.status <> 'Pending' then
+  if v_tx.type is distinct from 'Top Up'
+     or v_tx.provider is distinct from 'fiatsend'
+     or v_tx.currency is distinct from 'GHS'
+     or v_tx.status is distinct from 'Pending' then
     raise exception 'Funding transaction is not eligible for Fiatsend checkout';
   end if;
 
@@ -50,7 +50,9 @@ begin
     and reference = normalized_reference
   for update;
 
-  if not found or v_intent.status <> 'pending' or v_intent.provider <> 'fiatsend' then
+  if not found
+     or v_intent.status is distinct from 'pending'
+     or v_intent.provider is distinct from 'fiatsend' then
     raise exception 'Pending Fiatsend collection intent not found';
   end if;
 
@@ -66,7 +68,7 @@ begin
   end if;
 
   update public.collection_intents
-  set checkout_creation_started_at = timezone('utc', now())
+  set checkout_creation_started_at = now()
   where id = v_intent.id;
 
   return true;
