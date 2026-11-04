@@ -77,8 +77,10 @@ class WalletDashboardState {
     return null;
   }
 
-  bool isBalanceMatched([String? currency]) {
-    return reconciliationFor(currency ?? homeCurrency)?.matched ?? true;
+  /// null means reconciliation could not be obtained; it must never be
+  /// interpreted as a successful balance match.
+  bool? isBalanceMatched([String? currency]) {
+    return reconciliationFor(currency ?? homeCurrency)?.matched;
   }
 
   double pendingAmountFor([String? currency]) {
