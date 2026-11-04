@@ -129,7 +129,9 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
       // allowing another attempt, and keep the same idempotency reference.
       TransactionModel? recoveredTransaction;
       try {
-        recoveredTransaction = await _transactionService.getPendingFiatsendTopUp();
+        recoveredTransaction = await _transactionService.getPendingFiatsendTopUp(
+          reference: _fundingReference,
+        );
       } catch (_) {
         // Preserve the reference even if recovery is temporarily unavailable.
       }
