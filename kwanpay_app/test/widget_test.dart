@@ -1,30 +1,62 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:kwanpay_app/main.dart';
+import 'package:kwanpay_app/Core/models/wallet_reconciliation.dart';
+import 'package:kwanpay_app/Core/providers/wallet_dashboard_provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const KwanPayApp());
+  group('WalletDashboardState reconciliation', () {
+    test('reports unavailable when no reconciliation result exists', () {
+      const state = WalletDashboardState();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(state.isBalanceMatched(), isNull);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('reports a confirmed matching balance', () {
+      const state = WalletDashboardState(
+        reconciliation: [
+          WalletReconciliation(
+            currency: 'GHS',
+            ledgerAvailable: 100,
+            expectedAvailable: 100,
+            pendingAmount: 0,
+            matched: true,
+          ),
+        ],
+      );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(state.isBalanceMatched('GHS'), isTrue);
+    });
+
+    test('reports a mismatch without treating it as unavailable', () {
+      const state = WalletDashboardState(
+        reconciliation: [
+          WalletReconciliation(
+            currency: 'GHS',
+            ledgerAvailable: 90,
+            expectedAvailable: 100,
+            pendingAmount: 0,
+            matched: false,
+          ),
+        ],
+      );
+
+      expect(state.isBalanceMatched('GHS'), isFalse);
+    });
+
+    test('matches currency codes case-insensitively', () {
+      const state = WalletDashboardState(
+        reconciliation: [
+          WalletReconciliation(
+            currency: 'GHS',
+            ledgerAvailable: 100,
+            expectedAvailable: 100,
+            pendingAmount: 0,
+            matched: true,
+          ),
+        ],
+      );
+
+      expect(state.isBalanceMatched('ghs'), isTrue);
+    });
   });
 }
