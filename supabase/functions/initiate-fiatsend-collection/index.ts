@@ -191,7 +191,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     const message = error instanceof FiatsendError ? error.message : "Fiatsend is temporarily unavailable.";
-    const ambiguous = !(error instanceof FiatsendError) || error.retryable;
+    const ambiguous = !(error instanceof FiatsendError) || error.retryable || error.status === 408;
     console.error("Fiatsend checkout failed", reference,
       error instanceof FiatsendError ? error.code : "network_or_unknown_error");
 
@@ -242,9 +242,8 @@ Deno.serve(async (req) => {
       success: true,
       status: "Pending",
       reconciliation_required: true,
-      checkout_url: checkoutUrl,
       transaction: first(assigned),
-      message: "The payment page was created but could not be linked yet. Do not start another payment; refresh status or contact support.",
+      message: "The payment page was created but could not be linked yet. Do not open another payment; refresh status or contact support.",
     }, 202);
   }
 
