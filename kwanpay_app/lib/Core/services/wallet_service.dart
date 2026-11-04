@@ -90,6 +90,10 @@ class WalletService {
           .toList();
     } on PostgrestException {
       return [];
+    } catch (_) {
+      // Reconciliation is advisory state for the dashboard. A transient
+      // network failure must not prevent balances and activity from loading.
+      return [];
     }
   }
 
