@@ -268,6 +268,55 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     });
 
     try {
+      // If initiation may have reached Fiatsend but the session ID was not
+      // saved, retry the same reference through the server's recovery path.
+      // The server searches existing sessions and fails closed if uncertain.
+      final hasProviderReference =
+          transaction.providerReference != null &&
+          transaction.providerReference!.isNotEmpty;
+
+      if (transaction.provider == 'fiatsend' && !hasProviderReference) {
+        final method = ref.read(walletDashboardProvider).defaultPaymentMethod;
+        if (method == null) {
+          throw Exception(
+            'This payment is still being reconciled. Restore your Mobile Money method or contact support; do not start another payment.',
+          );
+        }
+
+        final recovered = await _transactionService.initiateFiatsendCollection(
+          amount: transaction.amount,
+          reference: reference,
+          rail: method.rail,
+          msisdn: method.msisdn,
+        );
+
+        if (!mounted) return;
+
+        setState(() {
+          _transaction = recovered.transaction;
+          _checkoutUrl = recovered.checkoutUrl ?? _checkoutUrl;
+        });
+
+        final recoveredProviderReference =
+            recovered.transaction.providerReference;
+        if (recoveredProviderReference == null ||
+            recoveredProviderReference.isEmpty) {
+          setState(() {
+            _submitting = false;
+            _error = null;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                recovered.message ??
+                    'The earlier payment request is still being checked. Do not start another payment.',
+              ),
+            ),
+          );
+          return;
+        }
+      }
+
       final result = await _transactionService.verifyFiatsendCollection(
         reference: reference,
       );
