@@ -1,6 +1,6 @@
 // Starts a GHS wallet top-up through a Fiatsend hosted checkout session.
 // The wallet is credited ONLY after verify-fiatsend-collection or
-// fiatsend-webhook confirms the session is "complete" server-side.
+// fiatsend-webhook confirms the session is "complete".
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import {
@@ -11,6 +11,7 @@ import {
   first,
   json,
   NETWORKS,
+  record,
   toE164,
 } from "../_shared/fiatsend.ts";
 
@@ -59,17 +60,24 @@ Deno.serve(async (req) => {
 
   const admin = createClient(supabaseUrl, serviceKey);
 
-  // Idempotent re-entry: same reference already has a checkout session.
-  const { data: existing } = await admin
+  // Do not treat a failed lookup as "no transaction": doing so could create
+  // a second funding intent after a transient database error.
+  const { data: existing, error: lookupError } = await admin
     .from("transactions")
     .select("*")
     .eq("reference", reference)
     .eq("wallet_id", user.id)
     .maybeSingle();
 
+  if (lookupError) {
+    console.error("Could not look up Fiatsend funding reference", reference, lookupError.message);
+    return json({ error: "Could not check the existing payment. Please retry shortly." }, 503);
+  }
+
   if (existing && existing.status !== "Pending") {
     return json({ error: "This funding reference is no longer pending.", transaction: existing }, 409);
   }
+
   if (existing?.provider === "fiatsend" && existing?.provider_reference) {
     try {
       const session = await fiatsend(
@@ -86,6 +94,58 @@ Deno.serve(async (req) => {
       return json({ success: true, already_initiated: true, checkout_url: null, transaction: existing });
     }
   }
+
+  // A previous request may have reached Fiatsend but timed out before the
+  // session ID was saved. Search the provider's recent sessions by our stable
+  // client_reference_id before considering another create request. If no
+  // session is visible, fail closed: never create a second checkout blindly.
+  if (existing?.provider === "fiatsend" && !existing?.provider_reference) {
+    try {
+      const list = await fiatsend(CHECKOUT_BASE_URL, "/checkout/sessions?limit=100");
+      const sessions = Array.isArray(list.data) ? list.data.map(record).filter(Boolean) : [];
+      const recovered = sessions.find((session) => session?.client_reference_id === reference);
+
+      if (recovered) {
+        const sessionId = String(recovered.id ?? "").trim();
+        const checkoutUrl = String(recovered.url ?? "").trim();
+        if (sessionId) {
+          const { data: attached, error: attachError } = await admin.rpc("attach_provider_reference", {
+            p_reference: reference,
+            p_provider: "fiatsend",
+            p_provider_reference: sessionId,
+          });
+          if (attachError) {
+            console.error("Could not attach recovered Fiatsend session", reference, attachError.message);
+            return json({
+              success: true,
+              status: "Pending",
+              reconciliation_required: true,
+              transaction: existing,
+              message: "A payment session was found but could not be linked safely. Do not start another payment; contact support.",
+            }, 202);
+          }
+          return json({
+            success: true,
+            already_initiated: true,
+            checkout_url: checkoutUrl || null,
+            transaction: first(attached),
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Could not recover Fiatsend checkout session", reference,
+        error instanceof FiatsendError ? error.code : "provider_lookup_failed");
+    }
+
+    return json({
+      success: true,
+      status: "Pending",
+      reconciliation_required: true,
+      transaction: existing,
+      message: "We are checking the status of your earlier payment request. Do not start another payment. Refresh status again shortly or contact support.",
+    }, 202);
+  }
+
   if (existing?.provider && existing.provider !== "fiatsend" && existing.provider_reference) {
     return json({ error: "This reference belongs to another payment provider." }, 409);
   }
@@ -108,8 +168,8 @@ Deno.serve(async (req) => {
     { p_reference: reference, p_provider: "fiatsend" },
   );
   if (assignError || !assigned) {
-    await admin.rpc("fail_pending_collection", { p_reference: reference });
-    return json({ error: "Could not prepare this payment. Start a new Add Funds request." }, 500);
+    console.error("Could not assign Fiatsend provider", reference, assignError?.message);
+    return json({ error: "Could not prepare this payment. Please retry or contact support." }, 500);
   }
 
   // 2. Hosted checkout session.
@@ -128,17 +188,45 @@ Deno.serve(async (req) => {
       }),
     });
   } catch (error) {
-    const { data: failed } = await admin.rpc("fail_pending_collection", { p_reference: reference });
-    const message = error instanceof FiatsendError ? error.message : "Fiatsend is unavailable.";
-    console.error("Fiatsend checkout failed", error instanceof FiatsendError ? error.code : error);
+    const message = error instanceof FiatsendError ? error.message : "Fiatsend is temporarily unavailable.";
+    const ambiguous = !(error instanceof FiatsendError) || error.retryable;
+    console.error("Fiatsend checkout failed", reference,
+      error instanceof FiatsendError ? error.code : "network_or_unknown_error");
+
+    // A timeout/5xx can happen after Fiatsend has created the session. Keep
+    // the KwanPay transaction Pending so a later reconciliation can recover
+    // and settle it. Only definitive provider rejections are marked Failed.
+    if (ambiguous) {
+      return json({
+        success: true,
+        status: "Pending",
+        reconciliation_required: true,
+        transaction: first(assigned),
+        message: "We could not confirm whether the payment page was created. Do not start another payment. Refresh status shortly or contact support.",
+      }, 202);
+    }
+
+    const { data: failed, error: failError } = await admin.rpc("fail_pending_collection", {
+      p_reference: reference,
+    });
+    if (failError) {
+      console.error("Could not mark definitively rejected Fiatsend request failed", reference, failError.message);
+    }
     return json({ error: message, transaction: first(failed) ?? first(assigned) }, 400);
   }
 
   const sessionId = String(session.id ?? "").trim();
   const checkoutUrl = String(session.url ?? "").trim();
   if (!sessionId || !checkoutUrl) {
-    await admin.rpc("fail_pending_collection", { p_reference: reference });
-    return json({ error: "Fiatsend did not return a checkout session." }, 502);
+    // A 2xx response with an incomplete body is still ambiguous: the provider
+    // may have created a session. Leave the transaction pending for recovery.
+    return json({
+      success: true,
+      status: "Pending",
+      reconciliation_required: true,
+      transaction: first(assigned),
+      message: "The payment page response could not be verified. Do not start another payment; refresh status or contact support.",
+    }, 202);
   }
 
   const { data: attached, error: attachError } = await admin.rpc("attach_provider_reference", {
@@ -147,7 +235,15 @@ Deno.serve(async (req) => {
     p_provider_reference: sessionId,
   });
   if (attachError) {
-    return json({ error: "Checkout was created but could not be recorded safely." }, 500);
+    console.error("Fiatsend checkout created but session reference could not be saved", reference, attachError.message);
+    return json({
+      success: true,
+      status: "Pending",
+      reconciliation_required: true,
+      checkout_url: checkoutUrl,
+      transaction: first(assigned),
+      message: "The payment page was created but could not be linked yet. Do not start another payment; refresh status or contact support.",
+    }, 202);
   }
 
   return json({
