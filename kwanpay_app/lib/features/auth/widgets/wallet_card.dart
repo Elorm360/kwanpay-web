@@ -31,7 +31,7 @@ class WalletCard extends StatefulWidget {
     required this.onPay,
     this.onCurrencySelected,
     this.pendingAmount = 0,
-    this.balanceMatched = true,
+    this.balanceMatched,
     this.hasDisplayRate = true,
     this.homeBalanceLabel,
   });
@@ -261,11 +261,11 @@ class _WalletCardState extends State<WalletCard> {
           ),
           if (widget.balanceMatched != true) ...[
             const SizedBox(height: 8),
-            const Text(
+            Text(
               widget.balanceMatched == false
                   ? "This balance needs review · available funds were not changed"
                   : "We could not verify this balance just now · please refresh before relying on reconciliation",
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.accent,
                 fontSize: 12,
               ),
