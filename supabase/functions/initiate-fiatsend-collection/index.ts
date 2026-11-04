@@ -78,11 +78,14 @@ Deno.serve(async (req) => {
     return json({ error: "This funding reference is no longer pending.", transaction: existing }, 409);
   }
 
-  if (existing?.provider === "fiatsend" && existing?.provider_reference) {
+  const existingSessionId = String(existing?.provider_reference ?? "").trim();
+  const hasCheckoutSession = /^cs_[a-f0-9]{48}$/.test(existingSessionId);
+
+  if (existing?.provider === "fiatsend" && hasCheckoutSession) {
     try {
       const session = await fiatsend(
         CHECKOUT_BASE_URL,
-        `/checkout/sessions/${encodeURIComponent(existing.provider_reference)}`,
+        `/checkout/sessions/${encodeURIComponent(existingSessionId)}`,
       );
       return json({
         success: true,
@@ -99,7 +102,7 @@ Deno.serve(async (req) => {
   // session ID was saved. Search the provider's recent sessions by our stable
   // client_reference_id before considering another create request. If no
   // session is visible, fail closed: never create a second checkout blindly.
-  if (existing?.provider === "fiatsend" && !existing?.provider_reference) {
+  if (existing?.provider === "fiatsend" && !hasCheckoutSession) {
     try {
       const list = await fiatsend(CHECKOUT_BASE_URL, "/checkout/sessions?limit=100");
       const sessions = Array.isArray(list.data)
