@@ -17,7 +17,7 @@ class WalletCard extends StatefulWidget {
   final VoidCallback onPay;
   final ValueChanged<String>? onCurrencySelected;
   final double pendingAmount;
-  final bool balanceMatched;
+  final bool? balanceMatched;
   final bool hasDisplayRate;
   final String? homeBalanceLabel;
 
@@ -239,7 +239,7 @@ class _WalletCardState extends State<WalletCard> {
                 width: 10,
                 height: 10,
                 decoration: BoxDecoration(
-                  color: widget.balanceMatched
+                  color: widget.balanceMatched == true
                       ? AppColors.success
                       : AppColors.accent,
                   shape: BoxShape.circle,
@@ -247,7 +247,11 @@ class _WalletCardState extends State<WalletCard> {
               ),
               const SizedBox(width: 8),
               Text(
-                widget.status,
+                widget.balanceMatched == null
+                    ? "Reconciliation unavailable"
+                    : widget.balanceMatched == false
+                        ? "Balance needs review"
+                        : widget.status,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -255,10 +259,12 @@ class _WalletCardState extends State<WalletCard> {
               ),
             ],
           ),
-          if (!widget.balanceMatched) ...[
+          if (widget.balanceMatched != true) ...[
             const SizedBox(height: 8),
             const Text(
-              "This balance needs review · available funds were not changed",
+              widget.balanceMatched == false
+                  ? "This balance needs review · available funds were not changed"
+                  : "We could not verify this balance just now · please refresh before relying on reconciliation",
               style: TextStyle(
                 color: AppColors.accent,
                 fontSize: 12,
