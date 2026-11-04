@@ -208,10 +208,24 @@ class TransactionService {
     return _transactionFromRpc(payload, 'Could not create the withdrawal request.');
   }
 
-  Future<TransactionModel?> getPendingFiatsendTopUp() async {
+  Future<TransactionModel?> getPendingFiatsendTopUp({String? reference}) async {
     final user = currentUser;
     if (user == null) throw Exception('No authenticated user.');
-    final data = await _supabase.from('transactions').select().eq('wallet_id', user.id).eq('provider', 'fiatsend').eq('type', 'Top Up').eq('status', 'Pending').eq('currency', 'GHS').order('created_at', ascending: false).limit(1);
+
+    var query = _supabase
+        .from('transactions')
+        .select()
+        .eq('wallet_id', user.id)
+        .eq('provider', 'fiatsend')
+        .eq('type', 'Top Up')
+        .eq('status', 'Pending')
+        .eq('currency', 'GHS');
+
+    if (reference != null && reference.trim().isNotEmpty) {
+      query = query.eq('reference', reference.trim());
+    }
+
+    final data = await query.order('created_at', ascending: false).limit(1);
     if (data.isEmpty) return null;
     return TransactionModel.fromJson(Map<String, dynamic>.from(data.first as Map));
   }
