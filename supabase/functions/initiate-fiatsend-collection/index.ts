@@ -177,6 +177,30 @@ Deno.serve(async (req) => {
     return json({ error: "Could not prepare this payment. Please retry or contact support." }, 500);
   }
 
+  // Atomically claim the single permitted provider create attempt. This
+  // closes the race where two app requests both pass the initial lookup and
+  // otherwise create two separate checkout sessions for one KwanPay reference.
+  const { data: checkoutClaimed, error: claimError } = await admin.rpc(
+    "claim_fiatsend_checkout",
+    { p_reference: reference },
+  );
+  if (claimError) {
+    console.error("Could not claim Fiatsend checkout creation", reference, claimError.message);
+    return json({
+      error: "Could not safely start the payment page. Please retry shortly.",
+      transaction: first(assigned),
+    }, 503);
+  }
+  if (checkoutClaimed !== true) {
+    return json({
+      success: true,
+      status: "Pending",
+      reconciliation_required: true,
+      transaction: first(assigned),
+      message: "A payment page request is already being processed for this reference. Do not start another payment; refresh status shortly.",
+    }, 202);
+  }
+
   // 2. Hosted checkout session.
   let session: Record<string, unknown>;
   try {
