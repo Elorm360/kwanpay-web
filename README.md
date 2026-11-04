@@ -44,13 +44,15 @@ Use `.env.example` as the source of truth. Never commit `.env.local`.
 
 ## Database
 
-Apply both files under `supabase/migrations/` in filename order. The second migration creates the operational CRM:
+The repository's migration directory is not yet a complete, replayable history of the connected KwanPay Supabase project. The live project's recorded migration history contains changes that do not have matching SQL files in this branch, and this branch also contains migration files not recorded as applied on that project.
+
+**Do not run `supabase db push`, apply these migrations to the existing project, or rebuild a production database from this folder until the migration history and live schema have been reconciled.** In particular, wallet balances, transaction settlement, provider webhooks, and RLS must be preserved.
+
+Public waitlist and demo submissions go through `POST /api/leads`; clients do not write directly to Supabase tables. The CRM migrations define:
 
 - `leads`: canonical waitlist and demo records, deduplicated by email.
 - `admin_users`: individual Supabase Auth administrators and roles.
 - `lead_audit_events`: append-only operational history.
-
-Public waitlist and demo submissions go through `POST /api/leads`; clients do not write directly to Supabase tables. Legacy `early_access` and `demo_requests` rows are backfilled into `leads`.
 
 ## Admin
 
@@ -86,4 +88,17 @@ Configure all environment variables in the hosting provider, apply the Supabase 
 
 ## Flutter app
 
-The `kwanpay_app/` directory is a separate Flutter application with its own dependencies and environment setup. Run Flutter commands from that directory; npm commands at the repository root apply only to the web app.
+The `kwanpay_app/` directory is a separate Flutter application. Run Flutter commands from that directory; npm commands at the repository root apply only to the web app.
+
+On Windows:
+
+```powershell
+cd kwanpay_app
+copy .env.example .env
+flutter pub get
+flutter analyze
+flutter test
+flutter run
+```
+
+On macOS/Linux, use `cp .env.example .env` instead. Fill in the Supabase project URL and public publishable/anon key in `.env`. The mobile app must never contain a Supabase service-role/secret key or a Stellar secret seed. Keep `STELLAR_NETWORK=testnet` during development. The real `.env` is ignored by Git; commit only `.env.example`.
