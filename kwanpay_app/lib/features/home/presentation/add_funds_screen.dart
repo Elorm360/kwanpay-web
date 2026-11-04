@@ -124,11 +124,25 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     } catch (error) {
       if (!mounted) return;
 
+      // The server may have created the pending transaction before the
+      // provider request or network response failed. Recover it before
+      // allowing another attempt, and keep the same idempotency reference.
+      TransactionModel? recoveredTransaction;
+      try {
+        recoveredTransaction = await _transactionService.getPendingFiatsendTopUp();
+      } catch (_) {
+        // Preserve the reference even if recovery is temporarily unavailable.
+      }
+
+      if (!mounted) return;
+
       setState(() {
+        _transaction = recoveredTransaction ?? _transaction;
         _submitting = false;
-        _fundingReference = null;
         _error = error.toString().replaceFirst('Exception: ', '');
       });
+
+      await ref.read(walletDashboardProvider.notifier).refresh();
     }
   }
 
