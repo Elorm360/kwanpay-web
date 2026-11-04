@@ -246,6 +246,12 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     }
   }
 
+  bool _isFiatsendSessionReference(String? value) {
+    final candidate = value?.trim() ?? '';
+    if (candidate.length != 51 || !candidate.startsWith('cs_')) return false;
+    return RegExp(r'^[a-f0-9]{48}').hasMatch(candidate.substring(3));
+  }
+
   Future<void> _refreshStatus() async {
     final transaction = _transaction;
 
@@ -271,8 +277,8 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
       // If initiation may have reached Fiatsend but the session ID was not
       // saved, retry the same reference through the server's recovery path.
       // The server searches existing sessions and fails closed if uncertain.
-      final hasProviderReference = RegExp(
-        r'^cs_[a-f0-9]{48}
+      final hasProviderReference =
+          _isFiatsendSessionReference(transaction.providerReference);
 
       if (transaction.provider == 'fiatsend' && !hasProviderReference) {
         final method = ref.read(walletDashboardProvider).defaultPaymentMethod;
@@ -298,7 +304,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
 
         final recoveredProviderReference =
             recovered.transaction.providerReference;
-        if (!RegExp(r'^cs_[a-f0-9]{48}
+        if (!_isFiatsendSessionReference(recoveredProviderReference)) {
           setState(() {
             _submitting = false;
             _error = null;
