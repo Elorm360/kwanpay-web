@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../Core/widgets/kwanpay_lockup.dart';
 import '../../../core/widgets/kwan_text_field.dart';
-import '../../../core/widgets/primary_button.dart';
 import '../../../core/services/supabase_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -55,6 +54,7 @@ class _ForgotPasswordScreenState
 
     } catch (e) {
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
