@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../Core/theme/app_colors.dart';
 import '../../../Core/widgets/kwanpay_lockup.dart';
-import '../../../core/widgets/kwan_text_field.dart';
-import '../../../core/services/supabase_service.dart';
+import '../../../Core/widgets/kwan_text_field.dart';
+import '../../../Core/services/supabase_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
