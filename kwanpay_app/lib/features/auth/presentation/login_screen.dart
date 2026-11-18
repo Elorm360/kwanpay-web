@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../Core/theme/app_colors.dart';
 import '../../../Core/widgets/kwanpay_lockup.dart';
-import '../../../core/widgets/kwan_text_field.dart';
-import '../../../core/widgets/password_text_field.dart';
-import '../../../core/services/auth_service.dart';
-import '../../../core/services/profile_service.dart';
+import '../../../Core/widgets/kwan_text_field.dart';
+import '../../../Core/widgets/password_text_field.dart';
+import '../../../Core/services/auth_service.dart';
+import '../../../Core/services/profile_service.dart';
 import '../../navigation/main_navigation_screen.dart';
 import 'email_verification_screen.dart';
 import 'forgot_password_screen.dart';
