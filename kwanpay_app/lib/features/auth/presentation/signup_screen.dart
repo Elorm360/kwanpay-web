@@ -5,13 +5,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../../Core/widgets/kwanpay_lockup.dart';
 import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/password_text_field.dart';
-import '../../../core/widgets/primary_button.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/profile_service.dart';
 import '../../navigation/main_navigation_screen.dart';
 import 'email_verification_screen.dart';
 import 'login_screen.dart';
-import 'welcome_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
