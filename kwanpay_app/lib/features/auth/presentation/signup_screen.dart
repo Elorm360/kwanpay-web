@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
 import '../../../Core/widgets/kwanpay_lockup.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/password_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
