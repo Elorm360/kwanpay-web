@@ -70,13 +70,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   Future<void> _verifyCode([String? value]) async {
     final token = (value ?? _codeController.text).trim();
-    if (token.length < 6 || token.length > 8) {
+    if (!RegExp(r'^\d{6}$').hasMatch(token)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter the verification code from your email.')),
+        const SnackBar(content: Text('Enter the 6-digit code from your email.')),
       );
       return;
     }
 
+    if (_isVerifying) return;
     setState(() => _isVerifying = true);
 
     try {
@@ -87,7 +88,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
       final user = response.user ?? Supabase.instance.client.auth.currentUser;
       if (user == null || !_authService.isEmailVerified(user)) {
-        throw Exception('Email is not verified yet.');
+        throw Exception('Email is not verified yet. Please try again.');
       }
 
       await _completeVerifiedSignup(user);
@@ -107,7 +108,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   Future<void> _resendCode() async {
-    if (_resendSeconds > 0) return;
+    if (_resendSeconds > 0 || _isResending) return;
 
     setState(() => _isResending = true);
 
@@ -115,6 +116,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       await _authService.resendSignupOtp(email: widget.email);
       if (!mounted) return;
 
+      _codeController.clear();
       _startResendCooldown();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -137,7 +139,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   Future<void> _completeVerifiedSignup(User user) async {
-    if (_completed) return;
+    if (_completed || !mounted) return;
     _completed = true;
     await ProfileService().createProfileIfNotExists();
     _navigateToDashboard();
@@ -171,46 +173,62 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           padding: AppSpacing.pagePadding,
           child: Column(
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 42),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'EMAIL VERIFICATION',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.6,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 34),
               Container(
-                width: 100,
-                height: 100,
+                width: 76,
+                height: 76,
                 decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(24),
                 ),
                 child: const Icon(
-                  Icons.mark_email_read_rounded,
-                  size: 50,
+                  Icons.mark_email_read_outlined,
+                  size: 34,
                   color: AppColors.accent,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 28),
               const Text(
-                'Verify Your Email',
+                'Check your inbox',
+                textAlign: TextAlign.center,
                 style: AppTextStyles.headline,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               const Text(
-                'Enter the 8-digit verification code we sent to:',
+                'We sent a 6-digit verification code to',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
+                  horizontal: 16,
+                  vertical: 14,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: AppColors.border),
                 ),
                 child: Text(
                   widget.email,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),
@@ -218,41 +236,46 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               ),
               const SizedBox(height: 12),
               const Text(
-                'Check your inbox and spam folder. The code expires after a short time.',
+                'Enter the code below to confirm your email and finish setting up your account.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.caption,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 30),
               OtpCodeField(
                 controller: _codeController,
                 onCompleted: _verifyCode,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               _isVerifying
                   ? const Center(child: CircularProgressIndicator())
                   : PrimaryButton(
-                      text: 'Verify Email',
+                      text: 'Verify email',
                       onPressed: _verifyCode,
                     ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               _isResending
                   ? const Center(child: CircularProgressIndicator())
                   : SecondaryButton(
                       text: _resendSeconds > 0
                           ? 'Resend code in ${_resendSeconds}s'
-                          : 'Resend Code',
+                          : 'Resend code',
                       onPressed: _resendCode,
                     ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 18),
+              const Text(
+                "Can't find the email? Check your spam or junk folder.",
+                textAlign: TextAlign.center,
+                style: AppTextStyles.caption,
+              ),
+              const SizedBox(height: 26),
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 child: const Text(
-                  'Back to Sign In',
+                  'Back to sign in',
                   style: TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 15,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
