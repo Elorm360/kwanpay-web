@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../Core/widgets/kwanpay_lockup.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/password_text_field.dart';
@@ -113,29 +115,58 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: AppColors.paper,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: AppSpacing.pagePadding,
+          padding: const EdgeInsets.fromLTRB(24, 18, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
-              Text("Welcome Back", style: AppTextStyles.headline),
+              const KwanPayLockup(
+                axis: Axis.horizontal,
+                onDark: false,
+                showTagline: false,
+                markSize: 36,
+                wordmarkSize: 21,
+              ),
+              const SizedBox(height: 44),
+              const Text(
+                'WELCOME BACK',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.7,
+                ),
+              ),
               const SizedBox(height: 12),
               const Text(
-                "Sign in to your KwanPay account.",
-                style: AppTextStyles.body,
+                'Good to have you back.',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.8,
+                ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
+              const Text(
+                'Sign in to continue with your KwanPay journey.',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
               KwanTextField(
-                label: "Email Address",
-                icon: Icons.email_outlined,
+                label: 'Email address',
+                icon: Icons.mail_outline_rounded,
                 controller: emailController,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               PasswordTextField(controller: passwordController),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -147,18 +178,51 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                  child: const Text("Forgot Password?"),
+                  child: const Text(
+                    'Forgot password?',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : PrimaryButton(text: "Sign In", onPressed: signIn),
-              const SizedBox(height: 24),
+                  : SizedBox(
+                      width: double.infinity,
+                      height: 54,
+                      child: ElevatedButton(
+                        onPressed: signIn,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: const Text(
+                          'Sign in',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+              const SizedBox(height: 18),
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Don't have an account? Create Account"),
+                  child: const Text(
+                    "Don't have an account? Create account",
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ],
