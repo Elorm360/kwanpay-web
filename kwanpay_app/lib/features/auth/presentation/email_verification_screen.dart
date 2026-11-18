@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/services/auth_service.dart';
-import '../../../core/services/profile_service.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/primary_button.dart';
-import '../../../core/widgets/secondary_button.dart';
+import '../../../Core/services/auth_service.dart';
+import '../../../Core/services/profile_service.dart';
+import '../../../Core/theme/app_colors.dart';
+import '../../../Core/theme/app_spacing.dart';
+import '../../../Core/theme/app_text_styles.dart';
+import '../../../Core/widgets/primary_button.dart';
+import '../../../Core/widgets/secondary_button.dart';
 import '../../navigation/main_navigation_screen.dart';
 import '../widgets/otp_code_field.dart';
 
