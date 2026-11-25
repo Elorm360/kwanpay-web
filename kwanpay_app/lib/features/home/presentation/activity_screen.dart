@@ -72,7 +72,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: const ['All', 'Money In', 'Money Out', 'Payments', 'Transfers'].length,
-                separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   const filters = ['All', 'Money In', 'Money Out', 'Payments', 'Transfers'];
                   final filter = filters[index];
