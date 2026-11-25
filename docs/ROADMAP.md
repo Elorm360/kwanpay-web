@@ -81,9 +81,12 @@ Milestones, in order; each ships on its own with tests.
    - Done in the app: Limits and verification screen with usage, Ghana Card /
      passport capture with selfie, tier badge on Profile, "Raise limit" on
      limit refusals
-   - Left: admin review queue page on the web; phone verification (needs an
-     SMS provider); set the limit figures against Bank of Ghana e-money rules
-     before launch (they are test placeholders)
+   - Done on the web: `/admin/kyc` review queue (operators and up), oldest
+     first, ID photos through 5-minute signed links, approve or reject with a
+     reason the user sees; waiting count on the admin tabs
+   - Left: phone verification (needs an SMS provider); set the limit figures
+     against Bank of Ghana e-money rules before launch (they are test
+     placeholders)
 3. [ ] **Receipts and notifications**: receipt view and shareable PDF per
    transaction, in-app notification feed, push notifications (FCM)
 4. [ ] **Statements**: search and date filters in Activity; monthly statement

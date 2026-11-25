@@ -8,17 +8,13 @@ import {
   type AdminUser,
   type LeadRecord,
 } from "@/lib/admin-types";
+import { csvCell } from "@/lib/csv";
 import AdminUsersPanel from "./AdminUsersPanel";
 import LeadFilters from "./LeadFilters";
 import LeadPanel from "./LeadPanel";
 import LeadsTable from "./LeadsTable";
 import Pagination from "./Pagination";
 import StatCard from "./StatCard";
-
-function csvCell(value: unknown) {
-  const text = value == null ? "" : String(value);
-  return `"${text.replaceAll('"', '""')}"`;
-}
 
 export default function AdminDashboard({
   initialLeads,

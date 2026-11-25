@@ -11,7 +11,7 @@ export default async function AdminPage() {
   if (!currentAdmin) redirect("/admin/login");
 
   const supabaseAdmin = getSupabaseAdmin();
-  const [leadsResult, adminsResult] = await Promise.all([
+  const [leadsResult, adminsResult, kycWaiting] = await Promise.all([
     supabaseAdmin
       .from("leads")
       .select("*")
@@ -23,6 +23,10 @@ export default async function AdminPage() {
         "id, email, display_name, role, is_active, last_login_at, created_at"
       )
       .order("created_at"),
+    supabaseAdmin
+      .from("kyc_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
   ]);
 
   if (leadsResult.error || adminsResult.error) {
@@ -48,7 +52,11 @@ export default async function AdminPage() {
   return (
     <main className="min-h-screen bg-[#EDEFF0] px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-[1500px]">
-        <DashboardHeader admin={currentAdmin} />
+        <DashboardHeader
+          admin={currentAdmin}
+          active="leads"
+          pendingKyc={kycWaiting.count ?? 0}
+        />
         <AdminDashboard
           initialLeads={leadsResult.data as LeadRecord[]}
           initialAdmins={adminsResult.data as AdminUser[]}
