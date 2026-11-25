@@ -18,3 +18,9 @@ export const SITE_DESCRIPTION =
   "One wallet. Every journey. Across Africa. KwanPay helps travelers pay for transport, tours, hotels and experiences across Africa using one secure digital wallet, and helps tourism businesses get paid faster.";
 export const CONTACT_EMAIL = "contact@kwanpay.app";
 export const LEGAL_ENTITY = "KwanPay Technologies Ltd.";
+
+export const PARTNER = {
+  name: "TransVista Africa",
+  legalName: "TransVista Africa Ltd",
+  url: "https://www.transvistaafrica.com",
+} as const;

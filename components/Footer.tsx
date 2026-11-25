@@ -30,15 +30,15 @@ const XIcon = ({ size = 16 }: { size?: number }) => (
 type FooterLinkItem = { label: string; href: string; soon?: boolean };
 
 const companyLinks: FooterLinkItem[] = [
-  { label: "The Problem", href: "/#problem" },
-  { label: "Our Vision", href: "/roadmap" },
-  { label: "Partner With Us", href: "/demo" },
+  { label: "Why KwanPay", href: "/#how-it-works" },
+  { label: "Starting in Ghana", href: "/#ghana" },
+  { label: "TransVista Africa", href: "https://www.transvistaafrica.com" },
   { label: "Careers", href: `mailto:${CONTACT_EMAIL}?subject=Careers`, soon: true },
 ];
 
 const productLinks: FooterLinkItem[] = [
-  { label: "For Travelers", href: "/#features" },
-  { label: "For Businesses", href: "/#platforms" },
+  { label: "For Travelers", href: "/#travelers" },
+  { label: "For Businesses", href: "/business" },
   { label: "Security", href: "/#trust" },
   { label: "Roadmap", href: "/roadmap" },
 ];

@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import JsonLd from "@/components/JsonLd";
-import { BRAND } from "@/lib/brand";
+import { ButtonLink } from "@/components/ui/Button";
+import { Eyebrow, Heading, Lead, Section } from "@/components/ui/Section";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 type Faq = { question: string; answer: string };
@@ -21,7 +21,7 @@ const faqs: Faq[] = [
   {
     question: "How do I add money to my wallet?",
     answer:
-      "The beta is starting with mobile money top-ups and withdrawals, beginning in Ghana. More funding methods and countries will follow as we expand.",
+      "Mobile Money top-ups and withdrawals (MTN, Telecel and AirtelTigo) are next on our roadmap, starting in Ghana. Early access members will hear first when they open.",
   },
   {
     question: "Why is KwanPay built on Stellar?",
@@ -52,75 +52,48 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="py-32 px-6" style={{ background: BRAND.paper }}>
+    <Section id="faq" tone="paper">
       <JsonLd data={jsonLd} />
 
-      <div className="max-w-6xl mx-auto grid lg:grid-cols-[1fr_1.6fr] gap-14 lg:gap-20">
+      <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <div>
-          <p
-            className="uppercase tracking-[0.35em] text-sm font-semibold"
-            style={{ color: BRAND.amber }}
-          >
-            FAQ
-          </p>
-          <h2
-            className="mt-5 text-4xl md:text-5xl font-black tracking-tight leading-tight"
-            style={{ color: BRAND.indigo }}
-          >
-            Questions, answered.
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-slate-600 max-w-md">
-            Everything you need to know about KwanPay during the private beta.
-            Can&apos;t find what you&apos;re looking for?
-          </p>
+          <Eyebrow>FAQ</Eyebrow>
+          <Heading>Questions, answered.</Heading>
+          <Lead>
+            What to know about KwanPay during the private beta. Can&apos;t find
+            your answer?
+          </Lead>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/demo"
-              className="rounded-full px-6 py-3 font-semibold text-white"
-              style={{
-                background: "linear-gradient(135deg, #D98E3B, #B56F28)",
-                boxShadow: "0 10px 30px -10px rgba(217,142,59,.6)",
-              }}
-            >
+            <ButtonLink href="/demo" variant="primary">
               Talk to the team
-            </Link>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="rounded-full px-6 py-3 font-semibold border-2 border-slate-300 bg-white/60 hover:border-amber-400 transition-colors"
-              style={{ color: BRAND.indigo }}
-            >
+            </ButtonLink>
+            <ButtonLink href={`mailto:${CONTACT_EMAIL}`} variant="secondary" external>
               Email us
-            </a>
+            </ButtonLink>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {faqs.map((faq, index) => (
             <details
               key={faq.question}
               open={index === 0}
-              className="group rounded-3xl border border-slate-200 bg-white px-7 py-6 shadow-sm transition-shadow open:shadow-lg open:border-amber-200"
+              className="group rounded-card border border-line bg-white px-6 py-5 open:shadow-card"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 [&::-webkit-details-marker]:hidden">
-                <h3
-                  className="text-lg font-bold leading-7"
-                  style={{ color: BRAND.indigo }}
-                >
-                  {faq.question}
-                </h3>
+                <h3 className="text-lg font-bold leading-7 text-ink">{faq.question}</h3>
                 <span
                   aria-hidden
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-open:rotate-45"
-                  style={{ background: "rgba(217,142,59,0.12)", color: BRAND.amber }}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-tint text-amber-deep transition-transform duration-300 group-open:rotate-45"
                 >
-                  <Plus size={18} />
+                  <Plus size={16} />
                 </span>
               </summary>
-              <p className="mt-4 pr-12 leading-7 text-slate-600">{faq.answer}</p>
+              <p className="mt-3 pr-10 leading-7 text-charcoal/75">{faq.answer}</p>
             </details>
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

@@ -10,8 +10,8 @@ import { EASE_OUT } from "@/lib/motion";
 // Absolute "/#..." hrefs so the links also work from /roadmap, /demo, etc.
 const navLinks = [
   { href: "/#how-it-works", label: "How It Works" },
-  { href: "/#features", label: "Travelers" },
-  { href: "/#platforms", label: "Businesses" },
+  { href: "/#travelers", label: "Travelers" },
+  { href: "/business", label: "Businesses" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/#faq", label: "FAQ" },
 ];
