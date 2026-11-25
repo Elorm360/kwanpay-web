@@ -62,12 +62,26 @@ Goal: users can top up and withdraw GHS via Mobile Money through one partner.
 
 Goal: a wallet people can trust with real money.
 
-- [ ] Double-entry ledger as the source of truth for balances
-- [ ] KYC tiers (phone, ID, selfie) with limits per tier
-- [ ] Push notifications and receipts for every transaction
-- [ ] Transaction search, filters and statement export
-- [ ] Admin tools: user lookup, transaction review, manual hold/release,
-      audit trail (extend the existing web admin CRM)
+Milestones, in order; each ships on its own with tests.
+
+1. [x] **Double-entry ledger** (`20261125130946_add_double_entry_ledger`)
+   - `ledger_accounts` / `ledger_journals` / `ledger_entries`; journals must
+     net to zero per currency (checked at commit); entries are append-only
+   - Every money function posts through `ledger_post`; `wallet_balances` is a
+     cache that cannot go negative; `adjust_wallet_balance` retired
+   - `ledger_verify()` reports any cache/ledger disagreement
+   - Fixes: FX credits rounded to 2 decimals; payouts get `completed_at`
+   - End-to-end flow test: `supabase/tests/ledger_flow_test.sql`
+2. [ ] **Limits and KYC tiers**: tier per user (phone verified, ID verified,
+   full), per-transaction and daily limits enforced inside the money
+   functions, ID document capture in the app, admin review queue
+3. [ ] **Receipts and notifications**: receipt view and shareable PDF per
+   transaction, in-app notification feed, push notifications (FCM)
+4. [ ] **Statements**: search and date filters in Activity; monthly statement
+   export (PDF/CSV) generated from the ledger
+5. [ ] **Admin wallet tools** (web admin): user and wallet lookup, ledger
+   view per user, transaction review, manual hold/release with audit trail,
+   nightly `ledger_verify()` alert
 
 ## Phase 3 — Stellar settlement
 
