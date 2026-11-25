@@ -157,7 +157,9 @@ class KwanPayLockup extends StatelessWidget {
             style: TextStyle(
               fontSize: wordmarkSize * 0.38,
               fontWeight: FontWeight.w500,
-              color: AppColors.accent,
+              // Amber text is too low-contrast on the light paper background
+              // (docs/DESIGN.md); keep amber only on dark surfaces.
+              color: onDark ? AppColors.accent : AppColors.textSecondary,
               height: 1.3,
             ),
           ),

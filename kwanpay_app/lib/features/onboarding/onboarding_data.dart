@@ -1,22 +1,23 @@
+import 'onboarding_illustrations.dart';
 import 'onboarding_model.dart';
 
 const onboardingPages = [
   OnboardingModel(
-    image: "assets/images/onboarding_1.png",
-    title: "Travel Africa Without Borders",
+    art: OnboardingArt.payTrip,
+    title: 'Pay for your whole trip',
     subtitle:
-        "Book experiences, pay operators and explore destinations across the continent from one secure wallet.",
+        'Tours, stays and rides across Ghana, paid from one balance. No cash to carry, no card to be declined.',
   ),
   OnboardingModel(
-    image: "assets/images/onboarding_2.png",
-    title: "Pay Anyone. Anytime.",
+    art: OnboardingArt.currencies,
+    title: 'Cedis and dollars, side by side',
     subtitle:
-        "Send money, request payments and settle bookings instantly with transparent cross-border transfers.",
+        'Hold GHS, USD and NGN in one wallet, and see the exact rate before you convert.',
   ),
   OnboardingModel(
-    image: "assets/images/onboarding_3.png",
-    title: "Your African Travel Wallet",
+    art: OnboardingArt.accounted,
+    title: 'Every payment accounted for',
     subtitle:
-        "Manage bookings, convert currency, and track your travel activity from one place.",
+        'Each payment is recorded and matched to the booking, so you and the business see the same thing.',
   ),
 ];

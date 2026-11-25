@@ -79,9 +79,6 @@ flutter:
   assets:
     - assets/images/kwanpay_lockup.png
     - assets/images/kwanpay_mark.svg
-    - assets/images/onboarding_1.png
-    - assets/images/onboarding_2.png
-    - assets/images/onboarding_3.png
     - .env
 
 
