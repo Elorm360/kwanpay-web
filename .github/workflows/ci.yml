@@ -9,6 +9,57 @@ permissions:
   contents: read
 
 jobs:
+  repo-guards:
+    name: Repository guards
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check config files for hidden code
+        run: bash .github/scripts/check-config-integrity.sh
+
+      - name: Scan for committed secrets
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.21.2 \
+            dir /repo --no-banner --redact --exit-code 1
+
+  flutter:
+    name: Flutter app
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: kwanpay_app
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # .env is a bundled asset but is never committed; CI only needs it to exist.
+      - name: Create placeholder env file
+        run: printf 'SUPABASE_URL=https://example.supabase.co\nSUPABASE_ANON_KEY=ci-placeholder\n' > .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check import path casing
+        run: dart run tool/check_import_case.dart
+
+      - name: Analyze
+        run: flutter analyze lib test tool
+
+      - name: Test
+        run: flutter test
+
   web:
     runs-on: ubuntu-latest
     timeout-minutes: 15

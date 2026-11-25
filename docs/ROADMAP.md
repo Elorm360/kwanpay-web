@@ -19,7 +19,8 @@ Goal: a trustworthy codebase and environment to build on.
       secret keys, GitHub/Vercel tokens, and the old gateway keys
 - [ ] Push the malware fix to `main` and every remote branch; clean the other
       infected local projects
-- [ ] Add secret scanning and a "no long lines in config files" check to CI
+- [x] CI guards: config files checked for hidden code, gitleaks secret scan,
+      and a Flutter job (import-case check, analyze, tests)
 - [x] Remove Fiatsend, Fincra, Flutterwave (and dead Moolre) code from the
       app and Edge Functions; add the provider-neutral `PaymentGateway`
       interface (`kwanpay_app/lib/Core/payments/payment_gateway.dart`)
@@ -34,9 +35,10 @@ Goal: a trustworthy codebase and environment to build on.
 - [ ] Bring migrations in the repo back in sync with the live database
       (`supabase db pull`): several live functions and `payout_intents` are
       missing from `supabase/migrations/`
-- [ ] Fix mixed `Core/` vs `core/` import paths in the Flutter app (they break
-      builds on case-sensitive systems such as Linux CI and macOS)
-- [ ] Replace the template `widget_test.dart` with real smoke tests
+- [x] Rename `lib/Core` to `lib/core` so imports work on case-sensitive
+      systems; `tool/check_import_case.dart` keeps it that way
+- [x] Replace the template test with model unit tests; fix withdrawals
+      showing as incoming and the always-empty "Transfers" filter
 
 ## Phase 1 — Payment gateway
 
