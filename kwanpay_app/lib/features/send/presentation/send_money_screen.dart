@@ -31,7 +31,11 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
   void initState() {
     super.initState();
     _sendCurrency = AppCurrencies.home.code;
-    ref.read(walletDashboardProvider.notifier).refresh();
+    // Refreshing updates shared state; doing it during initState (while the
+    // tree is building) throws in Riverpod and corrupts the dashboard state.
+    Future.microtask(() {
+      if (mounted) ref.read(walletDashboardProvider.notifier).refresh();
+    });
   }
 
   @override

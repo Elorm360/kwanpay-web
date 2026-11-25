@@ -5,8 +5,12 @@ import 'app_radius.dart';
 
 /// Centralized app themes.
 class AppTheme {
+  /// Brand typeface, bundled in assets/fonts/geist (see pubspec.yaml).
+  static const fontFamily = 'Geist';
+
   static ThemeData get lightTheme {
     return ThemeData(
+      fontFamily: AppTheme.fontFamily,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
@@ -94,6 +98,7 @@ class AppTheme {
 
   static ThemeData get darkTheme {
     return ThemeData(
+      fontFamily: AppTheme.fontFamily,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,

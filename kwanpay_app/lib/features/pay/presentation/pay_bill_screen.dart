@@ -29,7 +29,10 @@ class _PayBillScreenState extends ConsumerState<PayBillScreen> {
   @override
   void initState() {
     super.initState();
-    ref.read(walletDashboardProvider.notifier).refresh();
+    // Deferred: modifying a provider during initState throws in Riverpod.
+    Future.microtask(() {
+      if (mounted) ref.read(walletDashboardProvider.notifier).refresh();
+    });
   }
 
   @override

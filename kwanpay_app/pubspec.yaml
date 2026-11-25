@@ -79,7 +79,25 @@ flutter:
   assets:
     - assets/images/kwanpay_lockup.png
     - assets/images/kwanpay_mark.svg
+    - assets/fonts/geist/OFL.txt
     - .env
+
+  # Geist, the brand typeface shared with the website. SIL Open Font License
+  # 1.1 (assets/fonts/geist/OFL.txt). From the official `geist` npm package,
+  # v1.3.1, checksum-verified.
+  fonts:
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/geist/Geist-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/geist/Geist-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/geist/Geist-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/geist/Geist-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/geist/Geist-Black.ttf
+          weight: 900
 
 
 

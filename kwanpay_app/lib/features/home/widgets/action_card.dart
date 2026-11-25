@@ -59,11 +59,16 @@ class _ActionCardState extends State<ActionCard> {
                 borderRadius: BorderRadius.circular(AppRadius.large),
                 boxShadow: AppShadows.card,
               ),
+              // The card has no fixed height (only minHeight), so the content
+              // must size itself; SizedBox.expand here asked for infinite
+              // height and stopped the whole home screen from laying out.
               child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  SizedBox.expand(
+                  SizedBox(
+                    width: double.infinity,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(widget.icon, color: AppColors.primary, size: 28),
                         const SizedBox(height: AppSpacing.xs),

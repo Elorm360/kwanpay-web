@@ -106,6 +106,7 @@ class _Row extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(width: 12),
           Text(
             amount,
             style: TextStyle(
@@ -140,20 +141,20 @@ class _PayTrip extends StatelessWidget {
               SizedBox(height: 6),
               _Row(
                 icon: Icons.account_balance_outlined,
-                title: 'Cape Coast Castle tour',
-                meta: 'Tour · Paid',
+                title: 'Castle tour',
+                meta: 'Cape Coast · Tour',
                 amount: 'GHS 350.00',
               ),
               _Row(
                 icon: Icons.bed_outlined,
-                title: 'Elmina guesthouse',
-                meta: 'Stay · 2 nights',
+                title: 'Guesthouse',
+                meta: 'Elmina · 2 nights',
                 amount: 'GHS 780.00',
               ),
               _Row(
                 icon: Icons.directions_bus_outlined,
-                title: 'Accra–Cape Coast shuttle',
-                meta: 'Ride · Paid',
+                title: 'Shuttle',
+                meta: 'Accra to Cape Coast · Ride',
                 amount: 'GHS 120.00',
               ),
             ],
