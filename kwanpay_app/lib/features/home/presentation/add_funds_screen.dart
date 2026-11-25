@@ -1,20 +1,19 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/models/app_currency.dart';
-import '../../../core/models/transaction_model.dart';
-import '../../../core/models/transaction_status.dart';
-import '../../../core/providers/wallet_dashboard_provider.dart';
-import '../../../core/services/transaction_service.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/primary_button.dart';
+import '../../../Core/models/app_currency.dart';
+import '../../../Core/models/transaction_model.dart';
+import '../../../Core/models/transaction_status.dart';
+import '../../../Core/payments/payment_gateway.dart';
+import '../../../Core/providers/wallet_dashboard_provider.dart';
+import '../../../Core/services/transaction_service.dart';
+import '../../../Core/theme/app_colors.dart';
+import '../../../Core/theme/app_radius.dart';
+import '../../../Core/theme/app_spacing.dart';
+import '../../../Core/theme/app_text_styles.dart';
+import '../../../Core/widgets/primary_button.dart';
 import '../../profile/presentation/payment_methods_screen.dart';
 
 class AddFundsScreen extends ConsumerStatefulWidget {
@@ -26,7 +25,6 @@ class AddFundsScreen extends ConsumerStatefulWidget {
 
 class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
   final _amountController = TextEditingController();
-  final _fincraOtpController = TextEditingController();
   final _transactionService = TransactionService();
 
   TransactionModel? _transaction;
@@ -34,8 +32,6 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
   String? _checkoutUrl;
 
   bool _submitting = false;
-  bool _fincraOtpRequired = false;
-  bool _authorizingFincraOtp = false;
   bool _loadingExistingTransaction = true;
 
   String? _error;
@@ -48,10 +44,8 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
 
   Future<void> _recoverPendingTransaction() async {
     try {
-      final transaction = await _transactionService.getPendingFiatsendTopUp();
-
+      final transaction = await _transactionService.getPendingTopUp();
       if (!mounted) return;
-
       setState(() {
         _transaction = transaction;
         _fundingReference = transaction?.reference ?? _fundingReference;
@@ -59,10 +53,9 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
       });
     } catch (error) {
       if (!mounted) return;
-
       setState(() {
         _loadingExistingTransaction = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = _message(error);
       });
     }
   }
@@ -70,64 +63,51 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
   @override
   void dispose() {
     _amountController.dispose();
-    _fincraOtpController.dispose();
     super.dispose();
   }
 
-  Future<void> _requestPayment() async {
-    final amount = double.tryParse(_amountController.text.trim());
+  String _message(Object error) => error.toString().replaceFirst('Exception: ', '');
 
+  Future<void> _requestPayment(PaymentGateway gateway) async {
+    final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
-      setState(() {
-        _error = 'Enter an amount greater than zero.';
-      });
+      setState(() => _error = 'Enter an amount greater than zero.');
       return;
     }
 
     final method = ref.read(walletDashboardProvider).defaultPaymentMethod;
-
     if (method == null) {
-      setState(() {
-        _error = 'Add a Mobile Money number in Payment methods first.';
-      });
+      setState(() => _error = 'Add a Mobile Money number in Payment methods first.');
       return;
     }
 
     setState(() {
       _submitting = true;
       _error = null;
-      _fincraOtpRequired = false;
     });
 
     try {
       _fundingReference ??= _transactionService.generateTransactionReference();
-
-      final result = await _transactionService.initiateFiatsendCollection(
+      final session = await gateway.startTopUp(
         amount: amount,
         reference: _fundingReference!,
         rail: method.rail,
         msisdn: method.msisdn,
       );
-
       await ref.read(walletDashboardProvider.notifier).refresh();
-
       if (!mounted) return;
-
       setState(() {
-        _transaction = result.transaction;
-        _checkoutUrl = result.checkoutUrl;
+        _transaction = session.transaction;
+        _checkoutUrl = session.checkoutUrl;
         _submitting = false;
-        _error = null;
       });
-
       await _openCheckout();
     } catch (error) {
       if (!mounted) return;
-
       setState(() {
         _submitting = false;
         _fundingReference = null;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = _message(error);
       });
     }
   }
@@ -144,106 +124,12 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     }
   }
 
-  Future<void> _authorizeAndVerify() async {
-    final transaction = _transaction;
-
-    if (transaction == null) return;
-
-    final reference = transaction.reference;
-
+  Future<void> _refreshStatus(PaymentGateway gateway) async {
+    final reference = _transaction?.reference;
     if (reference == null || reference.isEmpty) {
-      setState(() {
-        _error = 'This payment is missing its reference.';
-      });
+      setState(() => _error = 'This payment is missing its reference.');
       return;
     }
-
-    final otp = _fincraOtpController.text.trim();
-
-    if (!RegExp(r'^\d{4,8}$').hasMatch(otp)) {
-      setState(() {
-        _error = 'Enter the verification code sent to your phone.';
-      });
-      return;
-    }
-
-    setState(() {
-      _submitting = true;
-      _authorizingFincraOtp = true;
-      _error = null;
-    });
-
-    try {
-      final authorized = await _transactionService.authorizeFincraMomo(
-        reference: reference,
-        otp: otp,
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        _transaction = authorized.transaction;
-      });
-
-      final verified = await _transactionService.verifyFincraMomo(
-        reference: reference,
-      );
-
-      if (!mounted) return;
-
-      final updated = verified.transaction;
-
-      setState(() {
-        _transaction = updated;
-        _submitting = false;
-        _authorizingFincraOtp = false;
-        _error = null;
-
-        if (updated.status == TransactionStatus.completed) {
-          _fincraOtpRequired = false;
-        }
-      });
-
-      if (updated.status == TransactionStatus.completed) {
-        _fincraOtpController.clear();
-
-        await ref.read(walletDashboardProvider.notifier).refresh();
-
-        if (!mounted) return;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Payment confirmed. GHS ${updated.amount.toStringAsFixed(2)} is in your wallet.',
-            ),
-          ),
-        );
-      }
-    } catch (error) {
-      if (!mounted) return;
-
-      setState(() {
-        _submitting = false;
-        _authorizingFincraOtp = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
-      });
-    }
-  }
-
-  Future<void> _refreshStatus() async {
-    final transaction = _transaction;
-
-    if (transaction == null) return;
-
-    final reference = transaction.reference;
-
-    if (reference == null || reference.isEmpty) {
-      setState(() {
-        _error = 'This payment is missing its reference.';
-      });
-      return;
-    }
-
     if (_submitting) return;
 
     setState(() {
@@ -252,104 +138,57 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     });
 
     try {
-      final result = await _transactionService.verifyFiatsendCollection(
-        reference: reference,
-      );
-
+      final session = await gateway.checkTopUp(reference: reference);
       if (!mounted) return;
-
-      final updated = result.transaction;
-
+      final updated = session.transaction;
       setState(() {
         _transaction = updated;
-        _checkoutUrl = result.checkoutUrl ?? _checkoutUrl;
+        _checkoutUrl = session.checkoutUrl ?? _checkoutUrl;
         _submitting = false;
-        _error = null;
       });
 
       if (updated.status == TransactionStatus.completed) {
         await ref.read(walletDashboardProvider.notifier).refresh();
       }
-
       if (!mounted) return;
 
       final message = updated.status == TransactionStatus.completed
           ? 'Payment confirmed. GHS ${updated.amount.toStringAsFixed(2)} is in your wallet.'
           : updated.isPending
-          ? (result.message ?? 'Payment is still pending. Finish the payment on the Fiatsend page, then refresh again.')
-          : 'This payment is ${updated.status}. Your wallet was not credited.';
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+              ? (session.message ?? 'Payment is still pending. Finish the payment, then refresh again.')
+              : 'This payment is ${updated.status}. Your wallet was not credited.';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     } catch (error) {
       if (!mounted) return;
-
       setState(() {
         _submitting = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = _message(error);
       });
     }
   }
 
-  Future<void> _resendFincraOtp() async {
-    final transaction = _transaction;
-    final reference = transaction?.reference;
+  Future<void> _openPaymentMethods() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PaymentMethodsScreen()),
+    );
+    await ref.read(walletDashboardProvider.notifier).refresh();
+  }
 
-    if (reference == null || reference.isEmpty) {
-      setState(() {
-        _error = 'This payment is missing its reference.';
-      });
-      return;
-    }
-
-    if (_submitting) return;
-
-    setState(() {
-      _submitting = true;
-      _error = null;
-    });
-
-    try {
-      final result = await _transactionService.resendFincraMomoOtp(
-        reference: reference,
+  Widget _errorText() => Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+        child: Text(
+          _error!,
+          style: AppTextStyles.body.copyWith(color: AppColors.error),
+        ),
       );
-
-      if (!mounted) return;
-
-      setState(() {
-        if (result.transaction != null) {
-          _transaction = result.transaction;
-        }
-        _submitting = false;
-        _error = null;
-      });
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(result.message)));
-
-      unawaited(ref.read(walletDashboardProvider.notifier).refresh());
-    } catch (error) {
-      if (!mounted) return;
-
-      setState(() {
-        _submitting = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final gateway = ref.watch(paymentGatewayProvider);
     final dashboard = ref.watch(walletDashboardProvider);
     final method = dashboard.defaultPaymentMethod;
     final transaction = _transaction;
-
-    final waitingForProvider =
-        transaction != null &&
-        transaction.isPending &&
-        transaction.provider == 'fiatsend';
 
     return Scaffold(
       backgroundColor: AppColors.paper,
@@ -375,35 +214,60 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
                 child: CircularProgressIndicator(),
               ),
             )
-          else if (transaction == null) ...[
+          else if (transaction != null) ...[
+            _FundingStatusCard(transaction: transaction),
+            const SizedBox(height: AppSpacing.lg),
+            if (_error != null) _errorText(),
+            if (!transaction.isPending)
+              Text(
+                transaction.status == TransactionStatus.completed
+                    ? 'GHS ${transaction.amount.toStringAsFixed(2)} is now in your KwanPay wallet.'
+                    : 'This request is ${transaction.status}. Your Ghana cedi balance was not changed.',
+                style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+              )
+            else if (gateway == null || transaction.provider != gateway.id)
+              Text(
+                'This payment was started with a payment partner KwanPay no longer uses. '
+                'Your wallet is only credited if that payment was confirmed. Contact support if money left your account.',
+                style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+              )
+            else if (_submitting)
+              const Center(child: CircularProgressIndicator())
+            else ...[
+              if (_checkoutUrl != null) ...[
+                OutlinedButton.icon(
+                  onPressed: _openCheckout,
+                  icon: const Icon(Icons.open_in_new_rounded),
+                  label: const Text('Open payment page'),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
+              PrimaryButton(
+                text: 'Refresh status',
+                onPressed: () => _refreshStatus(gateway),
+              ),
+            ],
+          ] else if (gateway == null)
+            const _TopUpsUnavailableCard()
+          else ...[
             Text('Amount (GHS)', style: AppTextStyles.caption),
             const SizedBox(height: AppSpacing.sm),
             TextField(
               controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-              ],
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
               decoration: InputDecoration(
                 hintText: '0.00',
                 filled: true,
                 fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 18,
-                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.medium),
                   borderSide: const BorderSide(color: AppColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.medium),
-                  borderSide: const BorderSide(
-                    color: AppColors.accent,
-                    width: 1.4,
-                  ),
+                  borderSide: const BorderSide(color: AppColors.accent, width: 1.4),
                 ),
               ),
             ),
@@ -411,41 +275,15 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
             Text('Pay from', style: AppTextStyles.caption),
             const SizedBox(height: AppSpacing.sm),
             if (method == null)
-              _NoPaymentMethodCard(
-                onAdd: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PaymentMethodsScreen(),
-                    ),
-                  );
-
-                  await ref.read(walletDashboardProvider.notifier).refresh();
-                },
-              )
+              _NoPaymentMethodCard(onAdd: _openPaymentMethods)
             else
               _PaymentMethodCard(
                 methodName: method.network.name,
                 number: method.displayNumber,
-                onChange: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PaymentMethodsScreen(),
-                    ),
-                  );
-
-                  await ref.read(walletDashboardProvider.notifier).refresh();
-                },
+                onChange: _openPaymentMethods,
               ),
             const SizedBox(height: AppSpacing.xl),
-            if (_error != null) ...[
-              Text(
-                _error!,
-                style: AppTextStyles.body.copyWith(color: AppColors.error),
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
+            if (_error != null) _errorText(),
             IgnorePointer(
               ignoring: _submitting,
               child: Opacity(
@@ -454,75 +292,12 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
                   text: _submitting
                       ? 'Requesting...'
                       : method == null
-                      ? 'Add a payment method first'
-                      : 'Add Funds',
-                  onPressed: _requestPayment,
+                          ? 'Add a payment method first'
+                          : 'Add Funds',
+                  onPressed: () => _requestPayment(gateway),
                 ),
               ),
             ),
-          ] else ...[
-            _FundingStatusCard(transaction: transaction),
-            const SizedBox(height: AppSpacing.lg),
-            if (_error != null) ...[
-              Text(
-                _error!,
-                style: AppTextStyles.body.copyWith(color: AppColors.error),
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            if (_fincraOtpRequired && transaction.isPending) ...[
-              _VerificationCard(
-                controller: _fincraOtpController,
-                submitting: _authorizingFincraOtp || _submitting,
-                onVerify: _authorizeAndVerify,
-                onResend: _resendFincraOtp,
-              ),
-            ] else if (waitingForProvider) ...[
-              Text(
-                'Payment request sent',
-                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Finish paying on the secure Fiatsend page, then come back and tap Refresh status. Your wallet is credited only after Fiatsend confirms the payment.',
-                style: AppTextStyles.body.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              if (_submitting) ...[
-                const Center(child: CircularProgressIndicator()),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  'Checking payment…',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ] else ...[
-                if (_checkoutUrl != null) ...[
-                  OutlinedButton.icon(
-                    onPressed: _openCheckout,
-                    icon: const Icon(Icons.open_in_new_rounded),
-                    label: const Text('Open payment page'),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                ],
-                PrimaryButton(
-                  text: 'Refresh status',
-                  onPressed: _refreshStatus,
-                ),
-              ],
-            ] else
-              Text(
-                transaction.status == TransactionStatus.completed
-                    ? 'GHS ${transaction.amount.toStringAsFixed(2)} is now in your KwanPay wallet.'
-                    : 'This request is ${transaction.status}. Your Ghana cedi balance was not changed.',
-                style: AppTextStyles.body.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
           ],
         ],
       ),
@@ -530,22 +305,13 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
   }
 }
 
-class _VerificationCard extends StatelessWidget {
-  final TextEditingController controller;
-  final bool submitting;
-  final VoidCallback onVerify;
-  final VoidCallback onResend;
-
-  const _VerificationCard({
-    required this.controller,
-    required this.submitting,
-    required this.onVerify,
-    required this.onResend,
-  });
+class _TopUpsUnavailableCard extends StatelessWidget {
+  const _TopUpsUnavailableCard();
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -555,41 +321,13 @@ class _VerificationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Verify your phone', style: AppTextStyles.title),
+          const Icon(Icons.schedule_rounded, color: AppColors.accent, size: 32),
+          const SizedBox(height: AppSpacing.md),
+          Text('Top-ups are coming soon', style: AppTextStyles.title),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Enter the verification code sent to your phone.',
+            'We are finalizing our Mobile Money partner. You can still save your Mobile Money number in Payment methods so you are ready when top-ups open.',
             style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            maxLength: 8,
-            obscureText: true,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: const InputDecoration(
-              labelText: 'Verification code',
-              hintText: 'Enter your code',
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          IgnorePointer(
-            ignoring: submitting,
-            child: Opacity(
-              opacity: submitting ? 0.6 : 1,
-              child: PrimaryButton(
-                text: submitting ? 'Checking payment…' : 'Verify payment',
-                onPressed: onVerify,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Center(
-            child: TextButton(
-              onPressed: submitting ? null : onResend,
-              child: const Text('Resend code'),
-            ),
           ),
         ],
       ),

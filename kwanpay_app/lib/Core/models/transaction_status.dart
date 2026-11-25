@@ -15,7 +15,6 @@ class TransactionProviders {
   static const kwanpayFx = 'kwanpay_fx';
   static const kwanpayTransfer = 'kwanpay_transfer';
   static const kwanpayMerchant = 'kwanpay_merchant';
-  static const flutterwave = 'flutterwave';
 
   // Development blockchain network for Sprint 13.
   // This is not a fake KwanPay funding provider.

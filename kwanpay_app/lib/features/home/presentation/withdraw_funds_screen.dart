@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../Core/models/payment_method.dart';
 import '../../../Core/providers/wallet_dashboard_provider.dart';
-import '../../../Core/services/fiatsend_payout_service.dart';
+import '../../../Core/payments/payment_gateway.dart';
 import '../../../Core/theme/app_colors.dart';
 import '../../../Core/theme/app_radius.dart';
 import '../../../Core/theme/app_spacing.dart';
@@ -18,7 +18,6 @@ class WithdrawFundsScreen extends ConsumerStatefulWidget {
 
 class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
   final _amountController = TextEditingController();
-  final _payoutService = FiatsendPayoutService();
   PaymentMethod? _selectedMethod;
   bool _submitting = false;
   String? _error;
@@ -59,6 +58,11 @@ class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
   double _amount() => double.tryParse(_amountController.text.trim()) ?? 0;
 
   Future<void> _submit() async {
+    final gateway = ref.read(paymentGatewayProvider);
+    if (gateway == null) {
+      setState(() => _error = 'Withdrawals are not available yet.');
+      return;
+    }
     final amount = _amount();
     final balance = ref.read(walletDashboardProvider).balanceFor('GHS');
     final method = _selectedMethod;
@@ -86,7 +90,7 @@ class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
     });
 
     try {
-      final transaction = await _payoutService.initiate(
+      final transaction = await gateway.startWithdrawal(
         amount: amount,
         paymentMethodId: method.id,
       );
@@ -118,6 +122,7 @@ class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
     final dashboard = ref.watch(walletDashboardProvider);
     final balance = dashboard.balanceFor('GHS');
     final methods = dashboard.paymentMethods;
+    final gatewayReady = ref.watch(paymentGatewayProvider) != null;
 
     return Scaffold(
       backgroundColor: AppColors.paper,
@@ -228,16 +233,24 @@ class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _submitting ? null : _submit,
+                  onPressed: _submitting || !gatewayReady ? null : _submit,
                   child: _submitting
                       ? const SizedBox(
                           width: 22,
                           height: 22,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Withdraw funds'),
+                      : Text(gatewayReady ? 'Withdraw funds' : 'Withdrawals coming soon'),
                 ),
               ),
+              if (!gatewayReady) ...[
+                const SizedBox(height: AppSpacing.md),
+                const Text(
+                  'We are finalizing our Mobile Money partner. Your balance stays safe in your wallet until withdrawals open.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               const Text(
                 'Your balance is reserved when the withdrawal request is created and returned automatically if the payment fails.',
