@@ -51,15 +51,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
     } on AuthException catch (e) {
       if (!mounted) return;
-      final tooMany = e.statusCode == '429' || e.message.toLowerCase().contains('rate');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            tooMany
-                ? 'Too many requests. Wait a minute, then try again.'
-                : e.message,
-          ),
-        ),
+        SnackBar(content: Text(AuthService.friendlyError(e))),
       );
     } catch (_) {
       if (!mounted) return;

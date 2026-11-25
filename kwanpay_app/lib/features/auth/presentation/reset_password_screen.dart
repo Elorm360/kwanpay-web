@@ -70,7 +70,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       _startResendTimer();
       _show('A new code is on its way.');
     } on AuthException catch (e) {
-      _show(e.message);
+      _show(AuthService.friendlyError(e));
     } catch (_) {
       _show('Could not resend the code. Try again shortly.');
     }
@@ -108,14 +108,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         (route) => route.isFirst,
       );
     } on AuthException catch (e) {
-      final message = e.message.toLowerCase();
-      if (message.contains('expired') || message.contains('invalid') || message.contains('token')) {
-        _show('That code is wrong or has expired. Check the latest email, or resend.');
-      } else if (message.contains('different from the old')) {
-        _show('Choose a password you have not used before.');
-      } else {
-        _show(e.message);
-      }
+      _show(AuthService.friendlyError(e));
     } catch (_) {
       _show('Could not update the password. Check your connection and try again.');
     } finally {

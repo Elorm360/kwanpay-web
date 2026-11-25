@@ -70,6 +70,42 @@ class AuthService {
     await _supabase.auth.signOut();
   }
 
+  /// Plain-language message for an auth error, keyed on Supabase's error
+  /// codes rather than its English text.
+  static String friendlyError(AuthException e) {
+    final message = e.message.toLowerCase();
+    switch (e.code) {
+      case 'over_email_send_rate_limit':
+        // Project-wide cap on emails (very low on Supabase's built-in
+        // sender), not something the user caused.
+        return "We've sent too many emails in the last hour. Please try again later.";
+      case 'over_request_rate_limit':
+        return 'Too many attempts. Please wait a minute, then try again.';
+      case 'invalid_credentials':
+        return 'Incorrect email or password.';
+      case 'email_not_confirmed':
+        return 'Confirm your email first. Enter the code we sent you.';
+      case 'otp_expired':
+        return 'That code is wrong or has expired. Check the latest email, or resend.';
+      case 'same_password':
+        return 'Choose a password you have not used before.';
+      case 'weak_password':
+        return 'That password is too weak. Use at least $minPasswordLength characters with a letter and a number.';
+      case 'email_address_invalid':
+        return 'That email address cannot receive mail. Check it and try again.';
+    }
+    // Per-address resend cooldown: "For security purposes, you can only
+    // request this after 42 seconds."
+    final wait = RegExp(r'after (\d+) seconds?').firstMatch(message);
+    if (wait != null) {
+      return 'Please wait ${wait.group(1)} seconds before requesting another code.';
+    }
+    if (e.statusCode == '429') {
+      return 'Too many attempts. Please try again shortly.';
+    }
+    return e.message;
+  }
+
   /// Minimum rules shown to the user before they type, and enforced here.
   static const minPasswordLength = 8;
 

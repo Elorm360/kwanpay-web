@@ -156,7 +156,7 @@ class _SignupScreenState extends State<SignupScreen> {
       );
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+        SnackBar(content: Text(AuthService.friendlyError(e))),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

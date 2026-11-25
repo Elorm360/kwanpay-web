@@ -94,7 +94,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     } on AuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+        SnackBar(content: Text(AuthService.friendlyError(e))),
       );
     } catch (e) {
       if (!mounted) return;
@@ -124,7 +124,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     } on AuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+        SnackBar(content: Text(AuthService.friendlyError(e))),
       );
     } catch (e) {
       if (!mounted) return;
