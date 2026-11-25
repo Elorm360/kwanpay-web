@@ -72,9 +72,18 @@ Milestones, in order; each ships on its own with tests.
    - `ledger_verify()` reports any cache/ledger disagreement
    - Fixes: FX credits rounded to 2 decimals; payouts get `completed_at`
    - End-to-end flow test: `supabase/tests/ledger_flow_test.sql`
-2. [ ] **Limits and KYC tiers**: tier per user (phone verified, ID verified,
-   full), per-transaction and daily limits enforced inside the money
-   functions, ID document capture in the app, admin review queue
+2. [~] **Limits and KYC tiers**
+   - Done: tiers 0–3 in `kyc_tiers` (Basic, Phone verified, ID verified,
+     Full); per-transaction, daily and monthly caps in GHS enforced by a
+     trigger on `transactions` for Send, Payment and Withdrawal (other
+     currencies converted via `fx_rates`); private `kyc-documents` bucket;
+     `submit_kyc_documents` and `admin_review_kyc` (service role only)
+   - Done in the app: Limits and verification screen with usage, Ghana Card /
+     passport capture with selfie, tier badge on Profile, "Raise limit" on
+     limit refusals
+   - Left: admin review queue page on the web; phone verification (needs an
+     SMS provider); set the limit figures against Bank of Ghana e-money rules
+     before launch (they are test placeholders)
 3. [ ] **Receipts and notifications**: receipt view and shareable PDF per
    transaction, in-app notification feed, push notifications (FCM)
 4. [ ] **Statements**: search and date filters in Activity; monthly statement

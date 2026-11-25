@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/money_error.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/payment_method.dart';
@@ -112,7 +113,7 @@ class _WithdrawFundsScreenState extends ConsumerState<WithdrawFundsScreen> {
       if (!mounted) return;
       setState(() {
         _submitting = false;
-        _error = error.toString().replaceFirst('Exception: ', '');
+        _error = moneyErrorMessage(error);
       });
     }
   }

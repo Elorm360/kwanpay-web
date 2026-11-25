@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/money_error.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -66,7 +67,7 @@ class _AddFundsScreenState extends ConsumerState<AddFundsScreen> {
     super.dispose();
   }
 
-  String _message(Object error) => error.toString().replaceFirst('Exception: ', '');
+  String _message(Object error) => moneyErrorMessage(error);
 
   Future<void> _requestPayment(PaymentGateway gateway) async {
     final amount = double.tryParse(_amountController.text.trim());

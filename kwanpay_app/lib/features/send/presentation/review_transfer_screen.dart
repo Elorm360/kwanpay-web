@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../kyc/presentation/money_error_snack_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/wallet_dashboard_provider.dart';
@@ -73,9 +74,7 @@ class _ReviewTransferScreenState
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
+        moneyErrorSnackBar(context, e),
       );
     } finally {
       if (mounted) {

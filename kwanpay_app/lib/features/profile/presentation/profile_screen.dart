@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/profile_model.dart';
 import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/kyc_service.dart';
+import '../../kyc/presentation/limits_screen.dart';
 import '../../../core/services/profile_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -156,6 +158,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final dashboard = ref.watch(walletDashboardProvider);
+    final kyc = ref.watch(kycStatusProvider).valueOrNull;
     final wallet = dashboard.wallet;
     final defaultMethod = dashboard.defaultPaymentMethod;
 
@@ -175,6 +178,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 userName: isLoading
                     ? "Loading..."
                     : profile?.fullName ?? "Traveller",
+                tierName: kyc?.tierName ?? 'Basic',
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -210,6 +214,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ProfileSection(
                 title: "WALLET",
                 children: [
+                  ProfileTile(
+                    icon: Icons.speed_rounded,
+                    title: "Limits and verification",
+                    subtitle: kyc == null
+                        ? "See what you can send"
+                        : kyc.underReview
+                            ? "ID being checked"
+                            : kyc.idVerified
+                                ? "ID verified"
+                                : "Verify your ID to raise limits",
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const LimitsScreen(),
+                        ),
+                      );
+                      ref.invalidate(kycStatusProvider);
+                    },
+                  ),
                   ProfileTile(
                     icon: Icons.account_balance_wallet_outlined,
                     title: "Wallet Status",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../kyc/presentation/money_error_snack_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/app_currency.dart';
@@ -72,11 +73,7 @@ class _ReviewPaymentScreenState extends ConsumerState<ReviewPaymentScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            error.toString().replaceFirst('Exception: ', ''),
-          ),
-        ),
+        moneyErrorSnackBar(context, error),
       );
     } finally {
       if (mounted) {
