@@ -55,9 +55,10 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   keywords: [
     "KwanPay",
-    "Africa travel payments",
+    "Ghana travel payments",
+    "pay tour operators Ghana",
     "travel wallet",
-    "digital wallet Africa",
+    "travel wallet Ghana",
     "tourism payments",
     "Stellar payments",
     "cross-border payments Africa",

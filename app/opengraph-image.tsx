@@ -1,8 +1,26 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "KwanPay — One Wallet. Every Journey. Across Africa.";
+export const alt = "KwanPay: pay for your whole trip in Ghana from one wallet.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+// Same mark as components/Logo.tsx and the app icon.
+function Mark() {
+  return (
+    <svg width="76" height="76" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="16" fill="#2A3154" />
+      <path
+        d="M16 50C18 34 30 40 34 28C37 18 44 16 48 16"
+        fill="none"
+        stroke="#D98E3B"
+        strokeWidth="5.5"
+        strokeLinecap="round"
+      />
+      <circle cx="16" cy="50" r="4.5" fill="#D98E3B" />
+      <circle cx="48" cy="16" r="6" fill="none" stroke="#D98E3B" strokeWidth="3.5" />
+    </svg>
+  );
+}
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -15,56 +33,22 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "72px 80px",
-          background:
-            "radial-gradient(circle at 85% 20%, rgba(217,142,59,0.35), transparent 45%), linear-gradient(135deg, #1E2340, #13162B)",
+          background: "#1E2340",
           color: "white",
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: 20,
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M6 18C10 12 14 12 18 6"
-                stroke="#D98E3B"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-              <circle cx="18" cy="6" r="2" fill="#D98E3B" />
-            </svg>
-          </div>
-          <div style={{ display: "flex", fontSize: 44, fontWeight: 900 }}>
-            Kwan<span style={{ color: "#D98E3B" }}>Pay</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+          <Mark />
+          <div style={{ display: "flex", fontSize: 46, fontWeight: 800 }}>
+            <span>Kwan</span>
+            <span style={{ color: "#D98E3B" }}>Pay</span>
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 84, fontWeight: 900, lineHeight: 1.05 }}>
-            One Wallet.
-          </div>
-          <div style={{ fontSize: 84, fontWeight: 900, lineHeight: 1.05 }}>
-            Every Journey.
-          </div>
-          <div
-            style={{
-              fontSize: 84,
-              fontWeight: 900,
-              lineHeight: 1.05,
-              color: "#D98E3B",
-            }}
-          >
-            Across Africa.
+        <div style={{ display: "flex", flexDirection: "column", maxWidth: 960 }}>
+          <div style={{ fontSize: 78, fontWeight: 800, lineHeight: 1.06, letterSpacing: -2 }}>
+            Pay for your whole trip in Ghana from one wallet.
           </div>
         </div>
 
@@ -77,19 +61,18 @@ export default function OpengraphImage() {
             color: "rgba(255,255,255,0.7)",
           }}
         >
-          <span>Travel payments for travelers and tourism businesses</span>
+          <span>Tours, stays and rides · Built with TransVista Africa</span>
           <span
             style={{
               padding: "10px 22px",
               borderRadius: 999,
-              border: "1px solid rgba(217,142,59,0.6)",
-              color: "#D98E3B",
+              background: "#D98E3B",
+              color: "#1E2340",
               fontSize: 22,
               fontWeight: 700,
-              letterSpacing: 3,
             }}
           >
-            PRIVATE BETA
+            Private beta
           </span>
         </div>
       </div>

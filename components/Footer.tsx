@@ -1,329 +1,153 @@
-"use client";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Mail, MapPin, ShieldCheck } from "lucide-react";
-import { BRAND } from "@/lib/brand";
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
-import { Logo } from "@/components/Logo";
-import { CONTACT_EMAIL, PARTNER } from "@/lib/site";
+import { ArrowUpRight, Mail } from "lucide-react";
 
-const LinkedinIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+import { Logo } from "@/components/Logo";
+import { CONTACT_EMAIL, LEGAL_ENTITY, PARTNER } from "@/lib/site";
+
+const LinkedinIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
     <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
   </svg>
 );
 
-const InstagramIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+const InstagramIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" aria-hidden>
     <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="2" />
     <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
     <circle cx="17.5" cy="6.5" r="1.3" fill="currentColor" />
   </svg>
 );
 
-const XIcon = ({ size = 16 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+const XIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
     <path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.22-6.82-5.97 6.82H1.66l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z" />
   </svg>
 );
 
-type FooterLinkItem = { label: string; href: string; soon?: boolean };
+type FooterLinkItem = { label: string; href: string; external?: boolean };
 
-const companyLinks: FooterLinkItem[] = [
-  { label: "Why KwanPay", href: "/#how-it-works" },
-  { label: "Starting in Ghana", href: "/#ghana" },
-  { label: "TransVista Africa", href: "https://www.transvistaafrica.com" },
-  { label: "Careers", href: `mailto:${CONTACT_EMAIL}?subject=Careers`, soon: true },
+const columns: { title: string; links: FooterLinkItem[] }[] = [
+  {
+    title: "Product",
+    links: [
+      { label: "How it works", href: "/#how-it-works" },
+      { label: "For travelers", href: "/#travelers" },
+      { label: "For businesses", href: "/business" },
+      { label: "Security", href: "/#trust" },
+      { label: "Roadmap", href: "/roadmap" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "Starting in Ghana", href: "/#ghana" },
+      { label: PARTNER.name, href: PARTNER.url, external: true },
+      { label: "Request a demo", href: "/demo" },
+      { label: "Join early access", href: "/waitlist" },
+    ],
+  },
+  {
+    title: "Help",
+    links: [
+      { label: "FAQ", href: "/#faq" },
+      { label: "Contact support", href: `mailto:${CONTACT_EMAIL}?subject=Support`, external: true },
+      { label: "Privacy policy", href: "/privacy" },
+      { label: "Terms of use", href: "/terms" },
+    ],
+  },
 ];
 
-const productLinks: FooterLinkItem[] = [
-  { label: "For Travelers", href: "/#travelers" },
-  { label: "For Businesses", href: "/business" },
-  { label: "Security", href: "/#trust" },
-  { label: "Roadmap", href: "/roadmap" },
-];
-
-const resourceLinks: FooterLinkItem[] = [
-  { label: "FAQ", href: "/#faq" },
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Use", href: "/terms" },
-  { label: "Support", href: `mailto:${CONTACT_EMAIL}?subject=Support` },
-];
-
-// Add the real profile URLs here; icons only render once a URL is set, so the
+// Add real profile URLs here; icons render only once a URL is set, so the
 // footer never shows dead social links.
 const socials = [
-  { label: "LinkedIn", icon: LinkedinIcon, href: "" },
-  { label: "Instagram", icon: InstagramIcon, href: "" },
-  { label: "X (Twitter)", icon: XIcon, href: "" },
+  { label: "KwanPay on LinkedIn", icon: LinkedinIcon, href: "" },
+  { label: "KwanPay on Instagram", icon: InstagramIcon, href: "" },
+  { label: "KwanPay on X", icon: XIcon, href: "" },
 ].filter((social) => social.href);
 
-function ColumnHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h3
-      className="text-[11px] font-bold uppercase tracking-[0.3em] mb-7"
-      style={{ color: BRAND.amber }}
-    >
-      {children}
-    </h3>
-  );
-}
-
-function FooterLink({ label, href, soon }: FooterLinkItem) {
-  return (
-    <li>
-      <Link
+function FooterLink({ label, href, external }: FooterLinkItem) {
+  const className = "inline-flex items-center gap-1 text-white/70 transition-colors hover:text-white";
+  if (external) {
+    const isMail = href.startsWith("mailto:");
+    return (
+      <a
         href={href}
-        className="group inline-flex items-center gap-1.5 text-slate-300 transition-colors duration-300 hover:text-white"
+        className={className}
+        {...(isMail ? {} : { target: "_blank", rel: "noopener noreferrer" })}
       >
-        <span className="transition-transform duration-300 group-hover:translate-x-1">
-          {label}
-        </span>
-        {soon && (
-          <span
-            className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
-            style={{
-              background: "rgba(217,142,59,0.15)",
-              color: BRAND.amber,
-            }}
-          >
-            Soon
-          </span>
-        )}
-      </Link>
-    </li>
+        {label}
+        {!isMail && <ArrowUpRight size={13} aria-hidden />}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {label}
+    </Link>
   );
 }
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer
-      id="footer"
-      className="relative px-6 pt-20 pb-10 overflow-hidden"
-      style={{ background: BRAND.indigo }}
-    >
-      {/* Top gradient hairline */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(217,142,59,.7), transparent)",
-        }}
-      />
-
-      {/* Ambient glow */}
-      <div
-        className="absolute -top-24 right-0 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(217,142,59,.5), transparent 70%)",
-        }}
-      />
-
-      <div className="relative max-w-7xl mx-auto">
-        {/* Top — 4 columns */}
-        <motion.div
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={viewportOnce}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12"
-        >
-          {/* Brand — spans wider */}
-          <motion.div variants={fadeUp} className="lg:col-span-4">
-            <Logo onDark size={40} />
-
-            <p className="mt-7 text-slate-400 leading-8 max-w-sm">
+    <footer id="footer" className="bg-ink-deep px-6 pb-10 pt-16 text-white md:pt-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
+          <div>
+            <Link href="/" aria-label="KwanPay home">
+              <Logo onDark size={38} />
+            </Link>
+            <p className="mt-5 max-w-sm leading-7 text-white/65">
               The travel wallet for Ghana and beyond: pay tours, stays and
               rides from one balance. Built with {PARTNER.name}.
             </p>
-
-            {/* Beta badge */}
-            <div
-              className="mt-8 inline-flex items-center gap-2.5 rounded-full px-4 py-2 border"
-              style={{
-                borderColor: "rgba(217,142,59,0.4)",
-                background: "rgba(217,142,59,0.12)",
-              }}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-6 inline-flex items-center gap-2 text-white/80 hover:text-white"
             >
-              <span
-                className="relative flex w-2 h-2"
-              >
-                <span
-                  className="absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping"
-                  style={{ background: BRAND.amber }}
-                />
-                <span
-                  className="relative inline-flex rounded-full w-2 h-2"
-                  style={{ background: BRAND.amber }}
-                />
-              </span>
-              <span
-                className="text-[11px] font-bold uppercase tracking-widest"
-                style={{ color: BRAND.amber }}
-              >
-                Private Beta
-              </span>
-            </div>
-            <p className="mt-3 text-sm text-slate-500">
-              Launching Soon Across Africa
-            </p>
-
-            {/* Trust micro-line */}
-            <div className="mt-8 flex items-center gap-2 text-slate-500">
-              <ShieldCheck size={15} style={{ color: BRAND.amber }} />
-              <span className="text-sm">Settlement built on the Stellar network</span>
-            </div>
-          </motion.div>
-
-          {/* Company */}
-          <motion.div variants={fadeUp} className="lg:col-span-2">
-            <ColumnHeading>Company</ColumnHeading>
-            <ul className="space-y-4">
-              {companyLinks.map((link) => (
-                <FooterLink
-                  key={link.label}
-                  label={link.label}
-                  href={link.href}
-                  soon={link.soon}
-                />
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Product */}
-          <motion.div variants={fadeUp} className="lg:col-span-2">
-            <ColumnHeading>Product</ColumnHeading>
-            <ul className="space-y-4">
-              {productLinks.map((link) => (
-                <FooterLink
-                  key={link.label}
-                  label={link.label}
-                  href={link.href}
-                />
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Resources */}
-          <motion.div variants={fadeUp} className="lg:col-span-2">
-            <ColumnHeading>Resources</ColumnHeading>
-            <ul className="space-y-4">
-              {resourceLinks.map((link) => (
-                <FooterLink
-                  key={link.label}
-                  label={link.label}
-                  href={link.href}
-                  soon={link.soon}
-                />
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Contact */}
-          <motion.div variants={fadeUp} className="lg:col-span-2">
-            <ColumnHeading>Contact</ColumnHeading>
-            <ul className="space-y-4">
-              <li>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="group inline-flex items-center gap-2 text-slate-400 transition-colors duration-300 hover:text-white"
-                >
-                  <span
-                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: "rgba(217,142,59,0.12)" }}
-                  >
-                    <Mail size={14} style={{ color: BRAND.amber }} />
-                  </span>
-                  <span className="text-sm">{CONTACT_EMAIL}</span>
-                </a>
-              </li>
-              <li>
-                <div className="inline-flex items-center gap-2 text-slate-400">
-                  <span
-                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: "rgba(217,142,59,0.12)" }}
-                  >
-                    <MapPin size={14} style={{ color: BRAND.amber }} />
-                  </span>
-                  <span className="text-sm">Across Africa</span>
-                </div>
-              </li>
-            </ul>
-
-            {/* Social icons */}
+              <Mail size={16} className="text-amber" aria-hidden />
+              {CONTACT_EMAIL}
+            </a>
             {socials.length > 0 && (
-            <div className="flex gap-3 mt-7">
-              {socials.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    initial={{ background: "rgba(255,255,255,0)" }}
-                    whileHover={{ y: -3, scale: 1.08, background: BRAND.amber, borderColor: BRAND.amber }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                    className="w-10 h-10 rounded-full flex items-center justify-center border"
-                    style={{
-                      borderColor: "rgba(255,255,255,0.15)",
-                      color: "white",
-                    }}
+              <div className="mt-6 flex gap-2">
+                {socials.map(({ label, icon: Icon, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/80 hover:border-white/40 hover:text-white"
                   >
-                    <Icon size={16} />
-                  </motion.a>
-                );
-              })}
-            </div>
+                    <Icon />
+                  </a>
+                ))}
+              </div>
             )}
-          </motion.div>
-        </motion.div>
-
-        {/* Bottom divider */}
-        <div
-          className="border-t border-white/10 mt-16 pt-10 flex flex-col md:flex-row justify-between items-center gap-5"
-        >
-          <div>
-            <p className="text-slate-400 text-sm">
-              © {new Date().getFullYear()} KwanPay Technologies Ltd.
-            </p>
-            <p className="text-slate-500 mt-1.5 text-xs">
-              Building the future of African travel payments.
-            </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <Link
-              href="/privacy"
-              className="text-sm text-slate-400 transition-colors duration-300 hover:text-white"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms"
-              className="text-sm text-slate-400 transition-colors duration-300 hover:text-white"
-            >
-              Terms
-            </Link>
-            <span className="inline-flex items-center text-sm text-slate-400">
-              Made with
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="mx-1.5"
-              >
-                <path
-                  d="M12 21s-7.5-4.6-9.5-9.2C.9 8 3 4.5 6.5 4.5c2 0 3.3 1 4.5 2.6 1.2-1.6 2.5-2.6 4.5-2.6 3.5 0 5.6 3.5 4 7.3C19.5 16.4 12 21 12 21z"
-                  fill={BRAND.amber}
-                />
-              </svg>
-              in Africa
-            </span>
-          </div>
+          <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-3">
+            {columns.map((column) => (
+              <div key={column.title}>
+                <h2 className="text-sm font-semibold text-white">{column.title}</h2>
+                <ul className="mt-4 space-y-3 text-[15px]">
+                  {column.links.map((link) => (
+                    <li key={link.label}>
+                      <FooterLink {...link} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 text-sm text-white/50 md:flex-row md:items-center md:justify-between">
+          <p>
+            © {year} {LEGAL_ENTITY} All rights reserved.
+          </p>
+          <p>Currently in private beta in Ghana.</p>
         </div>
       </div>
     </footer>

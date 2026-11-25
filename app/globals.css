@@ -41,14 +41,6 @@
   --shadow-raised: 0 2px 4px rgb(30 35 64 / 0.06), 0 24px 48px -24px rgb(30 35 64 / 0.32);
 }
 
-/* Animated sections are server-rendered hidden (inline opacity:0). Until
-   Providers marks the page hydrated, show them anyway, so the page is never
-   blank while JavaScript loads on a slow connection. */
-html:not([data-motion-ready]) [style*="opacity:0"] {
-  opacity: 1 !important;
-  transform: none !important;
-}
-
 html {
   scroll-behavior: smooth;
   /* Keep anchored sections clear of the fixed navbar. */
@@ -71,15 +63,6 @@ body {
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@keyframes gradient-shift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
 }
 
 /* Accessible focus states — every interactive element gets a visible ring,

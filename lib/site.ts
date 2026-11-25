@@ -15,7 +15,7 @@ export const SITE_URL = resolveSiteUrl();
 export const SITE_NAME = "KwanPay";
 export const SITE_TITLE = "KwanPay — Africa's Travel Wallet";
 export const SITE_DESCRIPTION =
-  "One wallet. Every journey. Across Africa. KwanPay helps travelers pay for transport, tours, hotels and experiences across Africa using one secure digital wallet, and helps tourism businesses get paid faster.";
+  "Pay for tours, stays and rides in Ghana from one wallet. KwanPay lets travelers pay tourism businesses directly and helps operators get paid faster. Private beta, built with TransVista Africa.";
 export const CONTACT_EMAIL = "contact@kwanpay.app";
 export const LEGAL_ENTITY = "KwanPay Technologies Ltd.";
 
