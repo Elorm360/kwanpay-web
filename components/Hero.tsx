@@ -1,13 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   Globe2,
@@ -17,50 +10,20 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
-import { EASE_OUT, fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
-const headline = staggerContainer(0.12, 0.35);
-
-const word: import("framer-motion").Variants = {
-  hidden: { opacity: 0, y: "100%" },
-  show: { opacity: 1, y: "0%", transition: { duration: 0.8, ease: EASE_OUT } },
-};
+// The hero is the first thing on screen, so it renders immediately: no
+// entrance animation, no scroll-linked fading, no cursor effects.
 
 export default function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-
-  function handleMouseMove(e: React.MouseEvent<HTMLElement>) {
-    const rect = sectionRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mx.set((e.clientX - rect.left) / rect.width);
-    my.set((e.clientY - rect.top) / rect.height);
-  }
-
-  const spotlight = useMotionTemplate`radial-gradient(560px circle at ${useTransform(
-    mx,
-    (v) => `${v * 100}%`
-  )} ${useTransform(my, (v) => `${v * 100}%`)}, rgba(217,142,59,.16), transparent 65%)`;
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
   return (
     <section
       id="hero"
-      ref={sectionRef}
-      onMouseMove={handleMouseMove}
-      className="relative overflow-hidden pt-44 pb-36 px-6"
+      className="relative overflow-hidden pt-36 pb-24 md:pt-44 md:pb-32 px-6"
       style={{ background: BRAND.paper }}
     >
       {/* Background */}
-      <motion.div style={{ y: bgY }} className="absolute inset-0 opacity-50">
+      <div className="absolute inset-0 opacity-50">
         <div
           className="absolute inset-0"
           style={{
@@ -71,44 +34,14 @@ export default function Hero() {
           `,
           }}
         />
-      </motion.div>
+      </div>
 
-      {/* Cursor spotlight */}
-      <motion.div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none hidden md:block"
-        style={{ background: spotlight }}
-      />
+      <div className="relative max-w-7xl mx-auto">
 
-      {/* Subtle grid texture for depth */}
-      <motion.div
-        style={{ y: bgY }}
-        className="absolute inset-0 opacity-[0.04]"
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(30,35,64,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(30,35,64,.6) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-      </motion.div>
+        <div className="text-center">
 
-      <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
-        className="relative max-w-7xl mx-auto"
-      >
-
-        <motion.div
-          variants={headline}
-          initial="hidden"
-          animate="show"
-          className="text-center"
-        >
-
-          {/* Premium badge with gradient border, glow, live dot & shimmer */}
-          <motion.div variants={fadeUp} className="inline-flex justify-center mb-8">
+          {/* Badge */}
+          <div className="inline-flex justify-center mb-8">
             <div
               className="relative rounded-full p-px"
               style={{
@@ -119,18 +52,6 @@ export default function Hero() {
               }}
             >
               <div className="relative flex items-center gap-3 rounded-full bg-white/95 backdrop-blur px-5 py-2 pr-6 overflow-hidden">
-                {/* Shimmer sweep */}
-                <motion.span
-                  className="absolute inset-y-0 w-1/3 -skew-x-12 pointer-events-none"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent)",
-                  }}
-                  initial={{ x: "-120%" }}
-                  animate={{ x: "420%" }}
-                  transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", repeatDelay: 2.2 }}
-                />
-
                 {/* Icon tile */}
                 <span
                   className="relative flex items-center justify-center w-8 h-8 rounded-full"
@@ -165,58 +86,52 @@ export default function Hero() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           <h1
-            className="text-6xl md:text-8xl font-black leading-[1.05] tracking-tight"
+            className="text-[2.75rem] sm:text-6xl md:text-8xl font-black leading-[1.05] tracking-tight"
             style={{ color: BRAND.indigo }}
           >
             <span className="block overflow-hidden">
-              <motion.span variants={word} className="block">
+              <span className="block">
                 One Wallet.
-              </motion.span>
+              </span>
             </span>
             <span className="block overflow-hidden">
-              <motion.span variants={word} className="block">
+              <span className="block">
                 Every Journey.
-              </motion.span>
+              </span>
             </span>
             <span className="block overflow-hidden">
-              <motion.span
-                variants={word}
+              <span
                 className="block bg-clip-text text-transparent"
                 style={{
                   backgroundImage:
                     "linear-gradient(90deg, #D98E3B, #F2B463, #D98E3B, #B56F28)",
-                  backgroundSize: "300% 100%",
-                  animation: "gradient-shift 6s ease-in-out infinite",
                 }}
               >
                 Across Africa.
-              </motion.span>
+              </span>
             </span>
           </h1>
 
-          <motion.p
-            variants={fadeUp}
-            className="max-w-3xl mx-auto mt-10 text-xl leading-9 text-slate-600"
+          <p
+            className="max-w-3xl mx-auto mt-8 text-lg md:text-xl leading-8 md:leading-9 text-slate-600"
           >
             KwanPay helps travelers pay for transport, tours, hotels and
             experiences across Africa using one secure digital wallet. Send
             money, manage your travel funds and pay trusted tourism
             businesses—all from one premium mobile experience.
-          </motion.p>
+          </p>
 
-          <motion.div
-            variants={fadeUp}
+          <div
             className="mt-6 text-sm font-medium"
             style={{ color: BRAND.indigo }}
           >
             Currently in Private Beta • Launching Soon Across Africa
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={fadeUp}
+          <div
             className="flex justify-center gap-5 mt-12 flex-wrap"
           >
             <Link href="/demo">
@@ -253,9 +168,9 @@ export default function Hero() {
               Explore Features
             </motion.a>
 
-          </motion.div>
+          </div>
 
-        </motion.div>
+        </div>
 
         {/* Payment Flow */}
 
@@ -374,7 +289,7 @@ export default function Hero() {
 
         </motion.div>
 
-      </motion.div>
+      </div>
 
     </section>
   );

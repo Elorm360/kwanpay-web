@@ -95,7 +95,7 @@ export default function Navbar() {
             </Link>
 
             {/* Navigation */}
-            <nav className="hidden lg:flex gap-10 font-medium">
+            <nav className="hidden xl:flex gap-8 font-medium whitespace-nowrap">
               {navLinks.map((link) => (
                 <a key={link.href} href={link.href} className={linkClassName}>
                   {link.label}
@@ -109,7 +109,7 @@ export default function Navbar() {
                   whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.96 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                  className="inline-block group relative overflow-hidden rounded-full px-6 py-3 font-semibold text-white shadow-lg"
+                  className="inline-block whitespace-nowrap group relative overflow-hidden rounded-full px-6 py-3 font-semibold text-white shadow-lg"
                   style={{ background: "linear-gradient(135deg, #D98E3B, #B56F28)" }}
                 >
                   <span className="relative z-10">Request Early Access</span>
@@ -121,7 +121,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen((open) => !open)}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
-                className="lg:hidden h-11 w-11 rounded-full flex items-center justify-center shrink-0"
+                className="xl:hidden h-11 w-11 rounded-full flex items-center justify-center shrink-0"
                 style={{ background: "rgba(30,35,64,0.06)" }}
               >
                 <AnimatePresence mode="wait" initial={false}>
@@ -153,7 +153,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.98 }}
               transition={{ duration: 0.25, ease: EASE_OUT }}
-              className="lg:hidden mt-3 rounded-3xl border border-white/40 bg-white/95 backdrop-blur-2xl shadow-xl overflow-hidden"
+              className="xl:hidden mt-3 rounded-3xl border border-white/40 bg-white/95 backdrop-blur-2xl shadow-xl overflow-hidden"
             >
               <nav className="flex flex-col p-3">
                 {navLinks.map((link, i) => (
