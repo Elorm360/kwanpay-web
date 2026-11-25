@@ -15,7 +15,9 @@ import {
   Send,
   Plus,
   CheckCircle2,
+  MessageSquare,
 } from "lucide-react";
+import Honeypot from "@/components/forms/Honeypot";
 import { BRAND } from "@/lib/brand";
 import { USER_TYPES } from "@/lib/constants";
 import { submitDemo, type DemoRequestData } from "@/lib/demo";
@@ -52,6 +54,7 @@ export default function DemoPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,19 +62,24 @@ export default function DemoPage() {
     setSubmitting(true);
 
     try {
-      await submitDemo({
-        full_name: form.full_name,
-        email: form.email,
-        country: form.country,
-        user_type: form.user_type,
-        company: form.company || null,
-        message: form.message || null,
-      });
+      await submitDemo(
+        {
+          full_name: form.full_name,
+          email: form.email,
+          country: form.country,
+          user_type: form.user_type,
+          company: form.company || null,
+          message: form.message || null,
+        },
+        honeypot
+      );
       setSubmitted(true);
     } catch (err) {
       console.error("DEMO SUBMIT ERROR:", err);
       setError(
-        "Something went wrong while submitting your request. Please try again."
+        err instanceof Error && err.message
+          ? err.message
+          : "Something went wrong while submitting your request. Please try again."
       );
     } finally {
       setSubmitting(false);
@@ -80,6 +88,7 @@ export default function DemoPage() {
 
   return (
     <main
+      id="main"
       className="min-h-screen px-6 py-20"
       style={{ background: BRAND.paper }}
     >
@@ -160,10 +169,16 @@ export default function DemoPage() {
                     icon="forward"
                   />
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="relative space-y-6">
+                    <Honeypot value={honeypot} onChange={setHoneypot} />
+
                     <TextInput
                       label="Full Name"
                       icon={User}
+                      name="full_name"
+                      autoComplete="name"
+                      minLength={2}
+                      maxLength={100}
                       value={form.full_name}
                       onChange={(v) => setForm({ ...form, full_name: v })}
                       required
@@ -174,6 +189,9 @@ export default function DemoPage() {
                       label="Email Address"
                       icon={Mail}
                       type="email"
+                      name="email"
+                      autoComplete="email"
+                      maxLength={254}
                       value={form.email}
                       onChange={(v) => setForm({ ...form, email: v })}
                       required
@@ -183,6 +201,10 @@ export default function DemoPage() {
                     <TextInput
                       label="Country"
                       icon={MapPin}
+                      name="country"
+                      autoComplete="country-name"
+                      minLength={2}
+                      maxLength={100}
                       value={form.country}
                       onChange={(v) => setForm({ ...form, country: v })}
                       required
@@ -192,6 +214,9 @@ export default function DemoPage() {
                     <TextInput
                       label="Company"
                       icon={Building2}
+                      name="company"
+                      autoComplete="organization"
+                      maxLength={150}
                       value={form.company}
                       onChange={(v) => setForm({ ...form, company: v })}
                       optional
@@ -214,7 +239,10 @@ export default function DemoPage() {
 
                     <TextInput
                       label="Message"
-                      icon={User}
+                      icon={MessageSquare}
+                      name="message"
+                      maxLength={2000}
+                      optional
                       value={form.message}
                       onChange={(v) => setForm({ ...form, message: v })}
                       textarea
@@ -222,7 +250,9 @@ export default function DemoPage() {
                     />
 
                     {error && (
-                      <p className="text-sm font-medium text-red-600">{error}</p>
+                      <p role="alert" className="text-sm font-medium text-red-600">
+                        {error}
+                      </p>
                     )}
 
                     <motion.button

@@ -12,6 +12,7 @@ import FormCard from "@/components/forms/FormCard";
 import TextInput from "@/components/forms/TextInput";
 import SelectInput from "@/components/forms/SelectInput";
 import SuccessCard from "@/components/forms/SuccessCard";
+import Honeypot from "@/components/forms/Honeypot";
 import { fadeUp, staggerContainer } from "@/lib/motion";
 
 export default function WaitlistPage() {
@@ -25,6 +26,7 @@ export default function WaitlistPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,17 +34,22 @@ export default function WaitlistPage() {
     setSubmitting(true);
 
     try {
-      await submitWaitlist({
-        full_name: form.full_name,
-        email: form.email,
-        country: form.country,
-        role: form.role,
-      });
+      await submitWaitlist(
+        {
+          full_name: form.full_name,
+          email: form.email,
+          country: form.country,
+          role: form.role,
+        },
+        honeypot
+      );
       setSubmitted(true);
     } catch (err) {
       console.error("WAITLIST SUBMIT ERROR:", err);
       setError(
-        "Something went wrong while joining the waitlist. Please try again."
+        err instanceof Error && err.message
+          ? err.message
+          : "Something went wrong while joining the waitlist. Please try again."
       );
     } finally {
       setSubmitting(false);
@@ -51,6 +58,7 @@ export default function WaitlistPage() {
 
   return (
     <main
+      id="main"
       className="min-h-screen px-6 py-20"
       style={{ background: BRAND.paper }}
     >
@@ -128,10 +136,16 @@ export default function WaitlistPage() {
                 icon="home"
               />
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="relative space-y-6">
+                <Honeypot value={honeypot} onChange={setHoneypot} />
+
                 <TextInput
                   label="Full Name"
                   icon={User}
+                  name="full_name"
+                  autoComplete="name"
+                  minLength={2}
+                  maxLength={100}
                   value={form.full_name}
                   onChange={(v) => setForm({ ...form, full_name: v })}
                   required
@@ -142,6 +156,9 @@ export default function WaitlistPage() {
                   label="Email Address"
                   icon={Mail}
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  maxLength={254}
                   value={form.email}
                   onChange={(v) => setForm({ ...form, email: v })}
                   required
@@ -151,6 +168,10 @@ export default function WaitlistPage() {
                 <TextInput
                   label="Country"
                   icon={MapPin}
+                  name="country"
+                  autoComplete="country-name"
+                  minLength={2}
+                  maxLength={100}
                   value={form.country}
                   onChange={(v) => setForm({ ...form, country: v })}
                   required
@@ -172,7 +193,9 @@ export default function WaitlistPage() {
                 />
 
                 {error && (
-                  <p className="text-sm font-medium text-red-600">{error}</p>
+                  <p role="alert" className="text-sm font-medium text-red-600">
+                    {error}
+                  </p>
                 )}
 
                 <motion.button

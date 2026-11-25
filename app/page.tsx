@@ -6,24 +6,26 @@ import HowItWorks from "@/components/HowItWorks";
 import ForTravelers from "@/components/ForTravelers";
 import ForPlatforms from "@/components/ForPlatforms";
 import PaymentInfrastructure from "@/components/PaymentInfrastructure";
+import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
-
 
 export default function Home() {
   return (
     <>
       <Navbar />
-      <Hero />
-      <TrustStrip />
-      <Problem />
-      <HowItWorks />
-      <ForTravelers />
-      <ForPlatforms />
-      <PaymentInfrastructure />
-      <FinalCTA />
+      <main id="main">
+        <Hero />
+        <TrustStrip />
+        <Problem />
+        <HowItWorks />
+        <ForTravelers />
+        <ForPlatforms />
+        <PaymentInfrastructure />
+        <FAQ />
+        <FinalCTA />
+      </main>
       <Footer />
     </>
   );
 }
-

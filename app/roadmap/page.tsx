@@ -49,22 +49,23 @@ const phases: Phase[] = [
     status: "progress",
     statusLabel: "In Progress",
     items: [
-      "Add Funds",
-      "Withdraw Funds",
+      "Add Funds via Mobile Money",
+      "Withdraw to Mobile Money",
       "Wallet Sync",
       "Transaction Refresh",
       "Wallet Balance",
+      "Multi-currency & Live FX",
     ],
   },
   {
     phase: "Phase 3",
     title: "Stellar Integration",
-    emoji: "⏳",
-    status: "todo",
-    statusLabel: "Next",
+    emoji: "🚧",
+    status: "progress",
+    statusLabel: "In Progress",
     items: [
       "Stellar Wallet Creation",
-      "Stellar USDC",
+      "Stellar USDC Payments",
       "On-chain Transactions",
       "Horizon/RPC Integration",
       "Anchor Support",
@@ -164,6 +165,7 @@ export default function RoadmapPage() {
 
   return (
     <main
+      id="main"
       className="min-h-screen px-6 py-24"
       style={{ background: "#ffffff" }}
     >
@@ -422,7 +424,7 @@ export default function RoadmapPage() {
 
           <div className="mt-10 flex justify-center gap-5 flex-wrap">
             <Link href="/waitlist">
-              <motion.button
+              <motion.span
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 340, damping: 22 }}
@@ -438,15 +440,15 @@ export default function RoadmapPage() {
                   size={18}
                   className="transition-transform group-hover:translate-x-0.5"
                 />
-              </motion.button>
+              </motion.span>
             </Link>
 
             <Link href="/demo">
-              <motion.button
+              <motion.span
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 340, damping: 22 }}
-                className="rounded-full px-8 py-4 border-2 font-semibold"
+                className="inline-block rounded-full px-8 py-4 border-2 font-semibold"
                 style={{
                   borderColor: "#D7D7D7",
                   color: BRAND.indigo,
@@ -454,7 +456,7 @@ export default function RoadmapPage() {
                 }}
               >
                 Request a Demo
-              </motion.button>
+              </motion.span>
             </Link>
           </div>
         </motion.div>

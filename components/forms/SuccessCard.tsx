@@ -53,7 +53,7 @@ export default function SuccessCard({
       ))}
 
       <Link href={primaryHref}>
-        <motion.button
+        <motion.span
           whileHover={{ scale: 1.05, y: -3 }}
           whileTap={{ scale: 0.97 }}
           transition={{ type: "spring", stiffness: 340, damping: 22 }}
@@ -72,7 +72,7 @@ export default function SuccessCard({
           ) : (
             <ArrowLeft size={18} />
           )}
-        </motion.button>
+        </motion.span>
       </Link>
     </motion.div>
   );

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 const LinkedinIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -26,32 +27,36 @@ const XIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
-const companyLinks = [
-  { label: "About", href: "#" },
-  { label: "Our Vision", href: "#" },
-  { label: "Partners", href: "#" },
-  { label: "Careers", href: "#", soon: true },
+type FooterLinkItem = { label: string; href: string; soon?: boolean };
+
+const companyLinks: FooterLinkItem[] = [
+  { label: "The Problem", href: "/#problem" },
+  { label: "Our Vision", href: "/roadmap" },
+  { label: "Partner With Us", href: "/demo" },
+  { label: "Careers", href: `mailto:${CONTACT_EMAIL}?subject=Careers`, soon: true },
 ];
 
-const productLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Security", href: "#trust" },
+const productLinks: FooterLinkItem[] = [
+  { label: "For Travelers", href: "/#features" },
+  { label: "For Businesses", href: "/#platforms" },
+  { label: "Security", href: "/#trust" },
   { label: "Roadmap", href: "/roadmap" },
-  { label: "Request a Demo", href: "/demo" },
 ];
 
-const resourceLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms of Service", href: "#" },
-  { label: "FAQ", href: "#", soon: true },
-  { label: "Support", href: "#" },
+const resourceLinks: FooterLinkItem[] = [
+  { label: "FAQ", href: "/#faq" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Use", href: "/terms" },
+  { label: "Support", href: `mailto:${CONTACT_EMAIL}?subject=Support` },
 ];
 
+// Add the real profile URLs here; icons only render once a URL is set, so the
+// footer never shows dead social links.
 const socials = [
-  { label: "LinkedIn", icon: LinkedinIcon, href: "#" },
-  { label: "Instagram", icon: InstagramIcon, href: "#" },
-  { label: "X (Twitter)", icon: XIcon, href: "#" },
-];
+  { label: "LinkedIn", icon: LinkedinIcon, href: "" },
+  { label: "Instagram", icon: InstagramIcon, href: "" },
+  { label: "X (Twitter)", icon: XIcon, href: "" },
+].filter((social) => social.href);
 
 function ColumnHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -64,12 +69,12 @@ function ColumnHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FooterLink({ label, href, soon }: { label: string; href: string; soon?: boolean }) {
+function FooterLink({ label, href, soon }: FooterLinkItem) {
   return (
     <li>
       <Link
         href={href}
-        className="group inline-flex items-center gap-1.5 text-slate-400 transition-colors duration-300 hover:text-white"
+        className="group inline-flex items-center gap-1.5 text-slate-300 transition-colors duration-300 hover:text-white"
       >
         <span className="transition-transform duration-300 group-hover:translate-x-1">
           {label}
@@ -191,7 +196,7 @@ export default function Footer() {
             {/* Trust micro-line */}
             <div className="mt-8 flex items-center gap-2 text-slate-500">
               <ShieldCheck size={15} style={{ color: BRAND.amber }} />
-              <span className="text-sm">PCI-secured payments on Stellar</span>
+              <span className="text-sm">Settlement built on the Stellar network</span>
             </div>
           </motion.div>
 
@@ -245,7 +250,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="mailto:contact@kwanpay.app"
+                  href={`mailto:${CONTACT_EMAIL}`}
                   className="group inline-flex items-center gap-2 text-slate-400 transition-colors duration-300 hover:text-white"
                 >
                   <span
@@ -254,7 +259,7 @@ export default function Footer() {
                   >
                     <Mail size={14} style={{ color: BRAND.amber }} />
                   </span>
-                  <span className="text-sm">contact@kwanpay.app</span>
+                  <span className="text-sm">{CONTACT_EMAIL}</span>
                 </a>
               </li>
               <li>
@@ -271,6 +276,7 @@ export default function Footer() {
             </ul>
 
             {/* Social icons */}
+            {socials.length > 0 && (
             <div className="flex gap-3 mt-7">
               {socials.map((social) => {
                 const Icon = social.icon;
@@ -294,6 +300,7 @@ export default function Footer() {
                 );
               })}
             </div>
+            )}
           </motion.div>
         </motion.div>
 
@@ -303,7 +310,7 @@ export default function Footer() {
         >
           <div>
             <p className="text-slate-400 text-sm">
-              © 2026 KwanPay Technologies Ltd.
+              © {new Date().getFullYear()} KwanPay Technologies Ltd.
             </p>
             <p className="text-slate-500 mt-1.5 text-xs">
               Building the future of African travel payments.
@@ -311,18 +318,18 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-6">
-            <a
-              href="#"
+            <Link
+              href="/privacy"
               className="text-sm text-slate-400 transition-colors duration-300 hover:text-white"
             >
               Privacy
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/terms"
               className="text-sm text-slate-400 transition-colors duration-300 hover:text-white"
             >
               Terms
-            </a>
+            </Link>
             <span className="inline-flex items-center text-sm text-slate-400">
               Made with
               <svg

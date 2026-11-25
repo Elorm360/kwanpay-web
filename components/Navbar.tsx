@@ -7,11 +7,13 @@ import { Menu, X } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { EASE_OUT } from "@/lib/motion";
 
+// Absolute "/#..." hrefs so the links also work from /roadmap, /demo, etc.
 const navLinks = [
-  { href: "#hero", label: "Home" },
-  { href: "#problem", label: "Problem" },
-  { href: "#how-it-works", label: "How It Works" },
-  { href: "#footer", label: "Contact" },
+  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/#features", label: "Travelers" },
+  { href: "/#platforms", label: "Businesses" },
+  { href: "/roadmap", label: "Roadmap" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 export default function Navbar() {
@@ -59,7 +61,7 @@ export default function Navbar() {
             className="backdrop-blur-2xl bg-white/80 border border-white/40 rounded-full px-7 flex items-center justify-between"
           >
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-4">
+            <Link href="/" aria-label="KwanPay home" className="flex items-center gap-4">
               <motion.div
                 whileHover={{ rotate: -8, scale: 1.06 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -82,10 +84,10 @@ export default function Navbar() {
                 transition={{ duration: 0.3, ease: EASE_OUT }}
                 className="overflow-hidden whitespace-nowrap"
               >
-                <h1 className="text-2xl font-black tracking-tight" style={{ color: BRAND.indigo }}>
+                <span className="block text-2xl font-black tracking-tight" style={{ color: BRAND.indigo }}>
                   Kwan
                   <span style={{ color: BRAND.amber }}>Pay</span>
-                </h1>
+                </span>
                 <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-slate-400">
                   Travel Payments
                 </p>
@@ -103,15 +105,15 @@ export default function Navbar() {
 
             <div className="flex items-center gap-3">
               <Link href="/waitlist" className="hidden sm:block">
-                <motion.button
+                <motion.span
                   whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.96 }}
                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                  className="group relative overflow-hidden rounded-full px-6 py-3 font-semibold text-white shadow-lg"
+                  className="inline-block group relative overflow-hidden rounded-full px-6 py-3 font-semibold text-white shadow-lg"
                   style={{ background: "linear-gradient(135deg, #D98E3B, #B56F28)" }}
                 >
                   <span className="relative z-10">Request Early Access</span>
-                </motion.button>
+                </motion.span>
               </Link>
 
               {/* Mobile menu toggle */}
@@ -175,12 +177,12 @@ export default function Navbar() {
                   className="px-3 pt-2 pb-1 sm:hidden"
                 >
                   <Link href="/waitlist" onClick={() => setMenuOpen(false)}>
-                    <button
-                      className="w-full rounded-full px-6 py-3 font-semibold text-white shadow-lg"
+                    <span
+                      className="block text-center w-full rounded-full px-6 py-3 font-semibold text-white shadow-lg"
                       style={{ background: "linear-gradient(135deg, #D98E3B, #B56F28)" }}
                     >
                       Request Early Access
-                    </button>
+                    </span>
                   </Link>
                 </motion.div>
               </nav>

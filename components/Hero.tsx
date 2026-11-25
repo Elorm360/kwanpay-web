@@ -220,11 +220,11 @@ export default function Hero() {
             className="flex justify-center gap-5 mt-12 flex-wrap"
           >
             <Link href="/demo">
-              <motion.button
+              <motion.span
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 340, damping: 22 }}
-                className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white"
+                className="inline-block group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white"
                 style={{
                   background: "linear-gradient(135deg, #D98E3B, #B56F28)",
                   boxShadow: "0 10px 30px -8px rgba(217,142,59,.6)",
@@ -234,7 +234,7 @@ export default function Hero() {
                   Request a Demo
                   <Sparkles size={17} className="transition-transform group-hover:rotate-12" />
                 </span>
-              </motion.button>
+              </motion.span>
             </Link>
 
             <motion.a

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Flame, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Check, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import TiltCard from "@/components/TiltCard";
 
@@ -45,11 +45,11 @@ export default function FinalCTA() {
 
 <div className="mt-12 flex justify-center lg:justify-start flex-wrap gap-5">
               <Link href="/demo">
-                <motion.button
+                <motion.span
                   whileHover={{ scale: 1.05, y: -3 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 340, damping: 22 }}
-                  className="group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white"
+                  className="inline-block group relative overflow-hidden rounded-full px-9 py-4 font-semibold text-white"
                   style={{
                     background: "linear-gradient(135deg, #D98E3B, #B56F28)",
                     boxShadow: "0 12px 32px -10px rgba(217,142,59,.6)",
@@ -59,20 +59,20 @@ export default function FinalCTA() {
                     Request a Demo
                     <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </span>
-                </motion.button>
+                </motion.span>
               </Link>
 
               <Link href="/waitlist">
-                <motion.button
+                <motion.span
                   initial={{ background: "rgba(255,255,255,0)" }}
                   whileHover={{ scale: 1.05, y: -3, background: "rgba(255,255,255,0.1)" }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 340, damping: 22 }}
-                  className="rounded-full px-9 py-4 border backdrop-blur"
+                  className="inline-block rounded-full px-9 py-4 border backdrop-blur"
                   style={{ borderColor: "rgba(255,255,255,0.3)", color: "white" }}
                 >
                   Join Early Access
-                </motion.button>
+                </motion.span>
               </Link>
             </div>
 
@@ -139,41 +139,60 @@ export default function FinalCTA() {
                     }}
                   />
 
-                  <div className="relative">
+                  {/* Payment confirmation screen */}
+                  <div className="relative w-full px-6 py-8">
                     <motion.div
-                      className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto"
+                      className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
                       style={{
                         background:
-                          "linear-gradient(135deg, rgba(217,142,59,.25), rgba(217,142,59,.08))",
-                        border: "1px solid rgba(217,142,59,.35)",
+                          "linear-gradient(135deg, rgba(74,222,128,.25), rgba(74,222,128,.08))",
+                        border: "1px solid rgba(74,222,128,.45)",
                       }}
-                      animate={{ scale: [1, 1.08, 1] }}
-                      transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.4 }}
                     >
-                      <Flame size={30} style={{ color: BRAND.amber }} />
+                      <Check size={30} color="#4ADE80" strokeWidth={3} aria-hidden />
                     </motion.div>
 
                     <p
-                      className="mt-6 uppercase tracking-[0.3em] text-xs font-semibold"
+                      className="mt-5 uppercase tracking-[0.3em] text-[11px] font-semibold"
                       style={{ color: BRAND.amber }}
                     >
-                      Coming Soon
+                      Payment Sent
+                    </p>
+                    <p className="mt-2 text-4xl font-black text-white tracking-tight">
+                      $185.00
+                    </p>
+                    <p className="mt-1 text-sm text-slate-300">
+                      to Cape Coast Heritage Tours
                     </p>
 
-                    <p className="mt-4 text-2xl font-black text-white">
-                      Your Travel Wallet
-                    </p>
+                    <div className="mt-6 rounded-2xl bg-white/[0.06] border border-white/10 p-4 text-left space-y-3">
+                      {[
+                        { label: "Merchant receives", value: "GHS 2,868.50" },
+                        { label: "Settled via", value: "Stellar · USDC" },
+                        { label: "Settlement", value: "~5 seconds" },
+                      ].map((row) => (
+                        <div key={row.label} className="flex items-center justify-between text-xs">
+                          <span className="text-slate-400">{row.label}</span>
+                          <span className="font-semibold text-white">{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
 
-                    <p className="mt-3 max-w-[220px] text-sm text-slate-300 leading-6">
-                      Dashboard screenshot placeholder — the app UI will live here.
-                    </p>
+                    <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+                      <ShieldCheck size={13} style={{ color: BRAND.amber }} aria-hidden />
+                      Receipt saved to your travel history
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Caption */}
               <p className="mt-6 text-center text-sm font-medium text-slate-400">
-                The KwanPay experience — coming soon.
+                Illustrative preview of the KwanPay app.
               </p>
             </TiltCard>
           </motion.div>
@@ -190,7 +209,7 @@ export default function FinalCTA() {
         >
           <div className="border-t border-white/15 pt-12 text-center">
             <p className="text-lg md:text-xl font-medium text-slate-300">
-              Trusted by the next generation of African travelers.
+              Built for the next generation of African travelers.
             </p>
           </div>
         </motion.div>

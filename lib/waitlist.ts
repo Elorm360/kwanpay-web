@@ -1,6 +1,6 @@
 import type { WaitlistRequestData } from "@/lib/waitlist-schema";
 
-export async function submitWaitlist(data: WaitlistRequestData) {
+export async function submitWaitlist(data: WaitlistRequestData, honeypot = "") {
   const response = await fetch("/api/leads", {
     method: "POST",
     headers: {
@@ -12,6 +12,7 @@ export async function submitWaitlist(data: WaitlistRequestData) {
       email: data.email,
       country: data.country,
       audience_role: data.role,
+      website: honeypot,
     }),
   });
 
