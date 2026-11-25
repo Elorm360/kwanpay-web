@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, ShieldCheck } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
-import { CONTACT_EMAIL } from "@/lib/site";
+import { Logo } from "@/components/Logo";
+import { CONTACT_EMAIL, PARTNER } from "@/lib/site";
 
 const LinkedinIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -131,35 +132,11 @@ export default function Footer() {
         >
           {/* Brand — spans wider */}
           <motion.div variants={fadeUp} className="lg:col-span-4">
-            <div className="flex items-center gap-4">
-              <div
-                className="h-11 w-11 rounded-2xl flex items-center justify-center shadow-lg"
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M6 18C10 12 14 12 18 6"
-                    stroke={BRAND.amber}
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="18" cy="6" r="2" fill={BRAND.amber} />
-                </svg>
-              </div>
-
-              <h2 className="text-2xl font-black text-white tracking-tight">
-                Kwan
-                <span style={{ color: BRAND.amber }}>Pay</span>
-              </h2>
-            </div>
+            <Logo onDark size={40} />
 
             <p className="mt-7 text-slate-400 leading-8 max-w-sm">
-              KwanPay is building the future of borderless travel payments
-              across Africa, helping travelers and tourism businesses move money
-              with confidence.
+              The travel wallet for Ghana and beyond: pay tours, stays and
+              rides from one balance. Built with {PARTNER.name}.
             </p>
 
             {/* Beta badge */}
