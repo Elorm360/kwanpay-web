@@ -66,7 +66,7 @@ class QuickActions extends ConsumerWidget {
               Expanded(
                 child: ActionCard(
                   icon: Icons.currency_exchange_rounded,
-                  title: "Rates",
+                  title: "Convert",
                   onTap: () {
                     Navigator.push(
                       context,
@@ -81,7 +81,7 @@ class QuickActions extends ConsumerWidget {
               Expanded(
                 child: ActionCard(
                   icon: Icons.account_balance_wallet_outlined,
-                  title: "Top Up",
+                  title: "Add funds",
                   onTap: () async {
                     await Navigator.push(
                       context,

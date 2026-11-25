@@ -193,10 +193,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => _navigateToEditProfile(),
                     icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: const Text("Edit Profile"),
+                    label: const Text("Edit profile"),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.accent,
-                      side: const BorderSide(color: AppColors.accent),
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.medium),
                       ),

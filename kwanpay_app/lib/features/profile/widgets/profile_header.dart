@@ -101,7 +101,7 @@ class ProfileHeader extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.accent,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],

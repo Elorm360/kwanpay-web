@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_copy.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -46,13 +45,6 @@ class DashboardHeader extends StatelessWidget {
                       ? "Welcome to KwanPay"
                       : userName,
                   style: AppTextStyles.title,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  AppCopy.tagline,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.accent,
-                  ),
                 ),
               ],
             ),

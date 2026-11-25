@@ -151,13 +151,11 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.paper,
-      appBar: AppBar(title: const Text('Send Money')),
+      appBar: AppBar(title: const Text('Send money')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
           children: [
-            Text('Send money securely', style: AppTextStyles.headline),
-            const SizedBox(height: AppSpacing.sm),
             Text(
               'Send funds to another KwanPay wallet. Review the recipient and amount before you confirm.',
               style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),

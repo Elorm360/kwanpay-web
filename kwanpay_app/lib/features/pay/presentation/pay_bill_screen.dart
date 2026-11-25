@@ -103,9 +103,7 @@ class _PayBillScreenState extends ConsumerState<PayBillScreen> {
     final available = dashboard.canonicalBalance;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.operator.name),
-      ),
+      appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: AppSpacing.pagePadding,
@@ -123,7 +121,7 @@ class _PayBillScreenState extends ConsumerState<PayBillScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Pays ${widget.operator.name} in Ghana cedis from your KwanPay wallet. The operator receives GHS. Stellar settlement stays underneath later corridors.',
+                'Pay ${widget.operator.name} in Ghana cedis from your KwanPay wallet. You will see the full amount before you confirm.',
                 style: AppTextStyles.body,
               ),
               const SizedBox(height: 24),
