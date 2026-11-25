@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../Core/models/payment_method.dart';
-import '../../../Core/providers/wallet_dashboard_provider.dart';
-import '../../../Core/payments/payment_gateway.dart';
-import '../../../Core/theme/app_colors.dart';
-import '../../../Core/theme/app_radius.dart';
-import '../../../Core/theme/app_spacing.dart';
-import '../../../Core/theme/app_text_styles.dart';
+import '../../../core/models/payment_method.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
+import '../../../core/payments/payment_gateway.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../profile/presentation/payment_methods_screen.dart';
 
 class WithdrawFundsScreen extends ConsumerStatefulWidget {

@@ -53,13 +53,6 @@ class RecentActivity extends StatelessWidget {
     }
   }
 
-  bool _isOutgoing(String type) {
-    return type == 'Send' ||
-        type == 'Payment' ||
-        type == 'Exchange' ||
-        type == 'Convert Out';
-  }
-
   Color _statusColor(String status) {
     switch (status) {
       case TransactionStatus.completed:
@@ -143,7 +136,7 @@ class RecentActivity extends StatelessWidget {
             separatorBuilder: (_, _) => const Divider(height: 24),
             itemBuilder: (context, index) {
               final tx = visible[index];
-              final outgoing = _isOutgoing(tx.type);
+              final outgoing = tx.isOutgoing;
               final sign = outgoing ? '-' : '+';
               final completed = tx.isCompleted;
 

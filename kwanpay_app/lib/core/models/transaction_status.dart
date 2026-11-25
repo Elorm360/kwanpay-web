@@ -24,3 +24,19 @@ class TransactionProviders {
     return provider == stellarTestnet;
   }
 }
+
+/// Values of `transactions.type` written by the database functions.
+class TransactionTypes {
+  static const topUp = 'Top Up';
+  static const withdrawal = 'Withdrawal';
+  static const send = 'Send';
+  static const receive = 'Receive';
+  static const payment = 'Payment';
+  static const convertIn = 'Convert In';
+  static const convertOut = 'Convert Out';
+
+  /// Legacy type still found on older rows.
+  static const exchange = 'Exchange';
+
+  static const outgoing = {withdrawal, send, payment, convertOut, exchange};
+}

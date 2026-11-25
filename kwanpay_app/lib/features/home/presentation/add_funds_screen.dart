@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../Core/models/app_currency.dart';
-import '../../../Core/models/transaction_model.dart';
-import '../../../Core/models/transaction_status.dart';
-import '../../../Core/payments/payment_gateway.dart';
-import '../../../Core/providers/wallet_dashboard_provider.dart';
-import '../../../Core/services/transaction_service.dart';
-import '../../../Core/theme/app_colors.dart';
-import '../../../Core/theme/app_radius.dart';
-import '../../../Core/theme/app_spacing.dart';
-import '../../../Core/theme/app_text_styles.dart';
-import '../../../Core/widgets/primary_button.dart';
+import '../../../core/models/app_currency.dart';
+import '../../../core/models/transaction_model.dart';
+import '../../../core/models/transaction_status.dart';
+import '../../../core/payments/payment_gateway.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
+import '../../../core/services/transaction_service.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/primary_button.dart';
 import '../../profile/presentation/payment_methods_screen.dart';
 
 class AddFundsScreen extends ConsumerStatefulWidget {

@@ -25,12 +25,17 @@ class TransactionModel {
     this.providerReference,
   });
 
-  bool get isOutgoing {
-    return type == 'Send' ||
-        type == 'Payment' ||
-        type == 'Exchange' ||
-        type == 'Convert Out';
-  }
+  /// Money leaving this wallet. Single source of truth for +/- display and
+  /// the activity filters.
+  bool get isOutgoing => TransactionTypes.outgoing.contains(type);
+
+  bool get isIncoming => !isOutgoing;
+
+  /// Wallet-to-wallet transfers, in either direction.
+  bool get isTransfer =>
+      type == TransactionTypes.send || type == TransactionTypes.receive;
+
+  bool get isPayment => type == TransactionTypes.payment;
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(

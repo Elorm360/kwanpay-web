@@ -22,16 +22,15 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
   List<TransactionModel> _filtered(List<TransactionModel> transactions) {
     if (_filter == 'All') return transactions;
     return transactions.where((transaction) {
-      final type = transaction.type.toLowerCase();
       switch (_filter) {
         case 'Money In':
-          return type.contains('top') || type.contains('deposit') || type.contains('fund');
+          return transaction.isIncoming;
         case 'Money Out':
-          return type.contains('withdraw') || type.contains('transfer') || type.contains('convert');
+          return transaction.isOutgoing;
         case 'Payments':
-          return type.contains('pay');
+          return transaction.isPayment;
         case 'Transfers':
-          return type.contains('transfer');
+          return transaction.isTransfer;
         default:
           return true;
       }
