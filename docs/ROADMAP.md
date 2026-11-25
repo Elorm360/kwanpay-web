@@ -17,24 +17,25 @@ Goal: a trustworthy codebase and environment to build on.
 - [ ] Rotate every secret that touched an infected machine or Vercel build:
       Supabase service-role and anon keys, admin session secret, Stellar
       secret keys, GitHub/Vercel tokens, and the old gateway keys
-- [ ] Push the malware fix to `main` and every remote branch; clean the other
-      infected local projects
+- [x] Malware fix pushed to all 7 remote branches; force-pushes and deletion
+      blocked on every branch (including admins); `dixit-web` and
+      `kwanpay-onboarding-preview` cleaned. Infection source identified as the
+      cloned `gitcomp88/AICryptoTrader` repo (payload committed upstream)
 - [x] CI guards: config files checked for hidden code, gitleaks secret scan,
       and a Flutter job (import-case check, analyze, tests)
 - [x] Remove Fiatsend, Fincra, Flutterwave (and dead Moolre) code from the
       app and Edge Functions; add the provider-neutral `PaymentGateway`
-      interface (`kwanpay_app/lib/Core/payments/payment_gateway.dart`)
+      interface (`kwanpay_app/lib/core/payments/payment_gateway.dart`)
 - [x] Database cleanup applied (`20261125122409_remove_payment_gateways`):
       gateway-only functions dropped, settlement and payout functions made
       gateway-neutral, and a `payment_providers` registry added. Enable a new
       gateway by inserting a row and setting `is_active = true`
-- [ ] Delete the 19 deployed gateway Edge Functions and their secrets
-      (Fincra, Moolre, Fiatsend, Flutterwave, `ghana-collection-webhook`,
-      `hyper-endpoint`); the Supabase connector cannot delete functions
+- [~] 19 gateway Edge Functions replaced with inert 410 stubs behind JWT
+      verification. Still to do in the dashboard: delete them and remove their
+      secrets (the Supabase connector cannot delete functions)
 - [ ] Turn on leaked-password protection in Supabase Auth
-- [ ] Bring migrations in the repo back in sync with the live database
-      (`supabase db pull`): several live functions and `payout_intents` are
-      missing from `supabase/migrations/`
+- [x] Repo migrations synced with the live database: 69 files match the 69
+      recorded migrations (exported byte-exact; 5 hand-applied ones repaired)
 - [x] Rename `lib/Core` to `lib/core` so imports work on case-sensitive
       systems; `tool/check_import_case.dart` keeps it that way
 - [x] Replace the template test with model unit tests; fix withdrawals
