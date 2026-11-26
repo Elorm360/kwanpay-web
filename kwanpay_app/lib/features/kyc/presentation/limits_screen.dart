@@ -21,11 +21,36 @@ String ghs(double amount) {
       : 'GHS $digits.${pesewas.toString().padLeft(2, '0')}';
 }
 
-class LimitsScreen extends ConsumerWidget {
+class LimitsScreen extends ConsumerStatefulWidget {
   const LimitsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LimitsScreen> createState() => _LimitsScreenState();
+}
+
+class _LimitsScreenState extends ConsumerState<LimitsScreen>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // An ID review happens elsewhere; reload when the user comes back to the
+  // app so an approval shows without pulling to refresh.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) ref.invalidate(kycStatusProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final status = ref.watch(kycStatusProvider);
 
     return Scaffold(
@@ -235,7 +260,14 @@ class _VerificationCard extends ConsumerWidget {
                 size: 20,
               ),
               const SizedBox(width: AppSpacing.sm),
-              Text('We are checking your ID', style: AppTextStyles.title),
+              // Expanded so the title wraps instead of overflowing at
+              // large system text sizes.
+              Expanded(
+                child: Text(
+                  'We are checking your ID',
+                  style: AppTextStyles.title,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
