@@ -50,6 +50,12 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   url_launcher: ^6.3.1
   image_picker: ^1.2.4
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  # Not used directly: pins pdf's image dependency. image 4.11+ needs
+  # archive 4.1+, but stellar_flutter_sdk -> toml holds pdf to archive <4.1.
+  # Drop this once stellar_flutter_sdk allows a newer toml.
+  image: ">=4.5.0 <4.11.0"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

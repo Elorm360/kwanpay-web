@@ -47,7 +47,7 @@ class _ReviewTransferScreenState
     setState(() {});
 
     try {
-      await _transactionService.transferFunds(
+      final transaction = await _transactionService.transferFunds(
         receiverWalletId:
             widget.recipient['wallet']['wallet_id'],
         amount: widget.amount,
@@ -67,6 +67,7 @@ class _ReviewTransferScreenState
                 widget.recipient['profile']['full_name'],
             amount: widget.amount,
             currency: widget.currency,
+            transaction: transaction,
           ),
         ),
       );

@@ -4,6 +4,8 @@ import '../../../core/models/transaction_model.dart';
 import '../../../core/models/transaction_status.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../receipts/receipt_details.dart';
+import '../../receipts/receipt_screen.dart';
 
 class RecentActivity extends StatelessWidget {
   final List<TransactionModel> transactions;
@@ -94,10 +96,7 @@ class RecentActivity extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
             const SizedBox(height: 16),
-            const Text(
-              "No transactions yet",
-              style: AppTextStyles.title,
-            ),
+            const Text("No transactions yet", style: AppTextStyles.title),
             const SizedBox(height: 8),
             Text(
               "Transfers, top-ups, and payments will appear here.",
@@ -124,10 +123,7 @@ class RecentActivity extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: AppTextStyles.title,
-          ),
+          Text(title, style: AppTextStyles.title),
           const SizedBox(height: 20),
           ListView.separated(
             shrinkWrap: true,
@@ -137,69 +133,80 @@ class RecentActivity extends StatelessWidget {
             itemBuilder: (context, index) {
               final tx = visible[index];
               final outgoing = tx.isOutgoing;
-              final sign = outgoing ? '-' : '+';
+              final noMoneyMoved = transactionMovedNoMoney(tx);
+              final sign = noMoneyMoved ? '' : (outgoing ? '- ' : '+ ');
               final completed = tx.isCompleted;
 
-              return Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.paper,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Icon(
-                      getTransactionIcon(tx.type),
-                      color: getTransactionColor(tx.type),
-                    ),
+              return InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ReceiptScreen(transaction: tx),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tx.type,
-                          style: AppTextStyles.body.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                ),
+                child: Semantics(
+                  button: true,
+                  hint: 'Opens the receipt',
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.paper,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          tx.description,
-                          style: AppTextStyles.caption,
+                        child: Icon(
+                          getTransactionIcon(tx.type),
+                          color: getTransactionColor(tx.type),
                         ),
-                        if (tx.reference != null &&
-                            tx.reference!.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            tx.reference!,
-                            style: AppTextStyles.caption,
-                          ),
-                        ],
-                        const SizedBox(height: 4),
-                        Text(
-                          "${_formatDate(tx.createdAt)} • ${tx.status}",
-                          style: AppTextStyles.caption.copyWith(
-                            color: _statusColor(tx.status),
-                          ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tx.type,
+                              style: AppTextStyles.body.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(tx.description, style: AppTextStyles.caption),
+                            if (tx.reference != null &&
+                                tx.reference!.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(tx.reference!, style: AppTextStyles.caption),
+                            ],
+                            const SizedBox(height: 4),
+                            Text(
+                              "${_formatDate(tx.createdAt)} • ${tx.status}",
+                              style: AppTextStyles.caption.copyWith(
+                                color: _statusColor(tx.status),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    "$sign ${tx.currency} ${tx.amount.toStringAsFixed(2)}",
-                    style: AppTextStyles.body.copyWith(
-                      color: !completed
-                          ? AppColors.textSecondary
-                          : outgoing
+                      ),
+                      Text(
+                        "$sign${formatMoney(tx.amount, tx.currency)}",
+                        style: AppTextStyles.body.copyWith(
+                          color: !completed
+                              ? AppColors.textSecondary
+                              : outgoing
                               ? AppColors.textPrimary
                               : AppColors.success,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          decoration: noMoneyMoved
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               );
             },
           ),

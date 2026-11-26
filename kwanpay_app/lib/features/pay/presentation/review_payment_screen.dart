@@ -47,7 +47,7 @@ class _ReviewPaymentScreenState extends ConsumerState<ReviewPaymentScreen> {
     });
 
     try {
-      await _transactionService.payOperatorBill(
+      final transaction = await _transactionService.payOperatorBill(
         operatorCode: widget.operator.code,
         accountNumber: widget.accountNumber,
         amount: widget.amount,
@@ -66,6 +66,7 @@ class _ReviewPaymentScreenState extends ConsumerState<ReviewPaymentScreen> {
             operatorName: widget.operator.name,
             amount: widget.amount,
             currency: AppCurrencies.home.code,
+            transaction: transaction,
           ),
         ),
       );
