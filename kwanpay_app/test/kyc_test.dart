@@ -35,6 +35,19 @@ void main() {
       });
       expect(s.idVerified, isTrue);
       expect(s.rejected, isFalse);
+      expect(s.nextDailyLimit, isNull);
+    });
+
+    test('reads what the next level unlocks', () {
+      final s = KycStatus.fromJson({
+        'tier': 0,
+        'next_tier_name': 'ID verified',
+        'next_daily_limit': 20000,
+        'next_monthly_limit': '100000.00',
+      });
+      expect(s.nextTierName, 'ID verified');
+      expect(s.nextDailyLimit, 20000);
+      expect(s.nextMonthlyLimit, 100000);
     });
   });
 

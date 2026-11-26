@@ -191,14 +191,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // ── Edit Profile Button ────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                // A minimum, not a fixed height, so large system text
+                // sizes do not clip the label.
                 child: SizedBox(
                   width: double.infinity,
-                  height: 46,
                   child: OutlinedButton.icon(
                     onPressed: () => _navigateToEditProfile(),
                     icon: const Icon(Icons.edit_outlined, size: 18),
                     label: const Text("Edit profile"),
                     style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.border),
                       shape: RoundedRectangleBorder(

@@ -193,6 +193,15 @@ class _VerifyIdScreenState extends ConsumerState<VerifyIdScreen> {
             const SizedBox(height: AppSpacing.lg),
             SegmentedButton<KycDocumentType>(
               showSelectedIcon: false,
+              style: SegmentedButton.styleFrom(
+                backgroundColor: AppColors.surface,
+                foregroundColor: AppColors.textPrimary,
+                selectedBackgroundColor: AppColors.primary,
+                selectedForegroundColor: Colors.white,
+                side: const BorderSide(color: AppColors.border),
+                textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                minimumSize: const Size.fromHeight(48),
+              ),
               segments: [
                 for (final type in KycDocumentType.values)
                   ButtonSegment(value: type, label: Text(type.label)),

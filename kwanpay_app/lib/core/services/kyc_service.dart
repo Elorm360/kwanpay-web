@@ -14,6 +14,11 @@ class KycStatus {
   final double usedToday;
   final double usedThisMonth;
 
+  /// What ID verification unlocks; null once the ID is verified.
+  final String? nextTierName;
+  final double? nextDailyLimit;
+  final double? nextMonthlyLimit;
+
   /// 'pending', 'approved', 'rejected', or null when nothing was sent.
   final String? submissionStatus;
   final String? rejectionReason;
@@ -26,6 +31,9 @@ class KycStatus {
     required this.monthlyLimit,
     required this.usedToday,
     required this.usedThisMonth,
+    this.nextTierName,
+    this.nextDailyLimit,
+    this.nextMonthlyLimit,
     this.submissionStatus,
     this.rejectionReason,
   });
@@ -37,6 +45,9 @@ class KycStatus {
   static double _num(Object? value) =>
       value is num ? value.toDouble() : double.tryParse('$value') ?? 0;
 
+  static double? _numOrNull(Object? value) =>
+      value == null ? null : _num(value);
+
   factory KycStatus.fromJson(Map<String, dynamic> json) => KycStatus(
     tier: (json['tier'] as num?)?.toInt() ?? 0,
     tierName: json['tier_name']?.toString() ?? 'Basic',
@@ -45,33 +56,11 @@ class KycStatus {
     monthlyLimit: _num(json['monthly_limit']),
     usedToday: _num(json['used_today']),
     usedThisMonth: _num(json['used_this_month']),
+    nextTierName: json['next_tier_name']?.toString(),
+    nextDailyLimit: _numOrNull(json['next_daily_limit']),
+    nextMonthlyLimit: _numOrNull(json['next_monthly_limit']),
     submissionStatus: json['submission_status']?.toString(),
     rejectionReason: json['rejection_reason']?.toString(),
-  );
-}
-
-/// One row of the tier table, used to show what verifying unlocks.
-class KycTier {
-  final int tier;
-  final String name;
-  final double perTransactionLimit;
-  final double dailyLimit;
-  final double monthlyLimit;
-
-  const KycTier({
-    required this.tier,
-    required this.name,
-    required this.perTransactionLimit,
-    required this.dailyLimit,
-    required this.monthlyLimit,
-  });
-
-  factory KycTier.fromJson(Map<String, dynamic> json) => KycTier(
-    tier: (json['tier'] as num).toInt(),
-    name: json['name'].toString(),
-    perTransactionLimit: KycStatus._num(json['per_transaction_limit']),
-    dailyLimit: KycStatus._num(json['daily_limit']),
-    monthlyLimit: KycStatus._num(json['monthly_limit']),
   );
 }
 
@@ -91,11 +80,6 @@ class KycService {
   Future<KycStatus> getStatus() async {
     final data = await _supabase.rpc('get_my_kyc_status');
     return KycStatus.fromJson(Map<String, dynamic>.from(data as Map));
-  }
-
-  Future<List<KycTier>> getTiers() async {
-    final rows = await _supabase.from('kyc_tiers').select().order('tier');
-    return rows.map((row) => KycTier.fromJson(row)).toList();
   }
 
   /// Uploads one photo to the user's private folder and returns its path.
@@ -138,8 +122,4 @@ final kycServiceProvider = Provider<KycService>((ref) => KycService());
 
 final kycStatusProvider = FutureProvider.autoDispose<KycStatus>(
   (ref) => ref.watch(kycServiceProvider).getStatus(),
-);
-
-final kycTiersProvider = FutureProvider.autoDispose<List<KycTier>>(
-  (ref) => ref.watch(kycServiceProvider).getTiers(),
 );

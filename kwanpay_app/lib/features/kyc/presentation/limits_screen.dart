@@ -247,8 +247,8 @@ class _VerificationCard extends ConsumerWidget {
       );
     }
 
-    final tiers = ref.watch(kycTiersProvider).valueOrNull ?? const [];
-    final next = tiers.where((t) => t.tier == 2).firstOrNull;
+    final nextDaily = status.nextDailyLimit;
+    final nextMonthly = status.nextMonthlyLimit;
 
     return _Card(
       children: [
@@ -265,9 +265,9 @@ class _VerificationCard extends ConsumerWidget {
           const SizedBox(height: AppSpacing.sm),
         ],
         Text(
-          next == null
+          nextDaily == null || nextMonthly == null
               ? 'Verify your Ghana Card or passport to raise your limits.'
-              : 'Verify your Ghana Card or passport to send up to ${ghs(next.dailyLimit)} a day and ${ghs(next.monthlyLimit)} a month.',
+              : 'Verify your Ghana Card or passport to send up to ${ghs(nextDaily)} a day and ${ghs(nextMonthly)} a month.',
           style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.md),
