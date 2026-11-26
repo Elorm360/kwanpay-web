@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   KYC_DOCUMENT_LABELS,
@@ -47,6 +48,7 @@ export default function KycQueue({
   initialSubmissions: KycSubmission[];
   now: string;
 }) {
+  const router = useRouter();
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [tab, setTab] = useState<KycStatus>("pending");
   const [search, setSearch] = useState("");
@@ -91,6 +93,8 @@ export default function KycQueue({
         : s
     );
     setSubmissions(next);
+    // Re-render the server header so the waiting count on the tab is right.
+    router.refresh();
     // Move straight on to the next person waiting.
     setSelectedId(
       next.find((s) => s.status === "pending" && s.id !== updated.id)?.id ??
@@ -453,7 +457,11 @@ function Photo({ label, src }: { label: string; src?: string | null }) {
             />
           </a>
         ) : (
-          <span className="text-xs text-slate-400">Loading…</span>
+          <span className="px-4 text-center text-xs text-slate-400">
+            {src === null
+              ? "Photo not available. Reject and ask for a new one."
+              : "Loading…"}
+          </span>
         )}
       </div>
       <figcaption className="border-t border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600">
