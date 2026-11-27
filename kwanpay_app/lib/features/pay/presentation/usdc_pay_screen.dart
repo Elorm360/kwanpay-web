@@ -51,9 +51,17 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
   _Step _step = _Step.idle;
   String? _reference;
   String? _pendingHash;
+
+  /// Set before the payment is sent. If sending fails without a clear
+  /// answer, the payment may still have landed, so a retry looks it up on
+  /// Stellar by its memo before sending anything again.
+  bool _submitAttempted = false;
   String? _error;
 
   bool get _busy => _step != _Step.idle;
+
+  /// Once something may have reached Stellar, the inputs stay as they were.
+  bool get _locked => _pendingHash != null || _submitAttempted;
 
   @override
   void initState() {
@@ -74,7 +82,7 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
   /// A new amount or booking needs a new reference, unless a payment was
   /// already submitted: then the inputs are locked until it is verified.
   void _inputsChanged() {
-    if (_pendingHash == null && _reference != null) _reference = null;
+    if (!_locked && _reference != null) _reference = null;
   }
 
   Future<void> _prepare() async {
@@ -165,7 +173,7 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
     if (amount != double.parse(amount.toStringAsFixed(2))) {
       return 'Use at most two decimal places.';
     }
-    if (_pendingHash == null && amount > _usdc) {
+    if (!_locked && amount > _usdc) {
       return 'You have ${_usdc.toStringAsFixed(2)} Testnet USDC. Get more from the faucet first.';
     }
     return null;
@@ -195,11 +203,18 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
         );
 
         setState(() => _step = _Step.submitting);
-        hash = await _wallet.payUsdc(
-          destination: business['stellar_public_key']!,
-          amount: amount,
-          reference: reference,
-        );
+        // A retry after an unclear failure: the first send may have landed.
+        if (_submitAttempted) {
+          hash = await _wallet.findPaymentByReference(reference);
+        }
+        if (hash == null) {
+          _submitAttempted = true;
+          hash = await _wallet.payUsdc(
+            destination: business['stellar_public_key']!,
+            amount: amount,
+            reference: reference,
+          );
+        }
         _pendingHash = hash;
       }
 
@@ -239,7 +254,12 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
     _Step.recording => 'Recording payment…',
     _Step.submitting => 'Sending on Stellar…',
     _Step.verifying => 'Confirming on Horizon…',
-    _Step.idle => _pendingHash != null ? 'Check again' : 'Pay with USDC',
+    _Step.idle =>
+      _pendingHash != null
+          ? 'Check again'
+          : _submitAttempted
+          ? 'Try again'
+          : 'Pay with USDC',
   };
 
   @override
@@ -281,7 +301,7 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
                   _BusinessPicker(
                     businesses: _businesses,
                     selected: _businessCode,
-                    enabled: !_busy && _pendingHash == null,
+                    enabled: !_busy && !_locked,
                     onChanged: (code) => setState(() {
                       _businessCode = code;
                       _inputsChanged();
@@ -289,7 +309,7 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   IgnorePointer(
-                    ignoring: _busy || _pendingHash != null,
+                    ignoring: _busy || _locked,
                     child: Column(
                       children: [
                         KwanTextField(

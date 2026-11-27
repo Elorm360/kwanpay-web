@@ -17,9 +17,9 @@ class StellarTestnetWalletService {
   final _wallets = WalletService();
 
   Asset get _usdc => Asset.createNonNativeAsset(
-        StellarAssets.usdcCode,
-        StellarAssets.testnetUsdcIssuer,
-      );
+    StellarAssets.usdcCode,
+    StellarAssets.testnetUsdcIssuer,
+  );
 
   Uint8List memoHashFor(String reference) {
     return Util.hash(Uint8List.fromList(utf8.encode(reference.trim())));
@@ -50,6 +50,37 @@ class StellarTestnetWalletService {
   Future<String> publicKey() async {
     final keyPair = await ensureReady();
     return keyPair.accountId;
+  }
+
+  /// The hash of a successful transaction this account already sent for
+  /// [reference], found by its memo, or null. Run before resubmitting after
+  /// an unclear failure, so a dropped connection cannot cause a double pay.
+  Future<String?> findPaymentByReference(String reference) async {
+    final keyPair = await ensureReady();
+    final memo = memoHashFor(reference.trim().toUpperCase());
+    final page = await _stellar.server.transactions
+        .forAccount(keyPair.accountId)
+        .order(RequestBuilderOrder.DESC)
+        .limit(50)
+        .execute();
+    for (final tx in page.records) {
+      final txMemo = tx.memo;
+      if (tx.successful &&
+          tx.sourceAccount == keyPair.accountId &&
+          txMemo is MemoHash &&
+          _sameBytes(txMemo.bytes, memo)) {
+        return tx.hash;
+      }
+    }
+    return null;
+  }
+
+  static bool _sameBytes(Uint8List? a, Uint8List b) {
+    if (a == null || a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   Future<String> payUsdc({
@@ -117,9 +148,7 @@ class StellarTestnetWalletService {
         }
       }
 
-      throw Exception(
-        'Stellar Testnet account is not visible on Horizon yet.',
-      );
+      throw Exception('Stellar Testnet account is not visible on Horizon yet.');
     }
   }
 
