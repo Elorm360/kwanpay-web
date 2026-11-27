@@ -157,7 +157,15 @@ the demo in section 6.
   Stellar transaction hash, and "Stellar test network (not real money)", and
   **Share receipt** produces `KwanPay-receipt-KWP-TXN-HOJRIBOGWE-1GQRV0U.pdf`.
 
-**Screenshots** (USDC Pay screen, Payment made, receipt, Stellar Expert) are
+**Demo video.** A second payment was screen-recorded end to end on the same
+phone: Home → Pay → Pay with USDC → Labadi Beach Hotel, booking
+`LBH2026VIDEO`, 2.50 USDC → Payment made. Transaction
+[`f280a130…266e6b`](https://stellar.expert/explorer/testnet/tx/f280a130477b1770cb2c5eefe454edde9abbbcd5def361ddeef2ee7291266e6b)
+(ledger 5,950,466), verified the same way: successful, 2.5 USDC to Labadi
+Beach Hotel, memo = SHA-256 of `KWP-TXN-HOJS374C1A-18HHIRY`, KwanPay record
+Completed with the same hash.
+
+**Screenshots and the video** (USDC Pay screen, Payment made, receipt, Stellar Expert) are
 attached to the Instawards submission rather than kept in this public
 repository, because the receipt shows the account holder's name and wallet
 ID.
