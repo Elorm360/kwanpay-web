@@ -66,14 +66,28 @@ class ReceiptDetails {
       case TransactionTypes.receive:
         title = 'Received from a KwanPay wallet';
       case TransactionTypes.payment:
-        final business = tx.description.isEmpty ? 'a business' : tx.description;
+        // Stellar payments store "Business · BOOKING" in the description and,
+        // once confirmed, the Stellar transaction hash as provider reference.
+        final stellar = TransactionProviders.isDevelopmentNetwork(tx.provider);
+        final parts = tx.description.split(' · ');
+        final name = stellar ? parts.first : tx.description;
+        final business = name.isEmpty ? 'a business' : name;
         title = done ? 'Paid $business' : 'Payment to $business';
-        if (tx.description.isNotEmpty) {
-          lines.add(ReceiptLine('Business', tx.description));
-        }
-        final booking = _afterColon(tx.providerReference);
-        if (booking != null) {
+        if (name.isNotEmpty) lines.add(ReceiptLine('Business', name));
+        final booking = stellar
+            ? (parts.length > 1 ? parts.last : null)
+            : _afterColon(tx.providerReference);
+        if (booking != null && booking.isNotEmpty) {
           lines.add(ReceiptLine('Booking reference', booking, copyable: true));
+        }
+        if (stellar && done && (tx.providerReference ?? '').isNotEmpty) {
+          lines.add(
+            ReceiptLine(
+              'Stellar transaction',
+              tx.providerReference!,
+              copyable: true,
+            ),
+          );
         }
       case TransactionTypes.withdrawal:
         title = 'Withdrawal';

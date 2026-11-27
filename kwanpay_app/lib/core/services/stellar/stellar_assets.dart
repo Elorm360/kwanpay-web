@@ -7,6 +7,9 @@ class StellarAssets {
 
   static const String circleFaucetUrl = 'https://faucet.circle.com';
 
+  static const String testnetExplorerUrl =
+      'https://stellar.expert/explorer/testnet';
+
   static const String maxTrustlineLimit = '922337203685.4775807';
 
   static bool isUsdc({
@@ -25,3 +28,7 @@ class StellarAssets {
     return assetIssuer != null && assetIssuer.isNotEmpty;
   }
 }
+
+/// Public explorer page for a Testnet transaction: evidence anyone can open.
+String stellarExplorerUrl(String txHash) =>
+    '${StellarAssets.testnetExplorerUrl}/tx/${txHash.trim().toLowerCase()}';

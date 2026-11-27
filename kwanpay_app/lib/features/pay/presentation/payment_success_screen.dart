@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../core/services/stellar/stellar_assets.dart';
 
 import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/theme/app_colors.dart';
@@ -41,17 +44,10 @@ class PaymentSuccessScreen extends ConsumerWidget {
               const CircleAvatar(
                 radius: 44,
                 backgroundColor: AppColors.success,
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 48,
-                ),
+                child: Icon(Icons.check, color: Colors.white, size: 48),
               ),
               const SizedBox(height: 24),
-              Text(
-                'Payment made',
-                style: AppTextStyles.headline,
-              ),
+              Text('Payment made', style: AppTextStyles.headline),
               const SizedBox(height: 12),
               Text(
                 'You paid $currency ${amount.toStringAsFixed(2)} to\n$operatorName',
@@ -74,6 +70,14 @@ class PaymentSuccessScreen extends ConsumerWidget {
                   txHash!,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.caption,
+                ),
+                TextButton.icon(
+                  onPressed: () => launchUrl(
+                    Uri.parse(stellarExplorerUrl(txHash!)),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                  label: const Text('View on Stellar Expert'),
                 ),
               ],
               const Spacer(),

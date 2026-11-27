@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/theme_colors.dart';
@@ -9,6 +11,7 @@ import '../widgets/empty_operator_state.dart';
 import '../widgets/operator_card.dart';
 import '../widgets/search_section.dart';
 import 'pay_bill_screen.dart';
+import 'usdc_pay_screen.dart';
 
 class PayScreen extends StatefulWidget {
   const PayScreen({super.key});
@@ -34,7 +37,8 @@ class _PayScreenState extends State<PayScreen> {
     return TourismOperators.all.where((operator) {
       final matchesCategory =
           _selectedCategory == null || operator.category == _selectedCategory;
-      final matchesQuery = query.isEmpty ||
+      final matchesQuery =
+          query.isEmpty ||
           operator.name.toLowerCase().contains(query) ||
           operator.category.toLowerCase().contains(query) ||
           operator.accountLabel.toLowerCase().contains(query);
@@ -49,10 +53,7 @@ class _PayScreenState extends State<PayScreen> {
     return Scaffold(
       backgroundColor: context.colorPaper,
       appBar: AppBar(
-        title: const Text(
-          'Pay',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
+        title: const Text('Pay', style: TextStyle(fontWeight: FontWeight.w700)),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -84,6 +85,57 @@ class _PayScreenState extends State<PayScreen> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Material(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(AppRadius.large),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(AppRadius.large),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const UsdcPayScreen()),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.currency_exchange_rounded,
+                          color: AppColors.accent,
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Pay with USDC',
+                                style: AppTextStyles.title.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'On the Stellar test network',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          color: Colors.white70,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
