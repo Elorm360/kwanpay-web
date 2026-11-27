@@ -30,7 +30,8 @@ class UsdcPayScreen extends ConsumerStatefulWidget {
   ConsumerState<UsdcPayScreen> createState() => _UsdcPayScreenState();
 }
 
-class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
+class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen>
+    with WidgetsBindingObserver {
   final _wallet = StellarTestnetWalletService();
   final _transactions = TransactionService();
   final _bookingController = TextEditingController();
@@ -66,14 +67,29 @@ class _UsdcPayScreenState extends ConsumerState<UsdcPayScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _prepare();
     for (final c in [_bookingController, _amountController]) {
       c.addListener(_inputsChanged);
     }
   }
 
+  // Coming back from the Circle faucet: show the new balance without
+  // making the user tap refresh.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        !_preparing &&
+        _accountError == null &&
+        !_busy &&
+        !_refreshingBalance) {
+      _refreshBalance();
+    }
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _bookingController.dispose();
     _amountController.dispose();
     super.dispose();

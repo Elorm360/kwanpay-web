@@ -121,28 +121,46 @@ Failed, Cancelled.
 
 ## 7. Evidence for the SOW
 
-| SOW deliverable | Evidence |
-|---|---|
-| **1. USDC payment rail**: trustline, initiation, submission, secure result handling | Code in section 3 · demo steps 1–5 · Stellar Expert link below |
-| **2. Verification and sync**: hash, status mapping, idempotency, persistence | Section 4 checks · section 5 table · KwanPay record and receipt below |
-| **3. Demo and documentation** | This document · demo in section 6 · tests in section 6 |
+| SOW deliverable | Evidence | Status |
+|---|---|---|
+| **1. USDC payment rail**: trustline, initiation, submission, secure result handling | Code in section 3 · demo steps 1–5 · recorded payment below (account created, trustline opened, 5 USDC paid) | Complete |
+| **2. Verification and sync**: hash, status mapping, idempotency, persistence | Section 4 checks · section 5 table · recorded payment: Completed record with the on-chain hash; memo proven to match | Complete |
+| **3. Demo and documentation** | This document · repeatable demo in section 6 · automated tests in section 6 · screenshots with the submission | Complete |
 
 ### Recorded Testnet payment
 
-<!-- Filled in after the on-device run. -->
+Made from the KwanPay Android app on a Samsung Galaxy S26 Ultra, following
+the demo in section 6.
 
 | | |
 |---|---|
-| Date | _to be added_ |
-| Business | _to be added_ |
-| Amount | _to be added_ |
-| KwanPay reference | _to be added_ |
-| Stellar transaction | _to be added_ |
-| Explorer | _to be added_ |
-| KwanPay status | _to be added_ |
+| Date | 27 Nov 2026, 10:18:29 UTC (ledger 5,950,213) |
+| From | `GAWULGEFRXGHY7SFESJVHVLXFON2FN3JRYTFYRQT7TC5EGQXD7G6IOKV` (the user's Testnet account, created by the app) |
+| To | `GDVBOPN3QGTH4ASDHPOW2WF2D3E55AREL7UCYBFMNNBBPEFD2DUFACX2` (Cape Coast Tours) |
+| Amount | 5 USDC, Circle Testnet issuer `GBBD47IF…FLA5` |
+| Booking reference | `BK2026DEMO` |
+| KwanPay reference | `KWP-TXN-HOJRIBOGWE-1GQRV0U` |
+| Memo (hash, base64) | `4Ggypw2ogErKnY2YmwUw3jy7Xs3IWv0eVhT4MKe6+Z4=` = SHA-256 of the KwanPay reference |
+| Stellar transaction | `94bfbed5fbf84d589941991d5f929ecd009803df81290c7f0ed46e76017ffa16` |
+| Explorer | <https://stellar.expert/explorer/testnet/tx/94bfbed5fbf84d589941991d5f929ecd009803df81290c7f0ed46e76017ffa16> |
+| KwanPay record | Payment · USDC 5.00 · **Completed** · provider `stellar_testnet` · provider reference = the transaction hash above |
 
-Screenshots: _to be added_ (USDC Pay screen, Payment made, receipt,
-Stellar Expert page).
+**Independently checked after the run:**
+
+- Stellar Expert and Horizon both show the transaction as *Successful*: one
+  payment of 5 USDC from the user's account to Cape Coast Tours.
+- Recomputing SHA-256 of `KWP-TXN-HOJRIBOGWE-1GQRV0U` gives exactly the
+  on-chain memo, which ties this payment to this KwanPay record.
+- The KwanPay database row is Completed and stores the same hash.
+- The sender's USDC went from 20.00 (faucet) to 15.00.
+- The receipt in the app shows Completed, the business, booking reference,
+  Stellar transaction hash, and "Stellar test network (not real money)", and
+  **Share receipt** produces `KwanPay-receipt-KWP-TXN-HOJRIBOGWE-1GQRV0U.pdf`.
+
+**Screenshots** (USDC Pay screen, Payment made, receipt, Stellar Expert) are
+attached to the Instawards submission rather than kept in this public
+repository, because the receipt shows the account holder's name and wallet
+ID.
 
 ## 8. Known limitations
 

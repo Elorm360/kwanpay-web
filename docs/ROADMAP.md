@@ -99,7 +99,10 @@ Milestones, in order; each ships on its own with tests.
 
 Goal: cross-border value moves as USDC on Stellar.
 
-- [~] Stellar wallet identity and USDC payment verification (testnet)
+- [x] Testnet USDC payments in the app: account and trustline set-up,
+      payment with reference memo, Horizon verification, receipts, no
+      double pay on retry. First recorded payment 27 Nov 2026; see
+      `docs/STELLAR_USDC.md` (Stellar Instawards deliverables)
 - [ ] Decide custody model (custodial, MPC or user-held keys)
 - [ ] Anchor integration (SEP-24/SEP-31) for fiat on/off-ramp
 - [ ] Live FX quotes with expiry, and transparent fees

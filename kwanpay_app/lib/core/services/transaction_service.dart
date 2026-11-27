@@ -80,7 +80,7 @@ class TransactionService {
   Future<List<Map<String, String>>> getTourismStellarAccounts() async {
     final user = currentUser;
     if (user == null) throw Exception('No authenticated user.');
-    final data = await _supabase.from('tourism_stellar_accounts').select('code, name, stellar_public_key').order('name');
+    final data = await _supabase.from('tourism_stellar_accounts').select('code, name, stellar_public_key').order('name', ascending: true);
     return (data as List).whereType<Map>().map((row) => {'code': (row['code'] ?? '').toString(), 'name': (row['name'] ?? '').toString(), 'stellar_public_key': (row['stellar_public_key'] ?? '').toString()}).where((row) => row['code']!.isNotEmpty && row['stellar_public_key']!.isNotEmpty).toList();
   }
 
