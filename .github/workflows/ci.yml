@@ -105,6 +105,12 @@ jobs:
 
       - name: Type-check Edge Functions
         shell: bash
+        # The repo root has the website's package.json. Without this, Deno
+        # treats it as the project and wants npm packages (pulled in by
+        # supabase-js) in a node_modules folder CI never installs. Edge
+        # Functions resolve npm packages from Deno's own cache instead.
+        env:
+          DENO_NO_PACKAGE_JSON: "1"
         run: |
           set -euo pipefail
           mapfile -t functions < <(find supabase/functions -type f -name '*.ts' -print | sort)
