@@ -38,10 +38,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Pinned to the version the app is developed and tested with. Latest
+      # stable (3.50) deprecates importing package:flutter/material.dart,
+      # which fails analyze on every screen; upgrade together with that
+      # migration, not silently in CI.
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.2
           cache: true
 
       # .env is a bundled asset but is never committed; CI only needs it to exist.
