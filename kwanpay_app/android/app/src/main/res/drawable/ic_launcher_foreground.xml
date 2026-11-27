@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KwanPay mark (same geometry as assets/images/kwanpay_mark.svg, 64x64),
+     centred in the 108dp adaptive-icon canvas inside the 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="1.05"
+        android:scaleY="1.05"
+        android:translateX="18.7"
+        android:translateY="21">
+        <path
+            android:pathData="M16,50C18,34 30,40 34,28C37,18 44,16 48,16"
+            android:strokeColor="#D98E3B"
+            android:strokeWidth="5.5"
+            android:strokeLineCap="round"
+            android:fillColor="#00000000" />
+        <path
+            android:pathData="M11.5,50a4.5,4.5 0,1 0,9 0a4.5,4.5 0,1 0,-9 0"
+            android:fillColor="#D98E3B" />
+        <path
+            android:pathData="M42,16a6,6 0,1 0,12 0a6,6 0,1 0,-12 0"
+            android:strokeColor="#D98E3B"
+            android:strokeWidth="3.5"
+            android:fillColor="#00000000" />
+    </group>
+</vector>

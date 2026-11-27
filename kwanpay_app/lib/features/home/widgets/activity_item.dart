@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+
 class ActivityItem extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
@@ -22,7 +25,7 @@ class ActivityItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
@@ -54,17 +57,15 @@ class ActivityItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 17,
+                  style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w700,
+                    fontSize: 17,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
+                  style: AppTextStyles.caption.copyWith(
                     height: 1.4,
                   ),
                 ),
@@ -74,14 +75,10 @@ class ActivityItem extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             time,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-            ),
+            style: AppTextStyles.caption.copyWith(fontSize: 12),
           ),
         ],
       ),
     );
   }
 }
-

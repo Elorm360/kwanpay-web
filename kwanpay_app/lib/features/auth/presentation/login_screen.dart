@@ -9,6 +9,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/profile_service.dart';
 import '../../navigation/main_navigation_screen.dart';
+import 'email_verification_screen.dart';
 import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -32,13 +33,33 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    final email = emailController.text.trim();
+    final authService = AuthService();
+
     try {
       setState(() => isLoading = true);
-
-      await AuthService().signIn(
-        email: emailController.text.trim(),
+      final response = await authService.signIn(
+        email: email,
         password: passwordController.text,
       );
+
+      final user = response.user ?? Supabase.instance.client.auth.currentUser;
+      if (!mounted) return;
+
+      if (!authService.isEmailVerified(user)) {
+        try {
+          await authService.resendSignupOtp(email: email);
+        } catch (_) {}
+
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmailVerificationScreen(email: email),
+          ),
+        );
+        return;
+      }
 
       await ProfileService().createProfileIfNotExists();
 
@@ -49,6 +70,27 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
       );
     } on AuthException catch (e) {
+      if (!mounted) return;
+      final message = e.message.toLowerCase();
+      if (message.contains('email not confirmed') ||
+          message.contains('email_not_confirmed')) {
+        try {
+          await authService.resendSignupOtp(
+            email: emailController.text.trim(),
+          );
+        } catch (_) {}
+
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmailVerificationScreen(
+              email: emailController.text.trim(),
+            ),
+          ),
+        );
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
       );
@@ -82,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text("Welcome Back", style: AppTextStyles.headline),
               const SizedBox(height: 12),
               const Text(
-                "Sign in to your KwanPay wallet.",
+                "Sign in to your KwanPay account.",
                 style: AppTextStyles.body,
               ),
               const SizedBox(height: 40),
@@ -116,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Don't have an account? Create Wallet"),
+                  child: const Text("Don't have an account? Create Account"),
                 ),
               ),
             ],

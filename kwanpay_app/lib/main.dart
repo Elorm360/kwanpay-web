@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'core/services/stellar/stellar_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'features/splash/splash_screen.dart';
@@ -10,7 +13,16 @@ import 'features/splash/splash_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // The Geist font is bundled under the SIL Open Font License, which must
+  // ship with it; this lists it on the app's licences page.
+  LicenseRegistry.addLicense(() async* {
+    final text = await rootBundle.loadString('assets/fonts/geist/OFL.txt');
+    yield LicenseEntryWithLineBreaks(const ['Geist font'], text);
+  });
+
   await dotenv.load(fileName: '.env');
+
+  StellarService().validateConfiguration();
 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,

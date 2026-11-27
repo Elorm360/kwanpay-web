@@ -1,15 +1,6 @@
-"use client";
-
-import { MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
-import ScrollProgress from "@/components/ScrollProgress";
 
+/** App-wide providers. Kept as a seam for future context (analytics, theme). */
 export default function Providers({ children }: { children: ReactNode }) {
-  return (
-    <MotionConfig reducedMotion="user">
-      <ScrollProgress />
-      <div className="grain-overlay" aria-hidden="true" />
-      {children}
-    </MotionConfig>
-  );
+  return <>{children}</>;
 }

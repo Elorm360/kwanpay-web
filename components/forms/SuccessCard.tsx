@@ -1,21 +1,18 @@
-"use client";
+import { ArrowRight, Check } from "lucide-react";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { BRAND } from "@/lib/brand";
+import { ButtonLink } from "@/components/ui/Button";
 
 type SuccessCardProps = {
-  emoji?: string;
   title: string;
   messageLines: string[];
   primaryLabel: string;
   primaryHref: string;
+  /** Kept for compatibility with existing callers. */
   icon?: "forward" | "home";
+  emoji?: string;
 };
 
 export default function SuccessCard({
-  emoji = "🎉",
   title,
   messageLines,
   primaryLabel,
@@ -23,58 +20,26 @@ export default function SuccessCard({
   icon = "forward",
 }: SuccessCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="text-center py-10"
-    >
-      <div
-        className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl"
-        style={{ background: "rgba(217,142,59,0.12)" }}
-      >
-        {emoji}
-      </div>
+    <div role="status" className="py-6 text-center">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success">
+        <Check size={28} strokeWidth={2.5} aria-hidden />
+      </span>
 
-      <h2 className="mt-6 text-3xl font-black" style={{ color: BRAND.indigo }}>
-        {title}
-      </h2>
+      <h2 className="mt-6 text-2xl font-extrabold tracking-tight text-ink md:text-3xl">{title}</h2>
 
-      {messageLines.map((line, idx) => (
+      {messageLines.map((line, index) => (
         <p
-          key={idx}
-          className={
-            (idx === 0 ? "mt-4 " : "mt-2 ") +
-            "text-slate-600 leading-7 max-w-sm mx-auto"
-          }
+          key={line}
+          className={`${index === 0 ? "mt-3" : "mt-1.5"} mx-auto max-w-sm leading-7 text-charcoal/75`}
         >
           {line}
         </p>
       ))}
 
-      <Link href={primaryHref}>
-        <motion.button
-          whileHover={{ scale: 1.05, y: -3 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 340, damping: 22 }}
-          className="group mt-8 inline-flex items-center gap-2 rounded-full px-8 py-4 font-semibold text-white"
-          style={{
-            background: "linear-gradient(135deg, #D98E3B, #B56F28)",
-            boxShadow: "0 10px 30px -8px rgba(217,142,59,.6)",
-          }}
-        >
-          {primaryLabel}
-          {icon === "forward" ? (
-            <ArrowRight
-              size={18}
-              className="transition-transform group-hover:translate-x-0.5"
-            />
-          ) : (
-            <ArrowLeft size={18} />
-          )}
-        </motion.button>
-      </Link>
-    </motion.div>
+      <ButtonLink href={primaryHref} variant="primary" className="mt-8">
+        {primaryLabel}
+        {icon === "forward" && <ArrowRight size={16} aria-hidden />}
+      </ButtonLink>
+    </div>
   );
 }
-

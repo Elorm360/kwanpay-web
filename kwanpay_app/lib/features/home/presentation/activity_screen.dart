@@ -1,0 +1,189 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/models/transaction_model.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../widgets/recent_activity.dart';
+
+class ActivityScreen extends ConsumerStatefulWidget {
+  const ActivityScreen({super.key});
+
+  @override
+  ConsumerState<ActivityScreen> createState() => _ActivityScreenState();
+}
+
+class _ActivityScreenState extends ConsumerState<ActivityScreen> {
+  String _filter = 'All';
+
+  List<TransactionModel> _filtered(List<TransactionModel> transactions) {
+    if (_filter == 'All') return transactions;
+    return transactions.where((transaction) {
+      switch (_filter) {
+        case 'Money In':
+          return transaction.isIncoming;
+        case 'Money Out':
+          return transaction.isOutgoing;
+        case 'Payments':
+          return transaction.isPayment;
+        case 'Transfers':
+          return transaction.isTransfer;
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboard = ref.watch(walletDashboardProvider);
+    final transactions = _filtered(dashboard.transactions);
+
+    return Scaffold(
+      backgroundColor: AppColors.paper,
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          color: AppColors.accent,
+          onRefresh: () => ref.read(walletDashboardProvider.notifier).refresh(),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.md,
+              AppSpacing.lg,
+              AppSpacing.xxl,
+            ),
+            children: [
+              Text('Activity', style: AppTextStyles.headline),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Money in, money out, payments and transfers, in one list.',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Wrap, not a sideways list: every filter stays visible, none
+              // hides off the left edge after a scroll.
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  for (final filter in const [
+                    'All',
+                    'Money In',
+                    'Money Out',
+                    'Payments',
+                    'Transfers',
+                  ])
+                    Builder(
+                      builder: (context) {
+                        final selected = filter == _filter;
+                        return ChoiceChip(
+                          label: Text(filter),
+                          selected: selected,
+                          showCheckmark: false,
+                          onSelected: (_) => setState(() => _filter = filter),
+                          selectedColor: AppColors.primary,
+                          labelStyle: TextStyle(
+                            color: selected
+                                ? Colors.white
+                                : AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.large,
+                            ),
+                          ),
+                          side: BorderSide(
+                            color: selected
+                                ? AppColors.primary
+                                : AppColors.border,
+                          ),
+                        );
+                      },
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              if (dashboard.loading && dashboard.transactions.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(top: 80),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (dashboard.error != null &&
+                  dashboard.transactions.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.cloud_off_rounded,
+                        size: 42,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      Text(
+                        'We could not load your activity.',
+                        style: AppTextStyles.title,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        'Check your connection and try again.',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      TextButton(
+                        onPressed: () => ref
+                            .read(walletDashboardProvider.notifier)
+                            .refresh(),
+                        child: const Text('Try again'),
+                      ),
+                    ],
+                  ),
+                )
+              else if (transactions.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.receipt_long_outlined,
+                        size: 42,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      Text('No activity here yet', style: AppTextStyles.title),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        _filter == 'All'
+                            ? 'Your completed and pending activity will appear here.'
+                            : 'Try another filter to see more activity.',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                RecentActivity(
+                  transactions: transactions,
+                  title: 'Recent activity',
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

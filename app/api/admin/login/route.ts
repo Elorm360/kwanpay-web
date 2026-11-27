@@ -13,8 +13,19 @@ import {
   getLoginRateLimit,
   recordFailedLogin,
 } from "@/lib/login-rate-limit";
+import { getClientIp } from "@/lib/client-ip";
 import { getSupabase } from "@/lib/supabase";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+
+function tooManyAttempts(retryAfterSeconds: number) {
+  return NextResponse.json(
+    { success: false, error: "Too many attempts. Try again later." },
+    {
+      status: 429,
+      headers: { "Retry-After": String(retryAfterSeconds) },
+    }
+  );
+}
 
 const loginSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
@@ -22,27 +33,31 @@ const loginSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const clientKey =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const rateLimit = getLoginRateLimit(clientKey);
+  const ipKey = `ip:${getClientIp(req.headers)}`;
+  const ipLimit = getLoginRateLimit(ipKey);
 
-  if (rateLimit.limited) {
-    return NextResponse.json(
-      { success: false, error: "Too many attempts. Try again later." },
-      {
-        status: 429,
-        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
-      }
-    );
+  if (ipLimit.limited) {
+    return tooManyAttempts(ipLimit.retryAfterSeconds);
   }
 
   const result = loginSchema.safeParse(await req.json().catch(() => null));
   if (!result.success) {
     return NextResponse.json(
-      { success: false, error: "A password is required." },
+      { success: false, error: "Enter a valid email and password." },
       { status: 400 }
     );
   }
+
+  // Also limit per account so rotating IPs cannot brute-force one admin.
+  const emailKey = `email:${result.data.email}`;
+  const emailLimit = getLoginRateLimit(emailKey);
+  if (emailLimit.limited) {
+    return tooManyAttempts(emailLimit.retryAfterSeconds);
+  }
+  const recordFailure = () => {
+    recordFailedLogin(ipKey);
+    recordFailedLogin(emailKey);
+  };
 
   const sessionSecret = process.env.ADMIN_SESSION_SECRET;
 
@@ -176,7 +191,7 @@ export async function POST(req: Request) {
     profile.id !== authData.user.id ||
     !profile.is_active
   ) {
-    recordFailedLogin(clientKey);
+    recordFailure();
     return NextResponse.json(
       { success: false, error: "Incorrect email or password." },
       { status: 401 }
@@ -184,7 +199,8 @@ export async function POST(req: Request) {
   }
 
   const admin = profile as AdminUser;
-  clearLoginFailures(clientKey);
+  clearLoginFailures(ipKey);
+  clearLoginFailures(emailKey);
   await supabaseAdmin
     .from("admin_users")
     .update({ last_login_at: new Date().toISOString() })

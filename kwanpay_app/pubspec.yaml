@@ -46,6 +46,17 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_dotenv: ^6.0.1
 
+  stellar_flutter_sdk: ^1.9.0
+  flutter_secure_storage: ^9.2.4
+  url_launcher: ^6.3.1
+  image_picker: ^1.2.4
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  # Not used directly: pins pdf's image dependency. image 4.11+ needs
+  # archive 4.1+, but stellar_flutter_sdk -> toml holds pdf to archive <4.1.
+  # Drop this once stellar_flutter_sdk allows a newer toml.
+  image: ">=4.5.0 <4.11.0"
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
 
@@ -73,11 +84,27 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/kwanpay_logo.png
-    - assets/images/onboarding_1.png
-    - assets/images/onboarding_2.png
-    - assets/images/onboarding_3.png
+    - assets/images/kwanpay_lockup.png
+    - assets/images/kwanpay_mark.svg
+    - assets/fonts/geist/OFL.txt
     - .env
+
+  # Geist, the brand typeface shared with the website. SIL Open Font License
+  # 1.1 (assets/fonts/geist/OFL.txt). From the official `geist` npm package,
+  # v1.3.1, checksum-verified.
+  fonts:
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/geist/Geist-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/geist/Geist-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/geist/Geist-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/geist/Geist-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/geist/Geist-Black.ttf
+          weight: 900
 
 
 

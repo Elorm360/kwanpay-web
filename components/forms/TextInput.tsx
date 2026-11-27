@@ -1,3 +1,6 @@
+"use client";
+
+import { useId } from "react";
 import type { LucideIcon } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 
@@ -12,10 +15,14 @@ type TextInputProps = {
   placeholder?: string;
   textarea?: boolean;
   rows?: number;
+  name?: string;
+  autoComplete?: string;
+  maxLength?: number;
+  minLength?: number;
 };
 
 const inputClass =
-  "w-full rounded-2xl border border-slate-300 bg-white px-5 py-4 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all";
+  "w-full rounded-control border border-line bg-white px-4 py-3.5 text-[16px] text-ink placeholder:text-muted/70 focus:outline-none focus:ring-2 focus:ring-amber/60 focus:border-amber transition-colors";
 
 export default function TextInput({
   label,
@@ -28,14 +35,33 @@ export default function TextInput({
   placeholder,
   textarea,
   rows = 4,
+  name,
+  autoComplete,
+  maxLength,
+  minLength,
 }: TextInputProps) {
+  const id = useId();
+  const shared = {
+    id,
+    name,
+    required,
+    placeholder,
+    value,
+    maxLength,
+    minLength,
+    autoComplete,
+  };
+
   return (
     <div>
-      <label className="flex items-center gap-2 mb-2 font-medium text-slate-700">
-        <Icon size={15} style={{ color: BRAND.amber }} />
+      <label
+        htmlFor={id}
+        className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink"
+      >
+        <Icon size={15} style={{ color: BRAND.amber }} aria-hidden />
         {label}
         {optional && (
-          <span className="text-sm font-normal text-slate-400">
+          <span className="font-normal text-muted">
             (Optional)
           </span>
         )}
@@ -43,19 +69,15 @@ export default function TextInput({
 
       {textarea ? (
         <textarea
+          {...shared}
           rows={rows}
-          required={required}
-          placeholder={placeholder}
-          value={value}
           onChange={(e) => onChange(e.target.value)}
           className={`${inputClass} resize-none`}
         />
       ) : (
         <input
+          {...shared}
           type={type}
-          required={required}
-          placeholder={placeholder}
-          value={value}
           onChange={(e) => onChange(e.target.value)}
           className={inputClass}
         />
@@ -63,4 +85,3 @@ export default function TextInput({
     </div>
   );
 }
-

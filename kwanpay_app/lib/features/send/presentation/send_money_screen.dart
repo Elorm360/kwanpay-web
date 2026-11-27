@@ -1,48 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/models/wallet_model.dart';
+import '../../../core/models/app_currency.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/services/wallet_service.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/kwan_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import 'review_transfer_screen.dart';
 
-class SendMoneyScreen extends StatefulWidget {
+class SendMoneyScreen extends ConsumerStatefulWidget {
   const SendMoneyScreen({super.key});
 
   @override
-  State<SendMoneyScreen> createState() =>
-      _SendMoneyScreenState();
+  ConsumerState<SendMoneyScreen> createState() => _SendMoneyScreenState();
 }
 
-class _SendMoneyScreenState
-    extends State<SendMoneyScreen> {
-
-  final walletController =
-      TextEditingController();
-
-  final amountController =
-      TextEditingController();
-
+class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
+  final walletController = TextEditingController();
+  final amountController = TextEditingController();
   Map<String, dynamic>? recipient;
-
   bool searching = false;
-
-  WalletModel? myWallet;
+  late String _sendCurrency;
 
   @override
   void initState() {
     super.initState();
-    loadMyWallet();
-  }
-
-  Future<void> loadMyWallet() async {
-    myWallet = await WalletService().getWallet();
-
-    if (mounted) {
-      setState(() {});
-    }
+    _sendCurrency = AppCurrencies.home.code;
+    // Refreshing updates shared state; doing it during initState (while the
+    // tree is building) throws in Riverpod and corrupts the dashboard state.
+    Future.microtask(() {
+      if (mounted) ref.read(walletDashboardProvider.notifier).refresh();
+    });
   }
 
   @override
@@ -52,272 +45,222 @@ class _SendMoneyScreenState
     super.dispose();
   }
 
-  Future<void> searchWallet() async {
-    if (walletController.text.trim().isEmpty) {
+  Future<void> pasteWalletId() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final pasted = data?.text?.trim() ?? '';
+    if (pasted.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Enter a wallet ID."),
-        ),
+        const SnackBar(content: Text('Nothing to paste. Copy a wallet ID first.')),
       );
       return;
     }
-
     setState(() {
-      searching = true;
+      walletController.text = pasted;
+      recipient = null;
     });
+  }
 
-    final result =
-        await WalletService().findWalletById(
-      walletController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      recipient = result;
-      searching = false;
-    });
-
-    if (result != null &&
-        result['wallet']['id'] ==
-            WalletService().currentUser?.id) {
+  Future<void> searchWallet() async {
+    final walletId = walletController.text.trim();
+    if (searching) return;
+    if (walletId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "You cannot send money to your own wallet.",
-          ),
-        ),
+        const SnackBar(content: Text('Enter a wallet ID.')),
       );
-
+      return;
+    }
+    setState(() => searching = true);
+    try {
+      final result = await WalletService().findWalletById(walletId);
+      if (!mounted) return;
+      setState(() {
+        recipient = result;
+        searching = false;
+      });
+      if (result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('We could not find that KwanPay wallet.')),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
       setState(() {
         recipient = null;
+        searching = false;
       });
-
-      return;
-    }
-
-    if (result == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Wallet not found."),
-        ),
+        const SnackBar(content: Text('We could not look up that wallet right now.')),
       );
     }
   }
 
   void validateTransfer() {
-    if (amountController.text.trim().isEmpty) {
+    final found = recipient;
+    if (found == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Enter an amount."),
-        ),
+        const SnackBar(content: Text('Search for a recipient first.')),
       );
       return;
     }
-
-    final amount =
-        double.tryParse(amountController.text);
-
+    final amount = double.tryParse(amountController.text.trim());
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Enter a valid amount."),
-        ),
+        const SnackBar(content: Text('Enter a valid amount.')),
       );
       return;
     }
-
-    if (amount > (myWallet?.balance ?? 0)) {
+    final balance = ref.read(walletDashboardProvider).canonicalBalance;
+    if (amount > balance) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Insufficient balance."),
-        ),
+        const SnackBar(content: Text('You do not have enough available balance.')),
       );
       return;
     }
-
-Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ReviewTransferScreen(
-          recipient: recipient!,
+          recipient: found,
           amount: amount,
+          currency: _sendCurrency,
         ),
       ),
     );
+  }
+
+  String _recipientName() {
+    final profile = recipient?['profile'];
+    if (profile is Map && profile['full_name'] != null) {
+      final name = profile['full_name'].toString().trim();
+      if (name.isNotEmpty) return name;
+    }
+    return 'KwanPay user';
+  }
+
+  String _recipientWalletId() {
+    final wallet = recipient?['wallet'];
+    if (wallet is Map && wallet['wallet_id'] != null) return wallet['wallet_id'].toString();
+    return walletController.text.trim();
   }
 
   @override
   Widget build(BuildContext context) {
+    final dashboard = ref.watch(walletDashboardProvider);
+    final balance = dashboard.canonicalBalance;
 
     return Scaffold(
-
-      appBar: AppBar(
-        title: const Text("Send Money"),
-      ),
-
+      backgroundColor: AppColors.paper,
+      appBar: AppBar(title: const Text('Send money')),
       body: SafeArea(
-
-        child: SingleChildScrollView(
-
-          padding: AppSpacing.pagePadding,
-
-          child: Column(
-
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
-
-            children: [
-
-              Text(
-                "Send Money",
-                style: AppTextStyles.headline,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
+          children: [
+            Text(
+              'Send funds to another KwanPay wallet. Review the recipient and amount before you confirm.',
+              style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Text('RECIPIENT', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w700)),
+            const SizedBox(height: AppSpacing.sm),
+            KwanTextField(
+              label: 'Wallet ID',
+              icon: Icons.account_balance_wallet_outlined,
+              controller: walletController,
+              suffix: IconButton(
+                tooltip: 'Paste wallet ID',
+                onPressed: pasteWalletId,
+                icon: const Icon(Icons.content_paste_rounded),
               ),
-
-              const SizedBox(height: 8),
-
-              const Text(
-                "Send funds securely to another KwanPay wallet.",
-                style: AppTextStyles.body,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            IgnorePointer(
+              ignoring: searching,
+              child: Opacity(
+                opacity: searching ? 0.6 : 1,
+                child: PrimaryButton(
+                  text: searching ? 'Searching…' : 'Find recipient',
+                  onPressed: searchWallet,
+                ),
               ),
-
-              const SizedBox(height: 32),
-
-              KwanTextField(
-                label: "Recipient Wallet ID",
-                icon: Icons.account_balance_wallet_outlined,
-                controller: walletController,
-              ),
-
-              const SizedBox(height: 20),
-
-              PrimaryButton(
-                text: searching ? "Searching..." : "Search",
-                onPressed: searchWallet,
-              ),
-
-              const SizedBox(height: 40),
-
-              recipient == null
-                  ? Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            if (recipient == null)
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.large),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: const Column(
+                  children: [
+                    Icon(Icons.person_search_rounded, size: 36, color: AppColors.textSecondary),
+                    SizedBox(height: AppSpacing.sm),
+                    Text('Recipient details will appear here', style: TextStyle(fontWeight: FontWeight.w700)),
+                    SizedBox(height: AppSpacing.xs),
+                    Text('Check the wallet identity before sending money.', textAlign: TextAlign.center, style: TextStyle(color: AppColors.textSecondary)),
+                  ],
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.large),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.08),
+                      foregroundColor: AppColors.primary,
+                      child: Text(_recipientName().substring(0, 1).toUpperCase()),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.person_search,
-                            size: 48,
-                            color: Colors.grey.shade400,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            "Recipient will appear here",
-                            style: AppTextStyles.title,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Enter a wallet ID and search.",
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.body,
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 28,
-                            child: Text(
-                              recipient!['profile']['full_name']
-                                  .toString()
-                                  .substring(0, 1)
-                                  .toUpperCase(),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  recipient!['profile']['full_name'],
-                                  style: AppTextStyles.title,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  recipient!['wallet']['wallet_id'],
-                                  style: AppTextStyles.body,
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: const [
-                                    Icon(
-                                      Icons.verified,
-                                      color: Colors.green,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text("Verified KwanPay User"),
-                                  ],
-                                ),
-                              ],
-                            ),
+                          Text(_recipientName(), style: AppTextStyles.title),
+                          const SizedBox(height: 3),
+                          Text(_recipientWalletId(), style: AppTextStyles.caption),
+                          const SizedBox(height: 6),
+                          const Row(
+                            children: [
+                              Icon(Icons.verified_rounded, color: AppColors.success, size: 17),
+                              SizedBox(width: 5),
+                              Text('Verified KwanPay wallet', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                            ],
                           ),
                         ],
                       ),
                     ),
-
-              if (recipient != null) ...[
-
-                const SizedBox(height: 24),
-
-                KwanTextField(
-                  label: "Amount",
-                  icon: Icons.attach_money,
-                  controller: amountController,
+                  ],
                 ),
-
-                const SizedBox(height: 16),
-
-                Text(
-                  "Available Balance: "
-                  "${myWallet?.currency ?? "USD"} "
-                  "${myWallet?.balance.toStringAsFixed(2) ?? "0.00"}",
-                  style: AppTextStyles.body,
-                ),
-
-                const SizedBox(height: 24),
-
-                PrimaryButton(
-                  text: "Continue",
-                  onPressed: validateTransfer,
-                ),
-
-              ],
-
+              ),
+            if (recipient != null) ...[
+              const SizedBox(height: AppSpacing.xl),
+              Text('AMOUNT', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: AppSpacing.sm),
+              KwanTextField(
+                label: 'Amount in $_sendCurrency',
+                icon: Icons.payments_outlined,
+                controller: amountController,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Available · $_sendCurrency ${balance.toStringAsFixed(2)}',
+                style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              PrimaryButton(text: 'Review transfer', onPressed: validateTransfer),
             ],
-
-          ),
-
+          ],
         ),
-
       ),
-
     );
-
   }
-
 }
-

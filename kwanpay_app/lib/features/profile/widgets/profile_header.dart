@@ -9,9 +9,13 @@ import '../../../core/theme/theme_colors.dart';
 class ProfileHeader extends StatelessWidget {
   final String userName;
 
+  /// The KYC tier name, e.g. "Basic" or "ID verified".
+  final String tierName;
+
   const ProfileHeader({
     super.key,
     required this.userName,
+    this.tierName = 'Basic',
   });
 
   @override
@@ -87,21 +91,21 @@ class ProfileHeader extends StatelessWidget {
                 color: AppColors.accent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppRadius.pill),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.verified_user_rounded,
                     size: 14,
                     color: AppColors.accent,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
-                    "Basic Account",
-                    style: TextStyle(
+                    "$tierName account",
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.accent,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],

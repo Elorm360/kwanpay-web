@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import 'onboarding_data.dart';
-
 import '../auth/presentation/welcome_screen.dart';
+import 'onboarding_data.dart';
+import 'onboarding_illustrations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -16,157 +16,142 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int currentPage = 0;
 
+  bool get _isLast => currentPage == onboardingPages.length - 1;
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
 
+  void _finish() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+    );
+  }
+
+  void _goTo(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView.builder(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            currentPage = index;
-          });
-        },
-        itemCount: onboardingPages.length,
-        itemBuilder: (context, index) {
-          final page = onboardingPages[index];
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
+      backgroundColor: AppColors.paper,
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 56,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: _isLast
+                    ? const SizedBox.shrink()
+                    : TextButton(
+                        onPressed: _finish,
+                        child: const Text(
+                          'Skip',
+                          style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary),
+                        ),
+                      ),
+              ),
+            ),
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => currentPage = index),
+                itemCount: onboardingPages.length,
+                itemBuilder: (context, index) {
+                  final page = onboardingPages[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: OnboardingIllustration(art: page.art)),
+                        const SizedBox(height: 32),
+                        Text(
+                          page.title,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            height: 1.15,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          page.subtitle,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.55,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        _pageController.animateToPage(
-                          onboardingPages.length - 1,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                      child: const Text("Skip"),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: SizedBox.expand(
-                      child: Image.asset(
-                        page.image,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child: Text(
-                              'Failed to load asset: ${page.image}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.red),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(onboardingPages.length, (index) {
+                      final selected = currentPage == index;
+                      return Semantics(
+                        button: true,
+                        label: 'Page ${index + 1} of ${onboardingPages.length}',
+                        selected: selected,
+                        child: GestureDetector(
+                          onTap: () => _goTo(index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: selected ? 24 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: selected ? AppColors.primary : AppColors.border,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          ),
+                        ),
+                      );
+                    }),
                   ),
-                  const SizedBox(height: 30),
-                  Text(
-                    page.title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    page.subtitle,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
-                    height: 58,
+                    height: 56,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accent,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
+                        foregroundColor: AppColors.primary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
-                      onPressed: () {
-                        if (currentPage == onboardingPages.length - 1) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const WelcomeScreen(),
-                            ),
-                          );
-                          return;
-                        }
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 350),
-                          curve: Curves.easeInOut,
-                        );
-                      },
+                      onPressed: _isLast ? _finish : () => _goTo(currentPage + 1),
                       child: Text(
-                        currentPage == onboardingPages.length - 1
-                            ? "Get Started"
-                            : "Continue",
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        _isLast ? 'Get started' : 'Continue',
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      onboardingPages.length,
-                      (index) {
-                        final selected = currentPage == index;
-                        return GestureDetector(
-                          onTap: () {
-                            _pageController.animateToPage(
-                              index,
-                              duration: const Duration(milliseconds: 350),
-                              curve: Curves.easeInOut,
-                            );
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: selected ? 30 : 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? AppColors.accent
-                                  : Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 30),
                 ],
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
 }
-

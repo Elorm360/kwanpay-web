@@ -17,7 +17,7 @@ class FeaturePlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.paper,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
@@ -46,7 +46,7 @@ class FeaturePlaceholderScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                "Feature under development",
+                "Coming later — this is not live yet.",
                 style: AppTextStyles.body.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -54,7 +54,7 @@ class FeaturePlaceholderScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                "This feature will be available in an upcoming release.",
+                "You will see this here when it is ready.",
                 style: AppTextStyles.caption,
                 textAlign: TextAlign.center,
               ),

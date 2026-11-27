@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/profile_model.dart';
+import '../../../core/providers/wallet_dashboard_provider.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/kyc_service.dart';
+import '../../kyc/presentation/limits_screen.dart';
 import '../../../core/services/profile_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -16,6 +19,7 @@ import '../widgets/profile_info_card.dart';
 import '../widgets/profile_section.dart';
 import '../widgets/profile_tile.dart';
 import 'edit_profile_screen.dart';
+import 'payment_methods_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -153,6 +157,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
+    final dashboard = ref.watch(walletDashboardProvider);
+    final kyc = ref.watch(kycStatusProvider).valueOrNull;
+    final wallet = dashboard.wallet;
+    final defaultMethod = dashboard.defaultPaymentMethod;
 
     return Scaffold(
       backgroundColor: context.colorPaper,
@@ -170,6 +178,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 userName: isLoading
                     ? "Loading..."
                     : profile?.fullName ?? "Traveller",
+                tierName: kyc?.tierName ?? 'Basic',
               ),
               const SizedBox(height: AppSpacing.lg),
 
@@ -182,16 +191,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // ── Edit Profile Button ────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                // A minimum, not a fixed height, so large system text
+                // sizes do not clip the label.
                 child: SizedBox(
                   width: double.infinity,
-                  height: 46,
                   child: OutlinedButton.icon(
                     onPressed: () => _navigateToEditProfile(),
                     icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: const Text("Edit Profile"),
+                    label: const Text("Edit profile"),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.accent,
-                      side: const BorderSide(color: AppColors.accent),
+                      minimumSize: const Size.fromHeight(48),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.medium),
                       ),
@@ -206,16 +218,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: "WALLET",
                 children: [
                   ProfileTile(
+                    icon: Icons.speed_rounded,
+                    title: "Limits and verification",
+                    subtitle: kyc == null
+                        ? "See what you can send"
+                        : kyc.underReview
+                            ? "ID being checked"
+                            : kyc.idVerified
+                                ? "ID verified"
+                                : "Verify your ID to raise limits",
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const LimitsScreen(),
+                        ),
+                      );
+                      ref.invalidate(kycStatusProvider);
+                    },
+                  ),
+                  ProfileTile(
                     icon: Icons.account_balance_wallet_outlined,
                     title: "Wallet Status",
-                    subtitle: "Not Connected",
+                    subtitle: wallet == null
+                        ? "Not created"
+                        : "${wallet.status} · ${wallet.walletId}",
                     onTap: () {},
                   ),
                   ProfileTile(
                     icon: Icons.link_outlined,
-                    title: "Linked Accounts",
-                    subtitle: "Coming Soon",
-                    onTap: () {},
+                    title: "Payment methods",
+                    subtitle: defaultMethod == null
+                        ? "Add Mobile Money"
+                        : "${defaultMethod.network.name} · ${defaultMethod.displayNumber}",
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentMethodsScreen(),
+                        ),
+                      );
+                      await ref
+                          .read(walletDashboardProvider.notifier)
+                          .refresh();
+                    },
                   ),
                 ],
               ),

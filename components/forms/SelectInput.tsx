@@ -1,13 +1,17 @@
+"use client";
+
+import { useId } from "react";
 import { ChevronDown, type LucideIcon } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 
 type SelectInputProps = {
   label: string;
   icon: LucideIcon;
-options: readonly string[];
+  options: readonly string[];
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  name?: string;
 };
 
 export default function SelectInput({
@@ -17,20 +21,28 @@ export default function SelectInput({
   value,
   onChange,
   required,
+  name,
 }: SelectInputProps) {
+  const id = useId();
+
   return (
     <div>
-      <label className="flex items-center gap-2 mb-2 font-medium text-slate-700">
-        <Icon size={15} style={{ color: BRAND.amber }} />
+      <label
+        htmlFor={id}
+        className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink"
+      >
+        <Icon size={15} style={{ color: BRAND.amber }} aria-hidden />
         {label}
       </label>
 
       <div className="relative">
         <select
+          id={id}
+          name={name}
           required={required}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full appearance-none cursor-pointer rounded-2xl border border-slate-300 bg-white px-5 py-4 pr-12 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+          className="w-full cursor-pointer appearance-none rounded-control border border-line bg-white px-4 py-3.5 pr-12 text-[16px] text-ink focus:border-amber focus:outline-none focus:ring-2 focus:ring-amber/60 transition-colors"
         >
           {options.map((opt) => (
             <option key={opt} value={opt}>
@@ -40,10 +52,10 @@ export default function SelectInput({
         </select>
         <ChevronDown
           size={18}
-          className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"
+          aria-hidden
+          className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted"
         />
       </div>
     </div>
   );
 }
-

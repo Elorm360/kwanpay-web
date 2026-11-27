@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# supabase cli cache
+/supabase/.temp/
+
+# Local evidence screenshots (may show personal details); attach privately
+evidence/

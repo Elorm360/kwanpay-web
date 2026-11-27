@@ -9,7 +9,7 @@ export type DemoRequestData = {
   message?: string | null;
 };
 
-export async function submitDemo(data: DemoRequestData) {
+export async function submitDemo(data: DemoRequestData, honeypot = "") {
   const response = await fetch("/api/leads", {
     method: "POST",
     headers: {
@@ -23,6 +23,7 @@ export async function submitDemo(data: DemoRequestData) {
       audience_role: data.user_type,
       company: data.company,
       message: data.message,
+      website: honeypot,
     }),
   });
 

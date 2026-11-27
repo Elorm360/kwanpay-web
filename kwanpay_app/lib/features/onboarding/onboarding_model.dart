@@ -1,12 +1,13 @@
+import 'onboarding_illustrations.dart';
+
 class OnboardingModel {
-  final String image;
+  final OnboardingArt art;
   final String title;
   final String subtitle;
 
   const OnboardingModel({
-    required this.image,
+    required this.art,
     required this.title,
     required this.subtitle,
   });
 }
-
