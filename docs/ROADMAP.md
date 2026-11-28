@@ -103,16 +103,32 @@ Goal: cross-border value moves as USDC on Stellar.
       payment with reference memo, Horizon verification, receipts, no
       double pay on retry. First recorded payment 27 Nov 2026; see
       `docs/STELLAR_USDC.md` (Stellar Instawards deliverables)
-- [ ] Decide custody model (custodial, MPC or user-held keys)
-- [ ] Anchor integration (SEP-24/SEP-31) for fiat on/off-ramp
+Built toward the SCF Build Award (Integration Track): each step below uses
+or prepares for a partner on the SCF Integration List, and makes USDC on
+Stellar the settlement rail rather than a side feature.
+
+- [ ] **Next:** embedded wallets from an SCF Integration List provider
+      (evaluate Privy and DFNS: Flutter support, custody model, cost),
+      replacing keys stored on the phone
+- [ ] Sponsored user accounts (CAP-33) so onchain activity is
+      attributable to KwanPay for the award's onchain metric
+- [ ] Metrics page: users, merchants, payments and USDC volume from
+      Supabase and Horizon
+- [ ] On/off-ramp from the Integration List once Ghana coverage is
+      confirmed (MoneyGram, Mercuryo, BlindPay or Bridge); otherwise an
+      anchor partner (SEP-24/SEP-31)
+- [ ] Architecture outline, STRIDE threat model and monitoring plan
 - [ ] Live FX quotes with expiry, and transparent fees
 - [ ] Mainnet readiness review
 
 ## Phase 4 — Merchant payments
 
-Goal: tourism businesses get paid by travelers.
+Goal: tourism businesses get paid by travelers. Moved up to run alongside
+Phase 3: a live pilot merchant (TransVista Africa) is the traction the
+award review needs.
 
-- [ ] Merchant onboarding and KYB
+- [ ] Merchant onboarding and KYB, with merchants registering their own
+      Stellar receiving accounts
 - [ ] QR payments and shareable payment links
 - [ ] Merchant dashboard on the web (payments, payouts, exports)
 - [ ] Settlement to merchant Mobile Money or bank accounts
