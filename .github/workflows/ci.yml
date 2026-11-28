@@ -38,10 +38,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Pinned to the version the app is developed and tested with. Latest
+      # stable (3.50) deprecates importing package:flutter/material.dart,
+      # which fails analyze on every screen; upgrade together with that
+      # migration, not silently in CI.
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.2
           cache: true
 
       # .env is a bundled asset but is never committed; CI only needs it to exist.
@@ -105,6 +110,12 @@ jobs:
 
       - name: Type-check Edge Functions
         shell: bash
+        # The repo root has the website's package.json. Without this, Deno
+        # treats it as the project and wants npm packages (pulled in by
+        # supabase-js) in a node_modules folder CI never installs. Edge
+        # Functions resolve npm packages from Deno's own cache instead.
+        env:
+          DENO_NO_PACKAGE_JSON: "1"
         run: |
           set -euo pipefail
           mapfile -t functions < <(find supabase/functions -type f -name '*.ts' -print | sort)
